@@ -1,0 +1,671 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Fleet manager quiz - mobile layout preview</title>
+<style>
+  html,body{margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;background:#fff;color:#1a1a1a}
+  /* Stand-in site chrome, so the quiz is scrolled inside a page the way it
+     will be on the real site rather than sitting alone in the viewport. */
+  .mock-header{height:52px;background:#111;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+  .mock-intro{max-width:680px;margin:0 auto;padding:28px 20px 8px;font-size:15px;line-height:1.6;color:#3d3d3d}
+  .mock-intro h1{font-size:22px;line-height:1.25;margin:0 0 10px;color:#000}
+  .embed-shell{max-width:1200px;margin:0 auto;padding:12px 0 0}
+  .mock-footer{margin-top:40px;padding:28px 20px 60px;background:#f2f2f0;font-size:12px;color:#878787;text-align:center}
+  /* Preview-only badge. Makes it obvious this is not the live form. */
+  .pv-badge{position:fixed;z-index:9999;right:8px;bottom:8px;background:rgba(0,0,0,.86);color:#fff;font-size:10px;line-height:1.35;padding:7px 9px;border-radius:8px;font-variant-numeric:tabular-nums;pointer-events:none;max-width:46vw}
+  .pv-badge b{color:#F2D400;font-weight:700}
+</style>
+</head>
+<body>
+
+<div class="mock-header"><span>Allstar</span><span>Preview</span></div>
+
+<div class="mock-intro">
+  <h1>Mobile layout preview</h1>
+  <p>Stand-in page chrome. The quiz below is the real component. The email form is a visual stand-in, so nothing is submitted anywhere.</p>
+</div>
+
+<div class="embed-shell">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0&display=block');
+
+/* ---------------------------------------------------------------
+   ALLSTAR BRAND TOKENS
+   Primary palette   — Yellow #F2D400 · Black · White · Grey 1 #878787 · Grey 2 #E3E3E3
+   Secondary palette — Green #59EB9C / tint #D7F7E3 · Blue #65C6F7 / tint #D7EDFB
+                       Purple #D666F0 / tint #ECD3F8   (used sparingly, for callout panels)
+   Typography        — Inter. Headlines heavy + tight. Body copy is never set in colour
+                       (accessibility rule from the brand guidelines) — black, dark grey
+                       or white only. Yellow is used as a fill, highlight or rule.
+
+   PHASE 1 = MOBILE RESTRUCTURE ONLY.
+   Colour values below are carried over from v7 unchanged and are still
+   pending verification against the Figma DS Allstar mode and the 2025
+   brand guidelines (p.16 primary / p.17 secondary). Marked TO VERIFY.
+--------------------------------------------------------------- */
+#qr{
+  --yellow:#F2D400; --yellow-deep:#D9BE00; --yellow-tint:#FCF4C2;   /* TO VERIFY: deep + tint */
+  --black:#000000; --ink:#1A1A1A; --body:#3D3D3D;
+  --grey1:#878787; --grey2:#E3E3E3; --grey-bg:#F7F7F5; --white:#FFFFFF;  /* TO VERIFY: grey-bg */
+  --green:#59EB9C; --green-tint:#D7F7E3;
+  --blue:#65C6F7; --blue-tint:#D7EDFB;
+  --purple:#D666F0; --purple-tint:#ECD3F8;
+  --r-card:16px; --r-panel:20px;
+  --tap:44px;
+}
+
+/* Scoped reset. :where() keeps specificity at zero so every class rule
+   below still wins. A plain `#qr *` selector would outrank them all. */
+:where(#qr, #qr *){box-sizing:border-box;margin:0;padding:0}
+
+/* The quiz sizes itself off its own width, not the viewport, so it survives
+   being dropped into any column width on the site. No fixed height, no
+   overflow clipping, header and footer sit in normal flow. */
+#qr{
+  container-type:inline-size;
+  container-name:quiz;
+  background:var(--white);
+  font-family:'Inter',-apple-system,Helvetica,Arial,sans-serif;
+  color:var(--ink);
+  position:relative;
+  overflow-x:clip;
+  -webkit-font-smoothing:antialiased;
+  display:flex;
+  flex-direction:column;
+}
+
+.sc{
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  min-height:340px;
+  padding:28px 20px 36px;
+  text-align:center;
+  animation:fu .38s cubic-bezier(.22,.61,.36,1);
+}
+.sc.on{display:flex}
+@keyframes fu{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* Material Symbols, 300 weight, per the icon guidelines */
+/* TO VERIFY: confirm Material Symbols is the approved Allstar icon set,
+   or replace with the DS icon library. */
+.ms{font-family:'Material Symbols Outlined';font-weight:normal;font-style:normal;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;-webkit-font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 24}
+
+/* --- brand furniture ------------------------------------------------ */
+.lbar{display:flex;flex-direction:column;align-items:center;gap:12px;padding:24px 20px 0}
+/* Brand book minimum digital logo width is 120px, so the logo is sized by
+   width, never by height. */
+.brandlogo{width:clamp(120px,28cqw,150px);height:auto;display:block;color:var(--black);--logo-star:var(--yellow)}
+.lpill{background:var(--yellow);border-radius:100px;padding:7px 16px;font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--black);text-transform:uppercase;text-align:center}
+.fbar{border-top:2px solid var(--yellow);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--white)}
+.fbar-l{display:flex;align-items:center;gap:10px;font-size:10px;font-weight:600;letter-spacing:.12em;color:var(--grey1);text-transform:uppercase}
+.fbar-l .ms{font-size:16px;color:var(--ink)}
+/* TO VERIFY (Phase 2): .fmark is not an Allstar brand device. Candidate for removal. */
+.fmark{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:7px solid var(--yellow);flex-shrink:0}
+
+.htag{font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--grey1);text-transform:uppercase;margin-bottom:16px}
+.htitle{font-size:clamp(30px,8.8cqw,62px);font-weight:800;line-height:.98;letter-spacing:-.03em;color:var(--black);margin-bottom:20px;text-wrap:balance}
+.hl{background:var(--yellow);box-shadow:.14em 0 0 var(--yellow),-.14em 0 0 var(--yellow)}
+.hsub{font-size:15px;color:var(--body);max-width:452px;line-height:1.6;margin-bottom:30px}
+.divl{width:56px;height:4px;background:var(--yellow);margin:0 auto 20px}
+
+/* --- buttons -------------------------------------------------------- */
+/* Every button clears the 44px minimum touch target. */
+.btn{font-family:inherit;border-radius:100px;cursor:pointer;transition:background .18s,color .18s,border-color .18s,transform .18s;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:var(--tap);-webkit-tap-highlight-color:transparent}
+.btn .ms{font-size:19px}
+.bstart{background:var(--yellow);color:var(--black);border:2px solid var(--yellow);padding:14px 30px;font-size:15px;font-weight:700}
+.bnx{background:var(--yellow);color:var(--black);border:2px solid var(--yellow);padding:12px 24px;font-size:14px;font-weight:700;opacity:.28;pointer-events:none}
+.bnx.on{opacity:1;pointer-events:auto}
+.bbk,.brst{background:transparent;border:2px solid var(--grey2);color:var(--grey1);padding:11px 20px;font-size:13px;font-weight:600}
+
+/* Hover states are gated so touch devices never get a stuck hover.
+   Touch gets :active feedback instead. */
+@media (hover:hover) and (pointer:fine){
+  .bstart:hover{background:var(--black);border-color:var(--black);color:var(--yellow);transform:translateY(-2px)}
+  .bnx.on:hover{background:var(--black);border-color:var(--black);color:var(--yellow);transform:translateY(-1px)}
+  .bbk:hover,.brst:hover{border-color:var(--black);color:var(--black)}
+  .op:hover{border-color:var(--ink);box-shadow:0 2px 0 var(--grey2)}
+  .op:hover .oi{background:var(--grey2)}
+}
+.bstart:active,.bnx.on:active{background:var(--black);border-color:var(--black);color:var(--yellow)}
+.bbk:active,.brst:active{border-color:var(--black);color:var(--black)}
+.op:active{border-color:var(--ink)}
+.btn:focus-visible,.op:focus-visible{outline:3px solid var(--black);outline-offset:2px}
+
+/* --- progress ------------------------------------------------------- */
+.pbar{width:100%;max-width:620px;margin-bottom:26px}
+.plb{font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--grey1);margin-bottom:8px;text-align:right;text-transform:uppercase}
+.ptr{height:4px;background:var(--grey2);border-radius:100px;overflow:hidden}
+.pfi{height:100%;background:var(--yellow);border-radius:100px;transition:width .42s cubic-bezier(.22,.61,.36,1)}
+
+/* --- question ------------------------------------------------------- */
+.qn{font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--grey1);text-transform:uppercase;margin-bottom:10px}
+.qt{font-size:clamp(20px,4.4cqw,34px);font-weight:800;line-height:1.16;letter-spacing:-.02em;max-width:620px;margin-bottom:26px;color:var(--black);text-wrap:pretty}
+
+/* Single column by default. The grid widens with the container, not the
+   viewport, so it behaves the same in a narrow column as on a phone. */
+.og{display:grid;grid-template-columns:1fr;gap:12px;width:100%;max-width:620px}
+.op{background:var(--white);border:1.5px solid var(--grey2);border-radius:var(--r-card);padding:16px;cursor:pointer;transition:border-color .18s,background .18s,box-shadow .18s;text-align:left;display:flex;gap:13px;align-items:flex-start;min-height:var(--tap);-webkit-tap-highlight-color:transparent}
+.op.sel{border-color:var(--black);border-width:2px;background:var(--yellow-tint);padding:15.5px}
+/* icons held in circular shapes, per the icon guidelines */
+.oi{width:38px;height:38px;border-radius:100px;background:var(--grey-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .18s,color .18s;color:var(--ink)}
+.oi .ms{font-size:21px}
+.op.sel .oi{background:var(--yellow)}
+.ol{font-size:14px;font-weight:600;color:var(--ink);line-height:1.4}
+.os{font-size:12px;color:var(--grey1);margin-top:4px;line-height:1.45}
+
+.qnav{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;max-width:620px;margin-top:24px}
+
+/* --- result --------------------------------------------------------- */
+.rw{width:100%;max-width:520px}
+.rem{width:66px;height:66px;border-radius:100px;background:var(--yellow);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;color:var(--black)}
+.rem .ms{font-size:34px}
+.rbadge{display:inline-flex;align-items:center;background:var(--white);border:2px solid var(--grey2);border-radius:100px;padding:7px 16px;font-size:11px;font-weight:800;letter-spacing:.12em;color:var(--ink);text-transform:uppercase;margin-bottom:14px}
+.rtyp{font-size:clamp(26px,6.8cqw,48px);font-weight:800;color:var(--black);line-height:1.02;letter-spacing:-.03em;margin-bottom:14px;text-wrap:balance}
+.rsub{font-size:14px;font-weight:600;color:var(--ink);line-height:1.55;margin-bottom:18px;padding-left:14px;border-left:3px solid var(--yellow);text-align:left}
+.rdesc{font-size:14px;color:var(--body);line-height:1.7;margin-bottom:18px;text-align:left}
+
+/* Product-fit callout — the one place the secondary palette appears */
+.rfit{background:var(--yellow-tint);border-radius:var(--r-panel);padding:18px 18px;text-align:left;margin-bottom:18px}
+.rfit-tag{font-size:11px;font-weight:800;letter-spacing:.12em;color:var(--ink);text-transform:uppercase;margin-bottom:10px}
+.rfit-text{font-size:13.5px;color:var(--body);line-height:1.7;margin-bottom:14px}
+.rfit-cta{font-size:13px;font-weight:700;color:var(--black);display:flex;align-items:flex-start;gap:8px}
+.rfit-cta .ms{font-size:18px;flex-shrink:0;margin-top:1px}
+
+.rform-wrap{width:100%;background:var(--grey-bg);border-radius:var(--r-panel);padding:20px 18px 16px;margin-bottom:18px;text-align:left;overflow-x:clip}
+.rform-tag{font-size:11px;font-weight:800;letter-spacing:.12em;color:var(--ink);text-transform:uppercase;margin-bottom:8px}
+.rform-sub{font-size:13px;color:var(--body);line-height:1.6;margin-bottom:16px}
+.rform-consent{font-size:11px;color:var(--grey1);line-height:1.55;margin-top:14px}
+
+/* --- thank you: full-bleed yellow, as the brand uses it -------------- */
+#s-thankyou{background:var(--yellow)}
+#s-thankyou .ty-em{width:70px;height:70px;border-radius:100px;background:var(--black);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;color:var(--yellow)}
+#s-thankyou .ty-em .ms{font-size:36px}
+.ty-title{font-size:clamp(28px,7.4cqw,54px);font-weight:800;color:var(--black);line-height:1;letter-spacing:-.03em;margin-bottom:18px;text-wrap:balance}
+#s-thankyou .divl{background:var(--black)}
+.ty-msg{font-size:15px;color:var(--ink);line-height:1.65;max-width:430px;margin-bottom:26px}
+.ty-card{background:var(--white);border-radius:var(--r-panel);padding:18px;max-width:400px;width:100%;margin-bottom:26px;text-align:left}
+.ty-card-label{font-size:11px;font-weight:800;letter-spacing:.12em;color:var(--ink);text-transform:uppercase;margin-bottom:7px}
+.ty-card-text{font-size:13.5px;color:var(--body);line-height:1.65}
+#s-thankyou .brst{border-color:rgba(0,0,0,.25);color:var(--black)}
+#s-thankyou .brst:active{border-color:var(--black);background:var(--black);color:var(--yellow)}
+@media (hover:hover) and (pointer:fine){
+  #s-thankyou .brst:hover{border-color:var(--black);background:var(--black);color:var(--yellow)}
+}
+/* on the full-yellow screen the furniture inverts so it stays visible */
+#qr.ty{background:var(--yellow)}
+#qr.ty .lpill{background:var(--black);color:var(--yellow)}
+#qr.ty .fbar{background:transparent;border-top-color:var(--black)}
+#qr.ty .fbar-l{color:var(--ink)}
+#qr.ty .fbar-l .ms{color:var(--black)}
+/* TO VERIFY (Phase 2): recolouring the logo star via CSS is a logo
+   modification. Swap for the approved reversed lockup from
+   IVP Logos & Lockups instead. */
+#qr.ty .brandlogo{--logo-star:var(--black)}
+#qr.ty .fmark{border-bottom-color:var(--black)}
+
+/* --- Marketo form, restyled to brand ------------------------------- */
+/* forms2 injects its own stylesheet plus inline pixel widths, so every
+   width is forced back to 100% and inputs are 16px to stop iOS Safari
+   zooming the whole page on focus. */
+.rform-wrap .mktoForm{width:100%!important;max-width:100%!important;padding:0!important;font-family:'Inter',sans-serif!important;color:var(--ink)!important}
+.rform-wrap .mktoForm *{font-family:'Inter',sans-serif!important;box-sizing:border-box!important}
+.rform-wrap .mktoForm .mktoFormRow,.rform-wrap .mktoForm .mktoFieldWrap,.rform-wrap .mktoForm .mktoFormCol,.rform-wrap .mktoForm .mktoFieldDescriptor{width:100%!important;max-width:100%!important;float:none!important;margin:0!important;display:block!important}
+.rform-wrap .mktoForm .mktoOffset,.rform-wrap .mktoForm .mktoGutter,.rform-wrap .mktoForm .mktoClear{display:none!important}
+.rform-wrap .mktoForm .mktoLabel{font-size:12px!important;font-weight:700!important;color:var(--ink)!important;width:auto!important;max-width:100%!important;padding:0 0 6px!important;line-height:1.4!important}
+.rform-wrap .mktoForm input[type=text],.rform-wrap .mktoForm input[type=email],.rform-wrap .mktoForm input[type=tel],.rform-wrap .mktoForm select,.rform-wrap .mktoForm textarea{width:100%!important;max-width:100%!important;min-height:var(--tap)!important;height:auto!important;padding:12px 14px!important;font-size:16px!important;color:var(--ink)!important;background:var(--white)!important;border:1.5px solid var(--grey2)!important;border-radius:10px!important;box-shadow:none!important;margin-bottom:12px!important}
+.rform-wrap .mktoForm input:focus,.rform-wrap .mktoForm select:focus{outline:none!important;border-color:var(--black)!important}
+.rform-wrap .mktoForm .mktoButtonRow{width:100%!important;display:block!important}
+.rform-wrap .mktoForm .mktoButtonWrap{margin-left:0!important}
+.rform-wrap .mktoForm .mktoButton{width:100%!important;min-height:var(--tap)!important;background:var(--yellow)!important;background-image:none!important;border:2px solid var(--yellow)!important;border-radius:100px!important;color:var(--black)!important;font-size:15px!important;font-weight:700!important;padding:13px 24px!important;box-shadow:none!important;cursor:pointer;transition:background .18s,color .18s,border-color .18s}
+.rform-wrap .mktoForm .mktoButton:active{background:var(--black)!important;border-color:var(--black)!important;color:var(--yellow)!important}
+@media (hover:hover) and (pointer:fine){
+  .rform-wrap .mktoForm .mktoButton:hover{background:var(--black)!important;border-color:var(--black)!important;color:var(--yellow)!important}
+}
+.rform-wrap .mktoForm .mktoError{position:static!important}
+.rform-wrap .mktoForm .mktoError .mktoErrorArrowWrap{display:none!important}
+/* The error sits in the flow rather than as an off-canvas tooltip, so it is
+   readable on a phone. Colour is set explicitly because forms2 supplies the
+   white text itself and we are not relying on its stylesheet. */
+.rform-wrap .mktoForm .mktoError .mktoErrorMsg{position:static!important;display:block!important;margin:0 0 12px!important;padding:9px 12px!important;max-width:100%!important;background:var(--ink)!important;background-image:none!important;border:none!important;border-radius:8px!important;color:var(--white)!important;font-size:12px!important;line-height:1.45!important;box-shadow:none!important;text-shadow:none!important}
+.rform-wrap .mktoForm .mktoError .mktoErrorMsg *{color:var(--white)!important}
+
+/* --- container-driven breakpoints ----------------------------------- */
+@container quiz (min-width:480px){
+  .sc{padding:32px 26px 42px}
+  .lbar{padding:28px 26px 0}
+  .fbar{padding:14px 26px}
+  .rfit{padding:20px 22px}
+  .rform-wrap{padding:24px 24px 18px}
+  .ty-card{padding:18px 22px}
+  .rform-wrap .mktoForm .mktoButton{width:auto!important;padding:13px 30px!important}
+}
+@container quiz (min-width:560px){
+  .og{grid-template-columns:1fr 1fr}
+  .bbk,.brst{padding:11px 24px}
+  .bnx{padding:12px 28px}
+}
+@container quiz (min-width:720px){
+  .sc{min-height:560px;padding:44px 32px 56px}
+  .lbar{padding:34px 32px 0}
+  .fbar{padding:14px 32px}
+  .bstart{padding:15px 34px}
+  .rem{width:74px;height:74px}
+  .rem .ms{font-size:38px}
+  #s-thankyou .ty-em{width:78px;height:78px}
+  #s-thankyou .ty-em .ms{font-size:40px}
+}
+/* Q6 has six options, so it gets its own column rhythm. */
+@container quiz (min-width:900px){
+  .og.six{grid-template-columns:1fr 1fr 1fr}
+  .og.six{max-width:900px}
+}
+
+/* Browsers without container query support fall back to viewport widths
+   so the layout still widens on desktop. */
+@supports not (container-type:inline-size){
+  @media (min-width:560px){.og{grid-template-columns:1fr 1fr}}
+  @media (min-width:720px){.sc{min-height:560px;padding:44px 32px 56px}}
+  .htitle{font-size:clamp(30px,6.4vw,62px)}
+  .qt{font-size:clamp(20px,3.5vw,34px)}
+  .rtyp{font-size:clamp(26px,5.4vw,48px)}
+  .ty-title{font-size:clamp(28px,5.8vw,54px)}
+  .brandlogo{width:130px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  #qr *,#qr *::before,#qr *::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  .sc{animation:none}
+}
+</style>
+
+<div id="qr">
+  <div class="lbar">
+    <svg class="brandlogo" viewBox="0 0 214 177.472" role="img" aria-label="Allstar, a Corpay company">
+    <g id="Vector">
+    <path d="M0 129.383C0 118.137 7.78328 115.467 25.2406 115.467H26.8313C26.7613 111.88 25.8309 110.047 19.048 110.047C15.0295 110.091 11.0945 111.207 7.64322 113.281L2.22094 105.22C5.00211 103.325 11.955 100.373 20.2285 100.373C34.4145 100.373 37.3258 104.937 37.3258 116.182V128.275C37.3258 131.439 37.5358 131.932 40.7372 131.932V140.931C39.2214 141.194 37.6815 141.288 36.1452 141.213C31.9735 141.213 30.1427 140.366 28.642 137.272C26.6412 140.014 22.2494 141.707 14.8062 141.707C2.64111 141.687 0 136.336 0 129.383ZM26.8313 124.526V123.055H25.9309C12.0251 123.055 10.3544 124.183 10.3544 128.467C10.3544 131.419 11.955 132.83 16.9671 132.83C23.85 132.83 26.8313 130.37 26.8313 124.526Z" fill="currentColor"/>
+    <path d="M43.6589 129.03V86.5076H54.5035V127.691C54.5035 130.925 55.1238 131.842 58.3951 131.842H59.7157V140.911C57.9624 141.114 56.1983 141.208 54.4334 141.193C47.3405 141.193 43.6589 138.452 43.6589 129.03Z" fill="currentColor"/>
+    <path d="M62.1446 129.03V86.5076H73.0292V127.691C73.0292 130.925 73.6594 131.842 76.9208 131.842H78.2413V140.911C76.488 141.114 74.724 141.209 72.9592 141.193C65.8762 141.193 62.1846 138.452 62.1846 129.03" fill="currentColor"/>
+    <path d="M80.3332 136.687L85.8956 128.626C90.0684 131.261 94.8771 132.697 99.8015 132.778C105.294 132.778 106.894 132.213 106.894 129.473C106.894 127.155 105.294 126.661 99.9415 125.956C90.2074 124.616 82.7643 123.216 82.7643 112.856C82.7643 104.795 87.4962 100.412 99.9415 100.412C106.264 100.412 112.377 101.672 116.558 104.07L111.336 112.645C107.893 110.952 104.114 110.063 100.282 110.046C94.7293 110.046 93.6089 111.053 93.6089 112.927C93.6089 115.174 94.9994 115.668 100.082 116.363C110.086 117.774 117.529 118.973 117.529 128.879C117.529 138.018 112.657 141.746 99.1011 141.746C92.3583 141.746 85.6155 140.336 80.3332 136.707" fill="currentColor"/>
+    <path d="M118.78 101.269H125.784L127.655 91.5648L136.058 89.8115V101.269H145.382V110.68H136.058V127.064C136.058 130.157 136.479 131.841 141.141 131.841H145.382V141.07C143.781 141.212 140.86 141.212 138.909 141.212C128.275 141.212 125.213 137.554 125.213 128.697V110.68H118.751L118.78 101.269Z" fill="currentColor"/>
+    <path d="M147.842 129.383C147.842 118.137 155.626 115.467 173.073 115.467H174.674C174.604 111.88 173.673 110.047 166.89 110.047C162.871 110.088 158.936 111.204 155.485 113.281L150.063 105.22C152.844 103.325 159.797 100.373 168.071 100.373C182.247 100.373 185.168 104.937 185.168 116.182V128.275C185.168 131.439 185.378 131.932 188.569 131.932V140.931C187.057 141.193 185.521 141.287 183.988 141.213C179.815 141.213 177.985 140.366 176.474 137.272C174.474 140.014 170.082 141.707 162.649 141.707C150.484 141.707 147.842 136.356 147.842 129.403V129.383ZM174.674 124.546V123.075H173.763C159.868 123.075 158.197 124.204 158.197 128.486C158.197 131.439 159.797 132.85 164.799 132.85C171.682 132.85 174.674 130.39 174.674 124.546Z" fill="currentColor"/>
+    <path d="M191.77 101.894L200.254 101.269L201.364 105.622C203.036 103.093 207.828 101.058 213.95 100.846V111.386C204.706 111.457 202.685 115.114 202.685 121.372V141.071H191.77V101.894Z" fill="currentColor"/>
+    <path d="M159.687 0L180.386 28.9397L214 17.9765L193.181 46.8256L213.88 75.7653L180.316 64.661L159.488 93.51L159.567 57.7889L125.993 46.6845L159.607 35.7213L159.687 0Z" fill="var(--logo-star,#F2D400)"/>
+    <path d="M203.367 177.472C203.002 177.472 202.638 177.447 202.249 177.373V175.512C202.565 175.561 202.856 175.561 203.124 175.561C204.582 175.561 205.336 174.891 205.895 173.279L206.211 172.361L201.374 160.104H203.683L206.794 168.738C207.013 169.359 207.135 169.855 207.207 170.202H207.256C207.329 169.855 207.475 169.359 207.669 168.738L210.489 160.104H212.725L207.985 173.304C206.867 176.43 205.409 177.472 203.367 177.472Z" fill="currentColor"/>
+    <path d="M189.722 172.509V160.104H191.667V162.56C192.469 160.699 193.806 159.806 195.726 159.806C198.4 159.806 199.785 161.493 199.785 164.793V172.509H197.719V164.917C197.719 162.734 196.82 161.617 195.045 161.617C193.028 161.617 191.788 163.28 191.788 166.034V172.509H189.722Z" fill="currentColor"/>
+    <path d="M179.876 172.807C177.397 172.807 175.768 171.368 175.768 169.16C175.768 167.919 176.376 166.853 177.47 166.232C178.394 165.761 179.56 165.463 181.553 165.215L183.814 164.942V164.744C183.814 162.461 183.012 161.543 181.14 161.543C179.487 161.543 178.466 162.436 178.369 163.999H176.157C176.327 161.469 178.272 159.806 181.116 159.806C184.446 159.806 185.904 161.344 185.904 164.967V168.316C185.904 170.227 186.026 171.542 186.318 172.509H184.154C184.057 171.864 183.984 171.046 183.96 170.252C183.401 171.84 181.869 172.807 179.876 172.807ZM180.338 171.07C182.453 171.07 183.838 169.507 183.838 167.101V166.48L180.533 166.977C178.734 167.25 177.956 167.895 177.956 169.11C177.956 170.326 178.855 171.07 180.338 171.07Z" fill="currentColor"/>
+    <path d="M163.005 177.348V160.104H164.95V162.411C165.727 160.699 167.137 159.806 168.912 159.806C171.853 159.806 173.822 162.387 173.822 166.307C173.822 170.276 171.731 172.807 168.79 172.807C166.918 172.807 165.606 171.765 165.071 170.549V177.348H163.005ZM168.304 170.946C170.37 170.946 171.634 169.21 171.634 166.307C171.634 163.379 170.419 161.667 168.377 161.667C166.335 161.667 165.022 163.305 165.022 165.984V166.58C165.022 169.259 166.286 170.946 168.304 170.946Z" fill="currentColor"/>
+    <path d="M142.976 160.104H144.92V162.262C145.601 160.625 146.768 159.806 148.396 159.806C150.074 159.806 151.289 160.675 151.848 162.287C152.65 160.625 153.89 159.806 155.543 159.806C157.876 159.806 159.237 161.493 159.237 164.371V172.509H157.171V164.545C157.171 162.61 156.393 161.617 154.862 161.617C153.136 161.617 152.14 162.908 152.14 165.165V172.509H150.074V164.446C150.074 162.635 149.247 161.617 147.789 161.617C146.087 161.617 145.042 163.007 145.042 165.265V172.509H142.976V160.104Z" fill="currentColor"/>
+    <path d="M134.283 172.807C130.855 172.807 128.619 170.351 128.619 166.307C128.619 162.263 130.855 159.806 134.283 159.806C137.71 159.806 139.946 162.263 139.946 166.307C139.946 170.351 137.71 172.807 134.283 172.807ZM134.283 170.971C136.47 170.971 137.758 169.383 137.758 166.307C137.758 163.23 136.47 161.642 134.283 161.642C132.095 161.642 130.807 163.23 130.807 166.307C130.807 169.383 132.095 170.971 134.283 170.971Z" fill="currentColor"/>
+    <path d="M119.407 172.931C114.059 172.931 111.628 168.763 111.628 163.652C111.628 158.243 114.351 154.472 119.48 154.472C123.685 154.472 125.872 157.003 126.31 160.65L123.952 160.898C123.612 158.243 122.032 156.482 119.358 156.482C115.979 156.482 114.059 159.36 114.059 163.627C114.059 167.746 115.882 170.872 119.407 170.872C121.862 170.872 123.587 169.21 124.074 166.58L126.31 166.977C125.654 170.301 123.563 172.931 119.407 172.931Z" fill="currentColor"/>
+    <path d="M95.0977 177.472C94.7331 177.472 94.3685 177.447 93.9796 177.372V175.511C94.2956 175.561 94.5873 175.561 94.8547 175.561C96.3131 175.561 97.0666 174.891 97.6257 173.278L97.9417 172.36L93.1046 160.104H95.4137L98.5251 168.738C98.7438 169.358 98.8654 169.855 98.9383 170.202H98.9869C99.0598 169.855 99.2057 169.358 99.4001 168.738L102.22 160.104H104.456L99.7161 173.303C98.598 176.429 97.1395 177.472 95.0977 177.472Z" fill="currentColor"/>
+    <path d="M85.2031 172.807C82.7237 172.807 81.0952 171.368 81.0952 169.16C81.0952 167.919 81.7028 166.853 82.7967 166.232C83.7203 165.761 84.8871 165.463 86.8803 165.215L89.1408 164.942V164.744C89.1408 162.461 88.3387 161.543 86.467 161.543C84.8142 161.543 83.7933 162.436 83.696 163.999H81.4841C81.6542 161.469 83.5988 159.806 86.4427 159.806C89.7728 159.806 91.2312 161.344 91.2312 164.967V168.316C91.2312 170.227 91.3528 171.542 91.6445 172.509H89.4811C89.3839 171.864 89.311 171.046 89.2867 170.252C88.7276 171.84 87.1963 172.807 85.2031 172.807ZM85.6649 171.07C87.7796 171.07 89.1651 169.507 89.1651 167.101V166.48L85.8594 166.977C84.0606 167.25 83.2828 167.895 83.2828 169.11C83.2828 170.326 84.1822 171.07 85.6649 171.07Z" fill="currentColor"/>
+    <path d="M68.3321 177.348V160.104H70.2767V162.411C71.0545 160.699 72.4643 159.806 74.2388 159.806C77.1799 159.806 79.1488 162.387 79.1488 166.307C79.1488 170.276 77.0584 172.807 74.1172 172.807C72.2456 172.807 70.933 171.765 70.3982 170.549V177.348H68.3321ZM73.6311 170.946C75.6972 170.946 76.9612 169.21 76.9612 166.307C76.9612 163.379 75.7458 161.667 73.704 161.667C71.6622 161.667 70.3496 163.305 70.3496 165.984V166.58C70.3496 169.259 71.6136 170.946 73.6311 170.946Z" fill="currentColor"/>
+    <path d="M61.7599 162.932C62.3433 161.196 63.6073 159.806 65.4546 159.806C65.6005 159.806 65.7463 159.806 65.8921 159.831V161.89H65.7949C64.5309 161.89 63.7045 162.263 63.1211 162.858C61.9544 164.049 61.9058 165.711 61.9058 167.2V172.509H59.8396V160.104H61.7599V162.932Z" fill="currentColor"/>
+    <path d="M51.1463 172.807C47.719 172.807 45.4827 170.351 45.4827 166.307C45.4827 162.263 47.719 159.806 51.1463 159.806C54.5736 159.806 56.8099 162.263 56.8099 166.307C56.8099 170.351 54.5736 172.807 51.1463 172.807ZM51.1463 170.971C53.3339 170.971 54.6222 169.383 54.6222 166.307C54.6222 163.23 53.3339 161.642 51.1463 161.642C48.9586 161.642 47.6704 163.23 47.6704 166.307C47.6704 169.383 48.9586 170.971 51.1463 170.971Z" fill="currentColor"/>
+    <path d="M36.2704 172.931C30.9228 172.931 28.4921 168.763 28.4921 163.652C28.4921 158.243 31.2145 154.472 36.3433 154.472C40.5484 154.472 42.7361 157.003 43.1736 160.65L40.8158 160.898C40.4755 158.243 38.8955 156.482 36.2218 156.482C32.8431 156.482 30.9228 159.36 30.9228 163.627C30.9228 167.746 32.7458 170.872 36.2704 170.872C38.7254 170.872 40.4512 169.21 40.9374 166.58L43.1736 166.977C42.5173 170.301 40.4269 172.931 36.2704 172.931Z" fill="currentColor"/>
+    <path d="M18.7052 172.509L16.9308 167.423H9.88167L8.10724 172.509H5.72514L12.2638 154.893H14.5486L21.0873 172.509H18.7052ZM10.5623 165.438H16.2501L13.8437 158.566C13.6979 158.169 13.5764 157.747 13.4305 157.226H13.3819C13.2361 157.747 13.1145 158.169 12.9687 158.566L10.5623 165.438Z" fill="currentColor"/>
+    </g>
+    </svg>
+    <div class="lpill">Fleet Manager Edition</div>
+  </div>
+
+  <div class="sc on" id="s-intro">
+    <div class="htag">Fleet Event 2026</div>
+    <h1 class="htitle">What kind of<br><span class="hl">fleet manager</span><br>are you?</h1>
+    <div class="divl"></div>
+    <p class="hsub">6 questions. One diagnosis. Brutally accurate results — and the Allstar product to match. Go on, you've earned a bit of self-reflection.</p>
+    <button class="btn bstart" onclick="go()">Take the quiz<span class="ms">arrow_forward</span></button>
+  </div>
+
+  <div class="sc" id="s-q">
+    <div class="pbar">
+      <div class="plb" id="plb">1 of 6</div>
+      <div class="ptr"><div class="pfi" id="pfi" style="width:16%"></div></div>
+    </div>
+    <div class="qn" id="qn">Question 1</div>
+    <div class="qt" id="qt"></div>
+    <div class="og" id="og"></div>
+    <div class="qnav">
+      <button class="btn bbk" id="bbk" onclick="prev()"><span class="ms">arrow_back</span>Back</button>
+      <button class="btn bnx" id="bnx" onclick="nxt()"><span id="bnx-t">Next</span><span class="ms">arrow_forward</span></button>
+    </div>
+  </div>
+
+  <div class="sc" id="s-result">
+    <div class="rw">
+      <div class="rem" id="r-em"><span class="ms"></span></div>
+      <div class="rbadge" id="r-badge"></div>
+      <div class="rtyp" id="r-typ"></div>
+      <div class="rsub" id="r-sub"></div>
+      <p class="rdesc" id="r-desc"></p>
+      <div class="rfit" id="r-fit">
+        <div class="rfit-tag" id="r-fit-tag"></div>
+        <p class="rfit-text" id="r-fit-text"></p>
+        <div class="rfit-cta"><span class="ms">check_circle</span><span id="r-fit-cta"></span></div>
+      </div>
+
+      <div class="rform-wrap">
+        <div class="rform-tag">Stay in the loop</div>
+        <p class="rform-sub">Leave your work email and we'll keep you posted on the Allstar products built for fleet managers like you.</p>
+        <form id="mktoForm_3131"></form>
+        <p class="rform-consent">By submitting your email address, you agree to take part in future research.</p>
+      </div>
+
+      <button class="btn brst" onclick="restart()"><span class="ms">refresh</span>Try again</button>
+    </div>
+  </div>
+
+  <div class="sc" id="s-thankyou">
+    <div class="ty-em"><span class="ms">celebration</span></div>
+    <h2 class="ty-title">Thanks for<br>taking part</h2>
+    <div class="divl"></div>
+    <p class="ty-msg">That's a wrap. Come find us at the Allstar stand to talk through your result — we'd love to show you what we're building for fleet managers like you.</p>
+    <div class="ty-card">
+      <div class="ty-card-label">Find us today</div>
+      <div class="ty-card-text">The Allstar team are on stand [X] — bring your result and let's talk fleet.</div>
+    </div>
+    <button class="btn brst" onclick="restart()"><span class="ms">refresh</span>Take the quiz again</button>
+  </div>
+
+  <div class="fbar">
+    <div class="fbar-l">Fleet Manager Quiz</div>
+    <div class="fmark"></div>
+  </div>
+</div>
+
+
+
+<script>
+/* ---------------------------------------------------------------
+   QUESTIONS
+   Each option maps 1:1 to a character code:
+   CH = The Cost Hawk · MD = The Mileage Detective · FF = The Fleet Firefighter
+   VD = The Value Defender · AP = The Accidental Pioneer · BO = The Burned Out Manager
+   Q6 is the tiebreaker (all six characters, weighted x1.5)
+   `i` is a Google Material Symbols name (300 weight), per the brand icon guidelines.
+--------------------------------------------------------------- */
+const Qs=[
+  {t:"Monday morning. Before you open your email, you check...",opts:[
+    {i:"monitoring",l:"Last week's spend data",s:"Anything spike over the weekend?",type:"CH"},
+    {i:"build",l:"Which vehicles have a service or MOT coming up this week",s:"Before a driver tells you about it",type:"FF"},
+    {i:"trending_up",l:"The monthly dashboard",s:"Board meeting's coming and the numbers need to tell a story",type:"VD"},
+    {i:"bolt",l:"Whether anyone with a home charger used a public one instead",s:"Again",type:"AP"},
+  ]},
+  {t:"A driver calls at 5:58pm on a Friday. Before you pick up, your first thought is...",opts:[
+    {i:"call",l:"\"Pick up. Always pick up.\"",s:"That's the job.",type:"FF"},
+    {i:"bar_chart",l:"\"Whatever this is, I need the full story\"",s:"Before it becomes someone else's problem",type:"VD"},
+    {i:"electric_car",l:"\"Please don't let it be an EV\"",s:"Please don't let it be an EV",type:"AP"},
+    {i:"hourglass_empty",l:"\"I've had four calls already this hour\"",s:"I already know how this ends",type:"BO"},
+  ]},
+  {t:"Finance flags an unexpected spike in fleet spend. Your first move is...",opts:[
+    {i:"search",l:"Pull the transaction data and start cross-referencing",s:"The answer's in there somewhere",type:"CH"},
+    {i:"manage_search",l:"Check whether the mileage figures actually hold up",s:"Inaccurate data has a way of distorting everything",type:"MD"},
+    {i:"insights",l:"Get ahead of it: build the explanation before anyone asks for one",s:"",type:"VD"},
+    {i:"inbox",l:"Add it to the list",s:"You'll get to it once you've dealt with the other six urgent things",type:"BO"},
+  ]},
+  {t:"You're asked to cut fleet costs by 10%. You...",opts:[
+    {i:"trending_down",l:"Already know where to cut",s:"You've been watching the numbers for months",type:"CH"},
+    {i:"rule",l:"Question whether the baseline numbers are accurate first",s:"You can't cut what you can't measure correctly",type:"MD"},
+    {i:"architecture",l:"Build the 12-month model first",s:"You need to show what 10% actually means across the fleet",type:"VD"},
+    {i:"sync_problem",l:"Find the fuel savings. Find the charging savings.",s:"Realise neither report includes the other",type:"AP"},
+  ]},
+  {t:"The monthly fuel and EV charging invoice lands and the numbers don't match what you budgeted. You...",opts:[
+    {i:"storage",l:"Go straight to the transaction data",s:"You'll find the discrepancy before you call anyone",type:"CH"},
+    {i:"speed",l:"Check the mileage entries first",s:"A wrong vehicle, a misread odometer, a forgotten entry — it all adds up",type:"MD"},
+    {i:"support_agent",l:"Ring the card provider",s:"You need an explanation before Finance sees it",type:"FF"},
+    {i:"inbox",l:"Add it to the pile",s:"You'll get to it at the weekend, same as everything else",type:"BO"},
+  ]},
+  {t:"Finish the sentence: \"My job is basically...\"",weight:1.5,opts:[
+    {i:"savings",l:"\"...making sure every penny is going where it should.\"",s:"",type:"CH"},
+    {i:"pin_drop",l:"\"...working out which mileage number to fix and which driver to call.\"",s:"",type:"MD"},
+    {i:"car_repair",l:"\"...keeping the wheels turning and the maintenance and service record up to date.\"",s:"",type:"FF"},
+    {i:"dashboard",l:"\"...turning fleet chaos into something the Board can understand.\"",s:"",type:"VD"},
+    {i:"ev_station",l:"\"...doing the same job I used to do, but now twice as much, for two completely different vehicle types.\"",s:"",type:"AP"},
+    {i:"help",l:"\"...whatever everyone else needs it to be, apparently.\"",s:"",type:"BO"},
+  ]},
+];
+
+/* ---------------------------------------------------------------
+   CHARACTER PROFILES — full result shown directly on screen
+   (challenge description + product fit + suggested next step)
+   `icon` is a Material Symbols name; `tint` picks the callout panel
+   colour from the Allstar secondary palette (used sparingly).
+--------------------------------------------------------------- */
+const P={
+  CH:{icon:"savings",tint:"var(--yellow-tint)",name:"The Cost Hawk",badge:"Manager type: The Cost Hawk",subtitle:"\"You spotted the 20p variance when the invoice arrived.\"",
+    desc:"You have a forensic instinct for where fleet money goes, and where it quietly disappears. You're the person who notices the pattern before anyone else does, and you're usually right. The challenge most Cost Hawks share isn't spotting the problem — it's the time it takes to act on it. Fuel data that arrives weekly instead of daily. Reports that need manual reformatting before they're usable. Transaction data that doesn't map cleanly to your internal vehicle or driver records. By the time the picture is clear, the spend has already happened.",
+    fitTag:"Where Allstar Online fits in",
+    fitText:"Allstar Online gives you comprehensive spend visibility, per driver, per vehicle, per transaction, without the manual processing. We're also building an intelligent insight feed directly into Allstar Online — proactive flags for unusual spend, anomaly detection, and suggested actions — being shaped right now by fleet managers like you.",
+    cta:"Allstar match: Allstar Online + AI insight feed"},
+  MD:{icon:"speed",tint:"var(--blue-tint)",name:"The Mileage Detective",badge:"Manager type: The Mileage Detective",subtitle:"\"Somewhere between what the driver entered and what actually happened is the truth.\"",
+    desc:"Mileage accuracy is one of those problems that looks simple from the outside and is anything but in practice. The gap between what a driver enters and what actually happened ranges from minor rounding to figures that are clearly wrong but nobody flagged at the time. The downstream effects are real: unreliable MPG calculations, business/personal mileage splits that become guesswork, and vehicle efficiency analysis built on a foundation that shifts every month.",
+    fitTag:"Where MileagePoint fits in",
+    fitText:"MileagePoint removes the manual entry problem by capturing mileage automatically and accurately — no driver input required at the pump. Business and personal mileage is tracked and split correctly, giving you clean data for tax purposes and reliable efficiency figures you can actually build reports on.",
+    cta:"Allstar match: MileagePoint"},
+  FF:{icon:"car_repair",tint:"var(--yellow-tint)",name:"The Fleet Firefighter",badge:"Manager type: The Fleet Firefighter",subtitle:"\"The card declined. The service is due on Friday. The driver just called.\"",
+    desc:"You keep the fleet moving. When something goes wrong you're the person who gets it sorted, and the operation runs as smoothly as it does because of that instinct. The challenge is that a significant portion of what reaches you shouldn't need to be an emergency if it had been flagged before — a service interval or compliance check nobody tracked closely enough, or a reactive call that takes far longer to resolve because the information isn't visible in one place.",
+    fitTag:"Where Allstar ServicePoint fits in",
+    fitText:"Allstar ServicePoint gives you visibility of upcoming MOTs, service schedules, and maintenance requirements across your fleet — so the things that are supposed to be planned stay planned, and stop becoming last-minute calls. Booking is handled in the app, without the back-and-forth that eats time when you're already dealing with numerous other things.",
+    cta:"Allstar match: Allstar ServicePoint in Co-Pilot"},
+  VD:{icon:"insights",tint:"var(--purple-tint)",name:"The Value Defender",badge:"Manager type: The Value Defender",subtitle:"\"Takes 47 variables and makes it look like a clean line graph.\"",
+    desc:"You're accountable for fleet at a strategic level — which means the questions you get asked are bigger, come with less warning, and require answers that hold up under scrutiny. The pattern Value Defenders recognise: the analysis isn't the hard part. Getting clean, trusted, consolidated data fast enough to be useful is where the time goes.",
+    fitTag:"Where Allstar Online fits in",
+    fitText:"Allstar Online gives you consolidated fleet spend data in one place — queryable, exportable, and structured for the kind of reporting you're already doing. Spend visibility across your fleet means the baseline numbers are always current, not last month's.",
+    cta:"Allstar match: Allstar Online — reports and dashboard"},
+  AP:{icon:"ev_station",tint:"var(--green-tint)",name:"The Accidental Pioneer",badge:"Manager type: The Accidental Pioneer",subtitle:"\"You didn't choose EVs. EVs chose you. And brought a whole new set of admin.\"",
+    desc:"You're managing a fleet in transition — which in practice means managing two if not three types of fleet vehicles simultaneously, with tools that were largely designed for one. Fuel cards, charge cards and home charging. Multiple invoices. Multiple reporting streams. Mileage tracking that works differently for EVs. Every task you used to do once, you now do twice if not three times, and the pieces don't always fit together.",
+    fitTag:"Where Allstar Chargepass & Homecharge fit in",
+    fitText:"Allstar Chargepass puts fuel and EV charging on one card, one invoice, and one dashboard. Your drivers use the same card whether they're filling up at a forecourt or charging at a public network point. Allstar Homecharge removes the reimbursement process entirely — we pay the driver's energy supplier directly, so there's no claiming back and no money passing through your drivers' hands.",
+    cta:"Allstar match: Allstar Chargepass or Homecharge"},
+  BO:{icon:"schedule",tint:"var(--grey2)",name:"The Burned Out Manager",badge:"Manager type: The Burned Out Manager",subtitle:"\"Fleet got more complex. The team stayed the same size.\"",
+    desc:"You're not alone in this. The fleet role has gained enormous strategic importance in the last few years — electrification, sustainability reporting, cost pressure, compliance — all landing on the same desk, with the same team, often with tools designed for a simpler version of the job. No one product solves burnout yet, but a meaningful part of what's exhausting is genuinely avoidable.",
+    fitTag:"What we're developing at Allstar",
+    fitText:"We're creating a new platform designed to bring fleet operations together in one place — reducing the manual stitching, the system-hopping, and the administrative friction that turns a demanding job into an unsustainable one. It's in development now, and we're building it with direct input from fleet managers like you.",
+    cta:"Allstar match: New platform in development"},
+};
+
+let cur=0,ans=new Array(Qs.length).fill(null),rType=null;
+
+/* On a phone the quiz is one block inside a long page, so every screen
+   change brings the top of the quiz back into view. Without this the next
+   question starts below the fold. */
+function reduceMotion(){
+  return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+function scrollToQuiz(){
+  const el=document.getElementById('qr');
+  if(!el||!el.scrollIntoView)return;
+  try{
+    el.scrollIntoView({block:'start',behavior:reduceMotion()?'auto':'smooth'});
+  }catch(e){
+    el.scrollIntoView(true);
+  }
+}
+
+function show(id){
+  document.querySelectorAll('#qr .sc').forEach(s=>s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  document.getElementById('qr').classList.toggle('ty',id==='s-thankyou');
+}
+function go(){cur=0;ans=new Array(Qs.length).fill(null);rType=null;show('s-q');renderQ();scrollToQuiz()}
+function renderQ(){
+  const q=Qs[cur];
+  document.getElementById('qn').textContent='Question '+(cur+1);
+  document.getElementById('qt').textContent=q.t;
+  document.getElementById('plb').textContent=(cur+1)+' of '+Qs.length;
+  document.getElementById('pfi').style.width=((cur+1)/Qs.length*100)+'%';
+  const bk=document.getElementById('bbk');
+  bk.style.opacity=cur===0?'0':'1';bk.style.pointerEvents=cur===0?'none':'auto';
+  const g=document.getElementById('og');
+  g.className='og'+(q.opts.length>4?' six':'');
+  g.innerHTML='';
+  q.opts.forEach((o,i)=>{
+    const el=document.createElement('div');
+    el.className='op'+(ans[cur]===i?' sel':'');
+    el.setAttribute('role','button');
+    el.setAttribute('tabindex','0');
+    el.innerHTML=`<div class="oi"><span class="ms">${o.i}</span></div><div><div class="ol">${o.l}</div>${o.s?`<div class="os">${o.s}</div>`:''}</div>`;
+    el.onclick=()=>pick(i);
+    el.onkeydown=(ev)=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();pick(i);}};
+    g.appendChild(el);
+  });
+  updNx();
+}
+function pick(i){ans[cur]=i;document.querySelectorAll('#og .op').forEach((el,idx)=>el.classList.toggle('sel',idx===i));updNx()}
+function updNx(){
+  const b=document.getElementById('bnx');
+  b.classList.toggle('on',ans[cur]!==null);
+  document.getElementById('bnx-t').textContent=cur===Qs.length-1?'See my result':'Next';
+}
+function nxt(){
+  if(ans[cur]===null)return;
+  if(cur===Qs.length-1){calcResult();showResult();return;}
+  cur++;renderQ();scrollToQuiz();
+}
+function prev(){if(cur>0){cur--;renderQ();scrollToQuiz();}}
+
+/* Scoring: 1:1 per answer, Q6 weighted x1.5. On a tie, the character
+   whose score first reached the winning total (earliest question) wins. */
+function calcResult(){
+  const scores={CH:0,MD:0,FF:0,VD:0,AP:0,BO:0};
+  const history=[];
+  ans.forEach((a,qi)=>{
+    if(a!==null){
+      const opt=Qs[qi].opts[a];
+      scores[opt.type]+=Qs[qi].weight||1;
+    }
+    history.push(Object.assign({},scores));
+  });
+  const maxScore=Math.max(...Object.values(scores));
+  const candidates=Object.keys(scores).filter(k=>scores[k]===maxScore);
+  let winner=candidates[0],winnerIdx=Infinity;
+  candidates.forEach(c=>{
+    for(let i=0;i<history.length;i++){
+      if(history[i][c]===maxScore){if(i<winnerIdx){winnerIdx=i;winner=c;}break;}
+    }
+  });
+  rType=winner;
+  setMktoResultField();
+}
+function showResult(){
+  const p=P[rType];
+  document.querySelector('#r-em .ms').textContent=p.icon;
+  document.getElementById('r-badge').textContent=p.badge;
+  document.getElementById('r-typ').textContent=p.name;
+  document.getElementById('r-sub').textContent=p.subtitle;
+  document.getElementById('r-desc').textContent=p.desc;
+  document.getElementById('r-fit').style.background=p.tint;
+  document.getElementById('r-fit-tag').textContent=p.fitTag;
+  document.getElementById('r-fit-text').textContent=p.fitText;
+  document.getElementById('r-fit-cta').textContent=p.cta;
+  show('s-result');
+  scrollToQuiz();
+}
+function restart(){go();}
+
+/* ---------------------------------------------------------------
+   MARKETO INTEGRATION
+   Form 3131 sits on the result screen purely as an email capture
+   field (no gating, no follow-up email logic). The quiz result code
+   (CH/MD/FF/VD/AP/BO) is pushed into a hidden field so it's captured
+   alongside the email address for segmentation.
+   NOTE: a hidden field with this exact API name must exist on form
+   3131 in Marketo — update FLEET_RESULT_FIELD to match it.
+--------------------------------------------------------------- */
+const FLEET_RESULT_FIELD = "Fleet_Manager_Result"; // <-- match to actual Marketo field name
+let mktoFormInstance = null;
+
+function setMktoResultField(){
+  if(mktoFormInstance && rType){
+    try{
+      const vals={};
+      vals[FLEET_RESULT_FIELD]=rType;
+      mktoFormInstance.vals(vals);
+    }catch(e){ /* field may not exist yet on the form — safe to ignore */ }
+  }
+}
+
+if(typeof MktoForms2!=="undefined"){
+  MktoForms2.whenReady(function(form){
+    mktoFormInstance=form;
+    setMktoResultField();
+
+    /* forms2 writes a fixed pixel width straight onto the form element, which
+       is what forces horizontal scroll on a phone. Only that inline attribute
+       is stripped. The forms2 stylesheet is deliberately left in place: it may
+       be shared with other Marketo forms on the page, and the rules above
+       already override it. */
+    try{
+      const el=form.getFormElem()[0];
+      if(el && el.removeAttribute) el.removeAttribute('style');
+    }catch(e){ /* non-fatal */ }
+
+    form.onSuccess(function(){
+      show('s-thankyou');
+      scrollToQuiz();
+      return false; // prevent Marketo default redirect
+    });
+  });
+}
+</script>
+
+</div>
+
+<div class="mock-footer">Stand-in site footer</div>
+
+<div class="pv-badge" id="pvb">preview<br>form <b>stubbed</b><br><span id="pvw"></span></div>
+
+<script>
+/* Reproduces what Marketo forms2 actually injects: fixed pixel widths written
+   straight onto the form and its rows. If the layout survives this, it will
+   survive the real form. */
+(function(){
+  var f = document.getElementById('mktoForm_3131');
+  if(!f) return;
+  f.className = 'mktoForm';
+  f.setAttribute('style','width:1600px;font-family:Helvetica,Arial,sans-serif;padding:20px 20px 0');
+  function row(label, type, name){
+    return '<div class="mktoFormRow" style="width:1600px">'
+      + '<div class="mktoFieldDescriptor mktoFormCol" style="width:1600px">'
+      + '<div class="mktoOffset" style="width:10px;height:1px"></div>'
+      + '<div class="mktoFieldWrap" style="width:1590px">'
+      + '<label class="mktoLabel" style="width:100px;padding-left:10px">' + label + '</label>'
+      + '<div class="mktoGutter" style="width:10px;height:1px"></div>'
+      + '<input type="' + type + '" name="' + name + '" class="mktoField" style="width:1470px" placeholder="' + label + '">'
+      + '<div class="mktoClear"></div></div><div class="mktoClear"></div></div></div>';
+  }
+  f.innerHTML = row('Business email','email','Email')
+    + row('Company name','text','Company')
+    + '<div class="mktoButtonRow"><span class="mktoButtonWrap mktoNative" style="margin-left:110px">'
+    + '<button type="button" class="mktoButton" id="pv-submit">Keep me posted</button></span></div>';
+
+  /* Stubbed submit still drives the thank-you screen so that screen can be
+     checked on a phone too. */
+  document.getElementById('pv-submit').addEventListener('click', function(){
+    if (typeof show === 'function') { show('s-thankyou'); }
+    if (typeof scrollToQuiz === 'function') { scrollToQuiz(); }
+  });
+})();
+
+/* Live width readout, so a layout note can name the width it happened at. */
+(function(){
+  var out = document.getElementById('pvw'), qr = document.getElementById('qr');
+  function tick(){
+    if(!qr) return;
+    out.textContent = Math.round(qr.getBoundingClientRect().width) + ' css px';
+  }
+  tick();
+  addEventListener('resize', tick);
+  addEventListener('orientationchange', function(){ setTimeout(tick, 250); });
+})();
+</script>
+
+</body>
+</html>
