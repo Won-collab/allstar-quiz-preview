@@ -1,22 +1,88 @@
-import re, pathlib
+#!/usr/bin/env python3
+"""
+Build the Allstar fleet manager quiz from src/quiz-embed.html.
 
-SRC = pathlib.Path('/Users/won.ha/Downloads/allstar_fleet_manager_quiz_v8_mobile.html')
-OUT = pathlib.Path('/Users/won.ha/allstar-quiz-preview/index.html')
+    python3 build.py --preview     -> index.html      (GitHub Pages, form stubbed)
+    python3 build.py --handover    -> dist/embed.html (real Marketo IDs injected)
 
-frag = SRC.read_text()
+src/quiz-embed.html is the source of truth and carries __MKTO_*__ placeholders,
+so the whole component can live in a public repo. Real identifiers live only in
+mkto.config.json, which is gitignored and never published.
+"""
 
-# Strip every Marketo dependency: the forms2 loader, the loadForm call and the
-# Munchkin tracker. Nothing in the published preview may reference the real
-# Marketo instance or create real leads.
-frag = frag.replace('<script src="https://498-FVF-702.mktoweb.com/js/forms2/js/forms2.min.js"></script>\n', '')
-frag = frag.replace('<script>MktoForms2.loadForm("https://498-FVF-702.mktoweb.com", "498-FVF-702", 3131);</script>\n', '')
-frag = re.sub(r'<script type="text/javascript">\n\(function\(\) \{\n  var didInit.*?\}\)\(\);\n</script>\n', '', frag, flags=re.S)
+import argparse
+import json
+import pathlib
+import re
+import sys
 
-assert 'mktoweb.com' not in frag, 'Marketo host still present'
-assert 'munchkin' not in frag.lower(), 'Munchkin still present'
-assert '498-FVF-702' not in frag, 'Marketo instance id still present'
+ROOT = pathlib.Path(__file__).parent
+SRC = ROOT / "src" / "quiz-embed.html"
+CONFIG = ROOT / "mkto.config.json"
 
-PAGE = """<!doctype html>
+# Marketo blocks, stripped wholesale for the preview build.
+FORMS2_SRC = re.compile(r'<script src="__MKTO_HOST__/js/forms2/js/forms2\.min\.js"></script>\s*')
+LOADFORM = re.compile(r'<script>MktoForms2\.loadForm\([^\n]*\);</script>\s*')
+MUNCHKIN = re.compile(r'<script type="text/javascript">\s*\(function\(\) \{\s*var didInit.*?\}\)\(\);\s*</script>\s*', re.S)
+
+PREVIEW_FORM_ID = "0000"
+
+
+def read_source() -> str:
+    if not SRC.exists():
+        sys.exit(f"missing source: {SRC}")
+    return SRC.read_text()
+
+
+def build_preview() -> pathlib.Path:
+    frag = read_source()
+
+    # Strip every Marketo dependency. Nothing in the published preview may
+    # reference the real instance or create real leads.
+    frag = FORMS2_SRC.sub("", frag)
+    frag = LOADFORM.sub("", frag)
+    frag = MUNCHKIN.sub("", frag)
+    frag = frag.replace("__MKTO_FORM_ID__", PREVIEW_FORM_ID)
+    frag = frag.replace("__MKTO_HOST__", "about:blank")
+    frag = frag.replace("__MKTO_MUNCHKIN_ID__", "preview")
+
+    for leak in ("mktoweb.com", "munchkin.marketo.net"):
+        if leak in frag:
+            sys.exit(f"refusing to publish: {leak} still present in preview build")
+
+    page = PREVIEW_PAGE.replace("__FRAGMENT__", frag).replace("__FORM_ID__", PREVIEW_FORM_ID)
+    out = ROOT / "index.html"
+    out.write_text(page)
+    return out
+
+
+def build_handover() -> pathlib.Path:
+    if not CONFIG.exists():
+        sys.exit(
+            f"missing {CONFIG.name}. Create it with:\n"
+            '  {"host": "https://....mktoweb.com", "munchkinId": "...", "formId": "..."}'
+        )
+    cfg = json.loads(CONFIG.read_text())
+    for key in ("host", "munchkinId", "formId"):
+        if not cfg.get(key):
+            sys.exit(f"{CONFIG.name} is missing '{key}'")
+
+    frag = read_source()
+    frag = frag.replace("__MKTO_HOST__", cfg["host"].rstrip("/"))
+    frag = frag.replace("__MKTO_MUNCHKIN_ID__", cfg["munchkinId"])
+    frag = frag.replace("__MKTO_FORM_ID__", str(cfg["formId"]))
+
+    if "__MKTO_" in frag:
+        sys.exit("unresolved placeholder remains in handover build")
+
+    dist = ROOT / "dist"
+    dist.mkdir(exist_ok=True)
+    out = dist / "embed.html"
+    out.write_text(frag)
+    return out
+
+
+PREVIEW_PAGE = """<!doctype html>
 <html lang="en-GB">
 <head>
 <meta charset="utf-8">
@@ -33,7 +99,6 @@ PAGE = """<!doctype html>
   .mock-intro h1{font-size:22px;line-height:1.25;margin:0 0 10px;color:#000}
   .embed-shell{max-width:1200px;margin:0 auto;padding:12px 0 0}
   .mock-footer{margin-top:40px;padding:28px 20px 60px;background:#f2f2f0;font-size:12px;color:#878787;text-align:center}
-  /* Preview-only badge. Makes it obvious this is not the live form. */
   .pv-badge{position:fixed;z-index:9999;right:8px;bottom:8px;background:rgba(0,0,0,.86);color:#fff;font-size:10px;line-height:1.35;padding:7px 9px;border-radius:8px;font-variant-numeric:tabular-nums;pointer-events:none;max-width:46vw}
   .pv-badge b{color:#F2D400;font-weight:700}
 </style>
@@ -60,7 +125,7 @@ __FRAGMENT__
    straight onto the form and its rows. If the layout survives this, it will
    survive the real form. */
 (function(){
-  var f = document.getElementById('mktoForm_3131');
+  var f = document.getElementById('mktoForm___FORM_ID__');
   if(!f) return;
   f.className = 'mktoForm';
   f.setAttribute('style','width:1600px;font-family:Helvetica,Arial,sans-serif;padding:20px 20px 0');
@@ -90,10 +155,7 @@ __FRAGMENT__
 /* Live width readout, so a layout note can name the width it happened at. */
 (function(){
   var out = document.getElementById('pvw'), qr = document.getElementById('qr');
-  function tick(){
-    if(!qr) return;
-    out.textContent = Math.round(qr.getBoundingClientRect().width) + ' css px';
-  }
+  function tick(){ if(!qr) return; out.textContent = Math.round(qr.getBoundingClientRect().width) + ' css px'; }
   tick();
   addEventListener('resize', tick);
   addEventListener('orientationchange', function(){ setTimeout(tick, 250); });
@@ -104,5 +166,17 @@ __FRAGMENT__
 </html>
 """
 
-OUT.write_text(PAGE.replace('__FRAGMENT__', frag))
-print('wrote', OUT, OUT.stat().st_size, 'bytes')
+
+def main():
+    ap = argparse.ArgumentParser()
+    g = ap.add_mutually_exclusive_group(required=True)
+    g.add_argument("--preview", action="store_true", help="build index.html with the form stubbed")
+    g.add_argument("--handover", action="store_true", help="build dist/embed.html with real Marketo IDs")
+    args = ap.parse_args()
+
+    out = build_preview() if args.preview else build_handover()
+    print(f"wrote {out.relative_to(ROOT)} ({out.stat().st_size} bytes)")
+
+
+if __name__ == "__main__":
+    main()
