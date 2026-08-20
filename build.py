@@ -139,10 +139,16 @@ __FRAGMENT__
       + '<input type="' + type + '" name="' + name + '" class="mktoField" style="width:1470px" placeholder="' + label + '">'
       + '<div class="mktoClear"></div></div><div class="mktoClear"></div></div></div>';
   }
-  f.innerHTML = row('Business email','email','Email')
-    + row('Company name','text','Company')
+  f.innerHTML = row('First name','text','FirstName')
+    + row('Last name','text','LastName')
+    + row('Company','text','Company')
+    + row('Email address','email','Email')
+    + '<div class="mktoFormRow" style="width:1600px"><div class="mktoFieldDescriptor mktoFormCol" style="width:1600px">'
+    + '<div class="mktoFieldWrap" style="width:1590px"><div class="mktoHtmlText mktoHasWidth" style="width:1470px">'
+    + "By clicking 'Request Callback', you agree to Allstar and the Corpay group of companies contacting you in "
+    + 'accordance with the terms of our privacy policy</div></div></div></div>'
     + '<div class="mktoButtonRow"><span class="mktoButtonWrap mktoNative" style="margin-left:110px">'
-    + '<button type="button" class="mktoButton" id="pv-submit">Keep me posted</button></span></div>';
+    + '<button type="button" class="mktoButton" id="pv-submit">Request Callback</button></span></div>';
 
   /* Stubbed submit still drives the thank-you screen so that screen can be
      checked on a phone too. */

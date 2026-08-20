@@ -63,19 +63,35 @@ no horizontal overflow, no vertical clipping, no tap target under 44px, inputs
 at 16px so iOS does not zoom on focus. Options reflow 1 to 2 columns at 560, and
 the six-option question goes to 3 columns at 900.
 
+## Assets
+
+Icons are the DS `Icon` set from `0002 Graphics library`, **exported as SVG from
+Figma, not redrawn**. They are filled paths, so `fill` is `currentColor` and the
+roundel sets `color`. Logos are the approved `allstar` and `allstar_inverted`
+marks, exported the same way and never recoloured in CSS.
+
 ## Open items
 
 - **Typeface.** The DS font tokens resolve to Google Sans Flex, which is
   proprietary and not on Google Fonts. It is first in the stack so it wins where
   installed, but most visitors get the Inter fallback until web licensing is
   confirmed. Self-hosting it is a one-line change.
+- **Question spot illustrations.** Only two exist in the design, so the six
+  questions alternate between them. Four more are needed; add them to `QGFX` in
+  question order and the alternation stops.
+- **Persona illustrations.** All six personas still show the same star. Swapping
+  in sourced artwork means replacing the `<svg>` in `ART` per persona.
 - **Logo on the accent screen.** Neither approved variant works on yellow: the
   standalone mark's star is the same yellow, and the inverted mark is white. The
   mark is deliberately not recoloured. Needs a mono variant from the DAM, or the
   thank-you screen stops being full-bleed accent.
-- **Persona illustrations.** All six personas currently show the same star
-  placeholder. Swapping in sourced artwork means replacing the `<svg>` inside
-  `.persona-art` and adding entries to `ART`.
+- **Intro logo is 82px wide**, matching the design. The brand book minimum
+  digital width is 120px, so this is under it. Flagged rather than silently
+  corrected.
+- **Product-fit panel** is `#F7F7F7`, which has no confirmed Fluxus background
+  token, so it is a named literal. The mark on that panel is the **plain** black
+  variant: the design specifies `allstar_inverted`, which is white and would be
+  invisible on a light surface.
 - **Gating.** The result screen is split into Block A (persona and painpoint) and
   Block B (product fit and capture) with an empty `#gate-slot` between them.
   Gating later means moving the form into that slot and hiding Block B until

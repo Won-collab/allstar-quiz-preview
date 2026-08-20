@@ -63,6 +63,7 @@
   --border-default-inverted:rgba(255,255,255,.19);
   --illustration-background:rgba(242,212,0,.18);
   --surface-default:#FFFFFF;
+  --surface-light:#F7F7F7;      /* TO VERIFY: no confirmed Fluxus token */
 
   /* radius · Fluxus */
   --radius-button:12px;
@@ -117,6 +118,9 @@
    recoloured here: the dark screens use allstar_inverted, the accent
    screen uses allstar. Brand-book minimum digital width is 120px. */
 .brandlogo{width:120px;height:auto;display:block}
+/* Intro sits at 82px in the design. NOTE: the brand book minimum digital width
+   is 120px, so this is under it. Flagged, not silently corrected. */
+#s-intro .brandlogo{width:82px}
 .lbar{display:flex;flex-direction:column;align-items:center;gap:var(--sp-s);width:100%}
 
 .fbar{
@@ -140,8 +144,8 @@
 }
 .eyebrow.wide{letter-spacing:.16em}
 .htitle{
-  font-size:clamp(28px,9.2cqw,36px);line-height:1.11;
-  font-weight:var(--w-bold);letter-spacing:-.03em;
+  font-size:clamp(28px,9.2cqw,36px);line-height:1.222;
+  font-weight:var(--w-demibold);
   color:var(--content-primary-white);text-align:center;text-wrap:balance;
 }
 .hsub{
@@ -190,18 +194,18 @@
   .btn-secondary-dark:hover{background:rgba(255,255,255,.28)}
   .btn-secondary-accent:hover{background:rgba(0,0,0,.08)}
   .btn[disabled]:hover{background:var(--bg-subdued-strong-inverted)}
-  .op:hover{border-color:var(--border-default-inverted)}
+  .op:hover{background:var(--bg-subdued-strong-inverted)}
 }
 .btn-primary:active{background:#D5BB00}
 .btn-secondary-dark:active{background:rgba(255,255,255,.28)}
-.op:active{border-color:var(--border-default-inverted)}
+.op:active{background:var(--bg-subdued-strong-inverted)}
 .btn:focus-visible,.op:focus-visible{outline:3px solid var(--bg-accent);outline-offset:2px}
 
 /* --- progress --------------------------------------------------------- */
 .pbar{width:100%;display:flex;flex-direction:column;gap:var(--sp-xs)}
 .plb{
   font-size:10px;line-height:12px;font-weight:var(--w-medium);
-  letter-spacing:.12em;text-transform:uppercase;text-align:right;
+  text-transform:uppercase;text-align:right;
   color:var(--content-secondary-white);
 }
 .ptr{height:4px;background:var(--bg-subdued-strong-inverted);border-radius:var(--radius-badge);overflow:hidden}
@@ -210,8 +214,8 @@
 /* --- question --------------------------------------------------------- */
 .qbody{display:flex;flex-direction:column;gap:var(--sp-xl);width:100%;max-width:620px}
 .qt{
-  font-size:clamp(21px,6.2cqw,24px);line-height:1.17;
-  font-weight:var(--w-bold);letter-spacing:-.02em;
+  font-size:clamp(21px,6.2cqw,24px);line-height:1.333;
+  font-weight:var(--w-medium);
   color:var(--content-primary-white);
 }
 
@@ -219,18 +223,13 @@
 .og{display:grid;grid-template-columns:1fr;gap:var(--sp-s);width:100%}
 .op{
   background:var(--bg-subdued-inverted);
-  border:1px solid var(--border-subtle-inverted);
   border-radius:var(--radius-card);
   padding:var(--sp-m);
   display:flex;gap:var(--sp-s);align-items:flex-start;text-align:left;
   cursor:pointer;transition:background .18s,border-color .18s;
   min-height:var(--tap);-webkit-tap-highlight-color:transparent;
 }
-.op.sel{
-  background:var(--bg-subdued-strong-inverted);
-  border:2px solid var(--bg-accent);
-  padding:15px;
-}
+.op.sel{background:var(--bg-subdued-strong-inverted)}
 .oi{
   width:40px;height:40px;flex:0 0 40px;
   border-radius:var(--radius-badge);
@@ -239,13 +238,19 @@
   transition:background .18s;
 }
 .op.sel .oi{background:var(--bg-accent)}
-.oi svg{width:20px;height:20px;display:block;stroke:var(--content-primary-white)}
-.op.sel .oi svg{stroke:var(--content-on-accent)}
+/* DS icons are filled paths, so colour flows through currentColor. */
+.oi{color:var(--content-primary-white)}
+.op.sel .oi{color:var(--content-on-accent)}
+.oi svg{width:20px;height:20px;display:block;fill:currentColor}
 .otext{display:flex;flex-direction:column;gap:var(--sp-2xs);min-width:0}
 .ol{font-size:16px;line-height:20px;font-weight:var(--w-demibold);color:var(--content-primary-white)}
 .os{font-size:14px;line-height:20px;font-weight:var(--w-regular);color:var(--content-secondary-white)}
 
 .qnav{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-s);width:100%}
+
+/* Per-question spot illustration, 88x88, exported from the design. */
+.qgfx{width:88px;height:88px;flex:0 0 88px;align-self:center}
+.qgfx svg{width:100%;height:100%;display:block}
 
 /* --- result ----------------------------------------------------------- */
 .rw{display:flex;flex-direction:column;gap:var(--sp-2xl);width:100%;max-width:560px}
@@ -253,11 +258,10 @@
 .rbadge-wrap{display:flex;flex-direction:column;align-items:center;gap:var(--sp-2xs);width:100%}
 .rbadge{
   display:inline-flex;align-items:center;
-  border:1px solid var(--border-default-inverted);
   border-radius:var(--radius-badge);
   padding:var(--sp-xs) var(--sp-m);
-  font-size:10px;line-height:12px;font-weight:var(--w-demibold);
-  letter-spacing:.12em;text-transform:uppercase;
+  font-size:10px;line-height:12px;font-weight:var(--w-medium);
+  text-transform:uppercase;
   color:var(--content-secondary-white);
 }
 /* Yellow text on a dark ground. NOTE: Fluxus has no accent-on-dark TEXT
@@ -265,19 +269,18 @@
    grounds), so bg/accent is used as a text colour here. Raised with the
    DS team. */
 .rtyp{
-  font-size:clamp(26px,8.4cqw,32px);line-height:1.13;
-  font-weight:var(--w-bold);letter-spacing:-.03em;
+  font-size:clamp(26px,8.4cqw,32px);line-height:1.25;
+  font-weight:var(--w-demibold);
   color:var(--bg-accent);text-align:center;text-wrap:balance;
 }
 .rquote{
-  border-left:3px solid var(--bg-accent);
-  padding-left:14px;width:100%;
+  padding-left:var(--sp-m);width:100%;
   font-size:16px;line-height:24px;font-weight:var(--w-medium);
   color:var(--content-primary-white);
 }
 .rdesc{
   width:100%;
-  font-size:15px;line-height:24px;font-weight:var(--w-regular);
+  font-size:14px;line-height:20px;font-weight:var(--w-regular);
   color:var(--content-secondary-white);
 }
 
@@ -290,15 +293,27 @@
   display:flex;flex-direction:column;gap:var(--sp-s);
 }
 .ptag{
-  font-size:10px;line-height:12px;font-weight:var(--w-demibold);
-  letter-spacing:.12em;text-transform:uppercase;
+  font-size:10px;line-height:12px;font-weight:var(--w-medium);
+  text-transform:uppercase;
   color:var(--bg-accent);
 }
-.ptext{font-size:15px;line-height:24px;color:var(--content-secondary-white)}
+.ptext{font-size:14px;line-height:20px;color:var(--content-secondary-white)}
 .pmatch{display:flex;align-items:flex-start;gap:var(--sp-xs);font-size:14px;line-height:20px;font-weight:var(--w-demibold);color:var(--content-primary-white)}
 .pmatch svg{width:18px;height:18px;flex:0 0 18px;stroke:var(--bg-accent);margin-top:1px}
+/* Product fit moved onto a light surface in the updated design, with the
+   mark top-right. #F7F7F7 has no confirmed Fluxus background token yet, so it
+   is a named literal rather than a guessed semantic. The mark here is the
+   plain black variant: the design specifies allstar_inverted, which is white
+   and unreadable on this surface, and recolouring a mark is not allowed. */
+.panel-light{background:var(--surface-light)}
+.panel-light .ptext{color:var(--content-on-accent)}
+.panel-logo{display:flex;justify-content:flex-end;width:100%}
+.panel-logo svg{width:62px;height:auto;display:block}
+.match-label{font-size:14px;line-height:20px;font-weight:var(--w-medium);color:var(--content-on-accent)}
+.match-product{font-size:24px;line-height:32px;font-weight:var(--w-demibold);color:var(--content-on-accent)}
+
 .psub{font-size:14px;line-height:20px;color:var(--content-secondary-white)}
-.pconsent{font-size:11px;line-height:16px;color:var(--content-tertiary-inverted)}
+.pconsent{font-size:12px;line-height:16px;color:var(--content-tertiary-inverted)}
 
 /* Gate slot. Result is split Block A (persona + painpoint) / Block B
    (product fit + capture). To gate, move the form markup into
@@ -334,7 +349,7 @@
 .mkto-host .mktoForm .mktoFormRow,.mkto-host .mktoForm .mktoFieldWrap,.mkto-host .mktoForm .mktoFormCol,.mkto-host .mktoForm .mktoFieldDescriptor{width:100%!important;max-width:100%!important;float:none!important;margin:0!important;display:block!important}
 .mkto-host .mktoForm .mktoOffset,.mkto-host .mktoForm .mktoGutter,.mkto-host .mktoForm .mktoClear{display:none!important}
 .mkto-host .mktoForm .mktoLabel{
-  font-size:10px!important;line-height:12px!important;font-weight:600!important;
+  font-size:10px!important;line-height:12px!important;font-weight:500!important;
   letter-spacing:.12em!important;text-transform:uppercase!important;
   color:var(--content-secondary-white)!important;
   width:auto!important;max-width:100%!important;padding:0 0 8px!important;
@@ -351,6 +366,15 @@
 }
 .mkto-host .mktoForm input::placeholder{color:var(--content-tertiary-inverted)!important}
 .mkto-host .mktoForm input:focus,.mkto-host .mktoForm select:focus{outline:none!important;border-color:var(--bg-accent)!important}
+/* Marketo renders the privacy consent as an mktoHtmlText block. */
+.mkto-host .mktoForm .mktoHtmlText{
+  width:100%!important;max-width:100%!important;
+  font-size:12px!important;line-height:16px!important;
+  color:var(--content-tertiary-inverted)!important;
+  margin:0 0 var(--sp-xs)!important;
+}
+.mkto-host .mktoForm .mktoHtmlText *{color:var(--content-tertiary-inverted)!important;font-size:12px!important;line-height:16px!important}
+.mkto-host .mktoForm .mktoHtmlText a{text-decoration:underline!important}
 .mkto-host .mktoForm .mktoButtonRow{width:100%!important;display:block!important}
 .mkto-host .mktoForm .mktoButtonWrap{margin-left:0!important}
 .mkto-host .mktoForm .mktoButton{
@@ -410,21 +434,20 @@
   <!-- 01 Intro -->
   <div class="sc on" id="s-intro">
     <div class="lbar" id="logo-dark-1"></div>
-    <div class="persona-art square" id="intro-art"></div>
     <h1 class="htitle">What kind of fleet manager are you?</h1>
-    <p class="hsub">6 questions. Surprisingly accurate. Possibly too accurate.</p>
+    <div class="persona-art square" id="intro-art"></div>
     <button class="btn btn-lg btn-primary btn-block" onclick="go()">Take the quiz</button>
     <div class="fbar"><div class="fbar-l">Allstar 2026</div></div>
   </div>
 
-  <!-- 02 / 03 Question. No logo, by design. -->
+  <!-- 02 / 03 Question. No logo and no question-number eyebrow, by design. -->
   <div class="sc" id="s-q">
     <div class="qbody">
       <div class="pbar">
         <div class="plb" id="plb">1 of 6</div>
         <div class="ptr"><div class="pfi" id="pfi" style="width:16.6%"></div></div>
       </div>
-      <div class="eyebrow wide" id="qn">Question 1</div>
+      <div class="qgfx" id="qgfx"></div>
       <div class="qt" id="qt"></div>
       <div class="og" id="og"></div>
       <div class="qnav">
@@ -439,11 +462,11 @@
   <div class="sc" id="s-result">
     <div class="rw">
       <div class="blockA">
-        <div class="persona-art band" id="result-art"></div>
         <div class="rbadge-wrap">
-          <div class="rbadge">Manager type</div>
+          <div class="rbadge">Your manager type</div>
           <div class="rtyp" id="r-typ"></div>
         </div>
+        <div class="persona-art band" id="result-art"></div>
         <div class="rquote" id="r-sub"></div>
         <p class="rdesc" id="r-desc"></p>
       </div>
@@ -451,17 +474,20 @@
       <div id="gate-slot"></div>
 
       <div class="blockB">
-        <div class="panel">
-          <div class="ptag" id="r-fit-tag"></div>
+        <div class="panel panel-light">
+          <div class="panel-logo" id="fit-logo"></div>
+          <div>
+            <div class="match-label">Your Allstar match</div>
+            <div class="match-product" id="r-fit-product"></div>
+          </div>
           <p class="ptext" id="r-fit-text"></p>
-          <div class="pmatch"><span id="r-fit-icon"></span><span id="r-fit-cta"></span></div>
         </div>
 
         <div class="panel mkto-host">
           <div class="ptag">Stay in the loop</div>
-          <p class="psub">Leave your work email and we will keep you posted on what we are building for fleet managers like you.</p>
+          <p class="psub">Leave your work email and we'll keep you posted on the Allstar products built for fleet managers like you.</p>
           <form id="mktoForm_0000"></form>
-          <p class="pconsent">By submitting your email address you agree to take part in future research.</p>
+          <p class="pconsent">By submitting your email address, you agree to take part in future research.</p>
         </div>
 
         <button class="btn btn-md btn-secondary-dark" onclick="restart()">Try again</button>
@@ -495,25 +521,36 @@ const LOGO_INVERTED = '<svg class="brandlogo" viewBox="0 0 215 144" fill="none" 
 
 const LOGO_PLAIN = '<svg class="brandlogo" viewBox="0 0 215 145" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Allstar"><g clip-path="url(#lp)"><path d="M0.274902 130.911C0.274902 119.665 8.05818 116.995 25.5155 116.995H27.1062C27.0362 113.408 26.1058 111.575 19.3229 111.575C15.3044 111.619 11.3694 112.735 7.91812 114.809L2.49584 106.748C5.27701 104.853 12.2299 101.901 20.5034 101.901C34.6894 101.901 37.6007 106.466 37.6007 117.711V129.803C37.6007 132.967 37.8107 133.46 41.0121 133.46V142.459C39.4963 142.722 37.9564 142.817 36.4201 142.741C32.2484 142.741 30.4176 141.895 28.9169 138.801C26.9161 141.542 22.5243 143.235 15.0811 143.235C2.91601 143.215 0.274902 137.864 0.274902 130.911ZM27.1062 126.054V124.583H26.2058C12.3 124.583 10.6293 125.712 10.6293 129.995C10.6293 132.947 12.2299 134.358 17.242 134.358C24.1249 134.358 27.1062 131.898 27.1062 126.054Z" fill="black"/><path d="M43.9338 130.558V88.0358H54.7784V129.219C54.7784 132.453 55.3987 133.37 58.67 133.37H59.9907V142.439C58.2373 142.642 56.4732 142.736 54.7084 142.721C47.6154 142.721 43.9338 139.98 43.9338 130.558Z" fill="black"/><path d="M62.4194 130.558V88.0358H73.304V129.219C73.304 132.453 73.9342 133.37 77.1957 133.37H78.5162V142.439C76.7629 142.642 74.9988 142.737 73.234 142.721C66.151 142.721 62.4595 139.98 62.4595 130.558" fill="black"/><path d="M80.6082 138.215L86.1706 130.155C90.3433 132.79 95.1521 134.225 100.076 134.306C105.569 134.306 107.169 133.741 107.169 131.001C107.169 128.683 105.569 128.189 100.216 127.484C90.4824 126.144 83.0392 124.744 83.0392 114.385C83.0392 106.323 87.7712 101.94 100.216 101.94C106.539 101.94 112.652 103.2 116.833 105.598L111.611 114.173C108.168 112.48 104.389 111.591 100.557 111.574C95.0043 111.574 93.8838 112.581 93.8838 114.455C93.8838 116.702 95.2744 117.196 100.357 117.892C110.361 119.302 117.804 120.501 117.804 130.407C117.804 139.546 112.932 143.275 99.3761 143.275C92.6333 143.275 85.8904 141.864 80.6082 138.235" fill="black"/><path d="M119.055 102.797H126.059L127.93 93.093L136.333 91.3397V102.797H145.657V112.208H136.333V128.593C136.333 131.686 136.754 133.369 141.416 133.369H145.657V142.598C144.056 142.74 141.135 142.74 139.184 142.74C128.55 142.74 125.488 139.082 125.488 130.225V112.208H119.026L119.055 102.797Z" fill="black"/><path d="M148.117 130.911C148.117 119.665 155.901 116.995 173.348 116.995H174.949C174.879 113.408 173.948 111.575 167.165 111.575C163.146 111.616 159.211 112.732 155.76 114.809L150.338 106.748C153.119 104.853 160.072 101.901 168.346 101.901C182.522 101.901 185.442 106.466 185.442 117.711V129.803C185.442 132.967 185.653 133.46 188.844 133.46V142.459C187.332 142.721 185.796 142.816 184.263 142.741C180.09 142.741 178.26 141.895 176.749 138.801C174.749 141.542 170.357 143.235 162.923 143.235C150.758 143.235 148.117 137.884 148.117 130.932V130.911ZM174.949 126.075V124.603H174.038C160.142 124.603 158.472 125.732 158.472 130.014C158.472 132.967 160.072 134.378 165.074 134.378C171.957 134.378 174.949 131.919 174.949 126.075Z" fill="black"/><path d="M192.045 103.422L200.529 102.797L201.639 107.15C203.311 104.621 208.103 102.586 214.225 102.374V112.914C204.981 112.985 202.96 116.642 202.96 122.9V142.599H192.045V103.422Z" fill="black"/><path d="M159.962 1.52818L180.661 30.4679L214.275 19.5047L193.456 48.3537L214.155 77.2935L180.591 66.1892L159.763 95.0382L159.842 59.317L126.268 48.2127L159.882 37.2495L159.962 1.52818Z" fill="#F2D400"/></g><defs><clipPath id="lp"><rect width="214" height="142.667" fill="white" transform="translate(0.274902 1.52818)"/></clipPath></defs></svg>';
 
-const STAR = '<svg viewBox="0 0 211 223" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Allstar star character"><path d="M80.5719 15.4668C80.5828 10.6156 86.8014 8.6207 89.6323 12.5603L127.996 65.9473C129.265 67.7138 131.531 68.4569 133.6 67.7852L195.937 47.548C200.541 46.0535 204.37 51.3197 201.529 55.2386L162.855 108.582C161.591 110.326 161.586 112.684 162.843 114.434L201.294 167.947C204.119 171.878 200.267 177.128 195.67 175.614L133.426 155.116C131.36 154.436 129.092 155.169 127.815 156.93L89.2125 210.15C86.3641 214.077 80.1542 212.054 80.1651 207.203L80.3132 141.236C80.3181 139.073 78.9314 137.152 76.8767 136.476L14.5272 115.95C9.93524 114.438 9.94866 107.938 14.5468 106.445L76.9677 86.1808C79.0245 85.5131 80.4189 83.5988 80.4238 81.4363L80.5719 15.4668Z" fill="#F2D400"/><ellipse cx="135.483" cy="93.5009" rx="4.99369" ry="5.3266" fill="black"/><ellipse cx="107.716" cy="98.1289" rx="4.99369" ry="5.3266" fill="black"/><path d="M144.499 110.681C145.361 109.603 145.186 108.03 144.108 107.167C143.03 106.304 141.457 106.479 140.594 107.557L142.547 109.119L144.499 110.681ZM119.051 111.611L117.568 113.624C120.127 115.509 124.47 117.61 129.379 117.846C134.431 118.089 139.973 116.338 144.499 110.681L142.547 109.119L140.594 107.557C137.146 111.868 133.194 113.024 129.62 112.852C125.902 112.673 122.485 111.036 120.534 109.598L119.051 111.611Z" fill="black"/></svg>';
+const STAR = '<svg viewBox="0 0 211 223" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Allstar star character"><path d="M80.5719 15.4668C80.5828 10.6156 86.8014 8.6207 89.6323 12.5603L127.996 65.9473C129.265 67.7138 131.531 68.4569 133.6 67.7852L195.937 47.548C200.541 46.0535 204.37 51.3197 201.529 55.2386L162.855 108.582C161.591 110.326 161.586 112.684 162.843 114.434L201.294 167.947C204.119 171.878 200.267 177.128 195.67 175.614L133.426 155.116C131.36 154.436 129.092 155.169 127.815 156.93L89.2125 210.15C86.3641 214.077 80.1542 212.054 80.1651 207.203L80.3132 141.236C80.3181 139.073 78.9314 137.152 76.8767 136.476L14.5272 115.95C9.93524 114.438 9.94866 107.938 14.5468 106.445L76.9677 86.1808C79.0245 85.5131 80.4189 83.5988 80.4238 81.4363L80.5719 15.4668Z" fill="#F2D400"/><ellipse cx="135.483" cy="93.5009" rx="4.99369" ry="5.3266" fill="#494000"/><ellipse cx="107.716" cy="98.1289" rx="4.99369" ry="5.3266" fill="#494000"/><path d="M144.499 110.681C145.361 109.603 145.186 108.03 144.108 107.167C143.03 106.304 141.457 106.479 140.594 107.557L142.547 109.119L144.499 110.681ZM119.051 111.611L117.568 113.624C120.127 115.509 124.47 117.61 129.379 117.846C134.431 118.089 139.973 116.338 144.499 110.681L142.547 109.119L140.594 107.557C137.146 111.868 133.194 113.024 129.62 112.852C125.902 112.673 122.485 111.036 120.534 109.598L119.051 111.611Z" fill="#494000"/></svg>';
 
-/* Option-card icons, matched to the DS `Icon` set in 0002 Graphics library.
-   Drawn as strokes so they inherit the roundel's colour. */
+/* Option-card icons. These are the DS `Icon` set from 0002 Graphics library,
+   exported as SVG from Figma, not redrawn. They are FILLED paths, so the fill
+   is set to currentColor and the roundel sets `color`. Clip-path wrappers were
+   dropped because each clip was a full-bounds 20x20 rect, a no-op that would
+   otherwise collide on duplicate ids. */
 const I = {
-  reciept:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3z"/><path d="M9 8h6M9 12h6"/></svg>',
-  wrench:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 105.4 5.4l-2.1-2.1 1.4-1.4-2.1-2.1-1.4 1.4-1.2-1.2z"/><path d="M13.5 10.5L4 20l1.5 1.5L15 12"/></svg>',
-  chart:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
-  fuel:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V5a2 2 0 012-2h5a2 2 0 012 2v16M3 21h13M6 8h7"/><path d="M17 8h2a2 2 0 012 2v7a2 2 0 01-2 2"/></svg>',
-  banknote:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/></svg>',
-  pin:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.6 7-11a7 7 0 10-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>',
-  info:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>',
-  car:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14l1.5-5A2 2 0 016.4 8h11.2a2 2 0 011.9 1L21 14v4h-2M3 18v-4M6 18h12"/><circle cx="7" cy="18" r="1.6"/><circle cx="17" cy="18" r="1.6"/></svg>',
-  smartphone:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg>',
-  calendar:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
-  shield:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.4 8.3-8 9.6C7.4 20.3 4 17 4 12V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg>',
-  toggles:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h16M4 16h16"/><circle cx="9" cy="8" r="2.4"/><circle cx="15" cy="16" r="2.4"/></svg>',
-  success:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg>'
+  reciept:'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M15.2004 0C17.2713 0.000210987 18.9504 1.67906 18.9504 3.75V17.7012C18.9504 18.8325 18.0329 19.7499 16.9016 19.75C16.4895 19.75 16.0866 19.6259 15.7463 19.3936L15.1633 18.9951C14.8183 18.7595 14.3555 18.7942 14.05 19.0791C13.1815 19.8894 11.8506 19.9402 10.923 19.1982L10.7111 19.0293C10.2952 18.6968 9.70404 18.6967 9.28827 19.0293L9.09003 19.1885C8.15309 19.9378 6.80273 19.8629 5.95428 19.0146C5.6534 18.7138 5.17651 18.6802 4.83612 18.9355L4.29022 19.3447C3.93974 19.6076 3.51349 19.7499 3.07538 19.75C1.95693 19.75 1.04999 18.8431 1.04999 17.7246V3.75C1.04999 1.67893 2.72892 5.74331e-08 4.79999 0H15.2004ZM4.79999 1.5C3.55735 1.5 2.54999 2.50736 2.54999 3.75V17.7246C2.54999 18.0146 2.78536 18.25 3.07538 18.25C3.1889 18.2499 3.29901 18.2126 3.38983 18.1445L3.93671 17.7354C4.87424 17.0323 6.18613 17.1255 7.01483 17.9541C7.32292 18.262 7.81338 18.2887 8.1535 18.0166L8.35175 17.8584C9.31542 17.0874 10.6849 17.0875 11.6486 17.8584L11.8596 18.0273C12.2057 18.3042 12.7025 18.2848 13.0266 17.9824C13.8451 17.2186 15.0844 17.1246 16.009 17.7559L16.592 18.1543C16.6832 18.2166 16.7911 18.25 16.9016 18.25C17.2045 18.2499 17.4504 18.0041 17.4504 17.7012V3.75C17.4504 2.50749 16.4428 1.50021 15.2004 1.5H4.79999ZM14.5002 12.75C14.9144 12.75 15.2502 13.0858 15.2502 13.5C15.2502 13.9142 14.9144 14.25 14.5002 14.25H5.50018C5.08597 14.25 4.75018 13.9142 4.75018 13.5C4.75018 13.0858 5.08597 12.75 5.50018 12.75H14.5002ZM14.5002 8.75C14.9144 8.75 15.2502 9.08579 15.2502 9.5C15.2502 9.91421 14.9144 10.25 14.5002 10.25H5.50018C5.08597 10.25 4.75018 9.91421 4.75018 9.5C4.75018 9.08579 5.08597 8.75 5.50018 8.75H14.5002ZM9.50018 4.25C9.9144 4.25 10.2502 4.58579 10.2502 5C10.2502 5.41421 9.9144 5.75 9.50018 5.75H5.50018C5.08597 5.75 4.75018 5.41421 4.75018 5C4.75018 4.58579 5.08597 4.25 5.50018 4.25H9.50018Z" fill="currentColor"/></svg>',
+  wrench:'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M18.354 7.10512C18.3873 8.47973 17.8298 9.79578 16.7455 10.6583C15.3867 11.7393 13.3267 11.7154 11.6638 10.8148L11.2044 10.5659L4.53059 16.4266C3.77505 17.0901 2.61815 16.9867 1.99218 16.1998C1.36621 15.4129 1.52569 14.2624 2.34209 13.6754L9.55349 8.49059L9.41434 7.98694C8.91121 6.16577 9.35389 4.15772 10.7139 3.07589C11.7981 2.21336 13.2059 1.96609 14.5377 2.30773L12.6042 3.84585C11.8478 4.44754 11.7224 5.54846 12.3241 6.30483L13.9615 8.36316C14.5631 9.11953 15.6641 9.24493 16.4204 8.64325L18.354 7.10512ZM19.7394 6.0127C19.5827 5.19985 18.6475 4.95493 18.0775 5.40838L15.4866 7.46936C15.3786 7.55532 15.2213 7.5374 15.1353 7.42935L13.498 5.37102C13.412 5.26297 13.4299 5.10569 13.538 5.01974L16.1288 2.95876C16.6989 2.5053 16.6705 1.53896 15.9137 1.20352C13.9204 0.319975 11.5585 0.487242 9.78004 1.902C7.9745 3.33828 7.43253 5.75096 7.84698 7.87007L1.46645 12.4575C-0.0458183 13.5448 -0.341224 15.676 0.818296 17.1336C1.97782 18.5912 4.12082 18.7827 5.52036 17.5537L11.4252 12.3683C13.3962 13.2489 15.8729 13.2692 17.6794 11.8322C19.4578 10.4174 20.152 8.1537 19.7394 6.0127Z" fill="currentColor"/></svg>',
+  chart:'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2.75 2C2.75 1.58579 2.41421 1.25 2 1.25C1.58579 1.25 1.25 1.58579 1.25 2V14C1.25 16.6234 3.37665 18.75 6 18.75H18C18.4142 18.75 18.75 18.4142 18.75 18C18.75 17.5858 18.4142 17.25 18 17.25H6C4.20507 17.25 2.75 15.7949 2.75 14V2Z" fill="currentColor"/><path d="M11.75 4C11.75 3.58579 11.4142 3.25 11 3.25C10.5858 3.25 10.25 3.58579 10.25 4V13C10.25 13.4142 10.5858 13.75 11 13.75C11.4142 13.75 11.75 13.4142 11.75 13V4Z" fill="currentColor"/><path d="M7.75 9C7.75 8.58579 7.41421 8.25 7 8.25C6.58579 8.25 6.25 8.58579 6.25 9V13C6.25 13.4142 6.58579 13.75 7 13.75C7.41421 13.75 7.75 13.4142 7.75 13V9Z" fill="currentColor"/><path d="M15 6.25C15.4142 6.25 15.75 6.58579 15.75 7V13C15.75 13.4142 15.4142 13.75 15 13.75C14.5858 13.75 14.25 13.4142 14.25 13V7C14.25 6.58579 14.5858 6.25 15 6.25Z" fill="currentColor"/></svg>',
+  fuel:'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M3.25 5.03125C3.25 4.61704 3.58579 4.28125 4 4.28125H10C10.4142 4.28125 10.75 4.61704 10.75 5.03125V9.03125C10.75 9.44546 10.4142 9.78125 10 9.78125H4C3.58579 9.78125 3.25 9.44546 3.25 9.03125V5.03125ZM4.75 5.78125V8.28125H9.25V5.78125H4.75Z" fill="currentColor"/><path fill-rule="evenodd" clip-rule="evenodd" d="M0.25 4C0.25 1.92893 1.92893 0.25 4 0.25H10C12.0711 0.25 13.75 1.92893 13.75 4V12.0781H15C15.9662 12.0781 16.75 12.8619 16.75 13.8281V15.3281C16.75 15.7419 17.0862 16.0781 17.5 16.0781C17.9138 16.0781 18.25 15.7419 18.25 15.3281V10.5781H17.133C16.0816 10.5781 15.2657 9.65643 15.3968 8.6111L15.6467 6.61143C15.7555 5.73591 16.4997 5.07812 17.383 5.07812H18.108C18.0497 4.96644 17.9744 4.86318 17.8837 4.77246L16.4697 3.35846C16.1768 3.06556 16.1768 2.59069 16.4697 2.29779C16.7626 2.0049 17.2374 2.0049 17.5303 2.29779L18.9443 3.71179C19.4598 4.22729 19.75 4.92699 19.75 5.65613V15.3281C19.75 16.5703 18.7422 17.5781 17.5 17.5781C16.2578 17.5781 15.25 16.5703 15.25 15.3281V13.8281C15.25 13.6903 15.1378 13.5781 15 13.5781H13.75V16C13.75 18.0711 12.0711 19.75 10 19.75H4C1.92893 19.75 0.25 18.0711 0.25 16V4ZM12.25 12.8281V4C12.25 2.75736 11.2426 1.75 10 1.75H4C2.75736 1.75 1.75 2.75736 1.75 4V16C1.75 17.2426 2.75736 18.25 4 18.25H10C11.2426 18.25 12.25 17.2426 12.25 16V12.8281ZM17.383 6.57812C17.2564 6.57812 17.1507 6.67214 17.1353 6.79642L16.8852 8.79715C16.8666 8.94563 16.9826 9.07812 17.133 9.07812H18.25V6.57812H17.383Z" fill="currentColor"/></svg>',
+  banknote:'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.8218 1.89401L3.77294 6.15061C3.28127 6.38189 2.90003 6.75279 2.65425 7.19374C2.55754 7.36724 2.41316 7.51836 2.23698 7.61009C1.642 7.91987 0.872864 7.55614 1.12092 6.9329C1.48309 6.0229 2.17827 5.24308 3.13445 4.79329L12.1833 0.536686C14.1823 -0.403656 16.5651 0.454567 17.5055 2.45358L18.7824 5.16823C19.0327 5.70016 18.3365 5.97047 17.8771 5.60364C17.6957 5.45877 17.5055 5.3256 17.3077 5.20489C17.1619 5.11585 17.0409 4.98992 16.9681 4.83529L16.1481 3.09207C15.5604 1.84269 14.0712 1.3063 12.8218 1.89401ZM13.9112 7.48411L4.25189 10.0723C2.91823 10.4297 2.12677 11.8005 2.48413 13.1342L3.26058 16.0319C3.61794 17.3656 4.98878 18.1571 6.32245 17.7997L15.9817 15.2115C17.3154 14.8542 18.1068 13.4833 17.7495 12.1497L16.973 9.25188C16.6157 7.91822 15.2448 7.12676 13.9112 7.48411ZM3.86367 8.62341C1.7298 9.19518 0.463471 11.3885 1.03524 13.5224L1.8117 16.4202C2.38346 18.554 4.57681 19.8204 6.71068 19.2486L16.3699 16.6604C18.5038 16.0886 19.7701 13.8953 19.1984 11.7614L18.4219 8.86365C17.8501 6.72979 15.6568 5.46346 13.5229 6.03522L3.86367 8.62341ZM12.2819 11.3921C12.9723 12.5878 12.5626 14.1168 11.3668 14.8072C10.1711 15.4975 8.64213 15.0878 7.95178 13.8921C7.26142 12.6964 7.67111 11.1674 8.86684 10.4771C10.0626 9.78669 11.5915 10.1964 12.2819 11.3921ZM10.6168 13.5081C11.0951 13.232 11.259 12.6204 10.9829 12.1421C10.7067 11.6638 10.0951 11.4999 9.61684 11.7761C9.13855 12.0522 8.97467 12.6638 9.25081 13.1421C9.52696 13.6204 10.1385 13.7843 10.6168 13.5081ZM7.01091 13.2064C7.28706 13.6847 7.12318 14.2962 6.64489 14.5724C6.1666 14.8485 5.55501 14.6847 5.27886 14.2064C5.00272 13.7281 5.1666 13.1165 5.64489 12.8403C6.12318 12.5642 6.73477 12.7281 7.01091 13.2064ZM14.5848 12.4449C15.0631 12.1688 15.2269 11.5572 14.9508 11.0789C14.6747 10.6006 14.0631 10.4367 13.5848 10.7129C13.1065 10.989 12.9426 11.6006 13.2187 12.0789C13.4949 12.5572 14.1065 12.7211 14.5848 12.4449Z" fill="currentColor"/></svg>',
+  pin:'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M15.5 7.125C15.5 8.77303 14.9448 10.5102 14.0128 12.3963C13.1726 14.0965 12.0854 15.8066 10.9414 17.6059C10.8121 17.8092 10.6822 18.0136 10.5517 18.2193C10.4432 18.3905 10.2475 18.5013 10 18.5013C9.75252 18.5013 9.55682 18.3905 9.44827 18.2193C9.31816 18.0141 9.18851 17.8102 9.05957 17.6074L9.05864 17.6059C7.91464 15.8066 6.82744 14.0965 5.98724 12.3963C5.05524 10.5102 4.5 8.77303 4.5 7.125C4.5 3.99326 6.98735 1.5 10 1.5C13.0126 1.5 15.5 3.99326 15.5 7.125ZM17 7.125C17 10.8744 14.6137 14.6267 12.2102 18.406L12.2094 18.4074C12.079 18.6123 11.9486 18.8174 11.8185 19.0226C10.9911 20.3275 9.00892 20.3275 8.18148 19.0226C8.05114 18.817 7.92048 18.6116 7.78987 18.4062C5.38638 14.6269 3 10.8744 3 7.125C3 3.18997 6.13401 0 10 0C13.866 0 17 3.18997 17 7.125ZM11.5 7C11.5 7.82843 10.8284 8.5 10 8.5C9.17157 8.5 8.5 7.82843 8.5 7C8.5 6.17157 9.17157 5.5 10 5.5C10.8284 5.5 11.5 6.17157 11.5 7ZM13 7C13 8.65685 11.6569 10 10 10C8.34315 10 7 8.65685 7 7C7 5.34315 8.34315 4 10 4C11.6569 4 13 5.34315 13 7Z" fill="currentColor"/></svg>',
+  info:'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M10 19.5C15.2467 19.5 19.5 15.2467 19.5 10C19.5 4.75329 15.2467 0.5 10 0.5C4.75329 0.5 0.5 4.75329 0.5 10C0.5 15.2467 4.75329 19.5 10 19.5ZM10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM10 6.5C10.5523 6.5 11 6.05228 11 5.5C11 4.94772 10.5523 4.5 10 4.5C9.44772 4.5 9 4.94772 9 5.5C9 6.05228 9.44772 6.5 10 6.5ZM10 8.25C10.4142 8.25 10.75 8.58579 10.75 9V13.25H11C11.4142 13.25 11.75 13.5858 11.75 14C11.75 14.4142 11.4142 14.75 11 14.75H10H9C8.58579 14.75 8.25 14.4142 8.25 14C8.25 13.5858 8.58579 13.25 9 13.25H9.25V9.75H9C8.58579 9.75 8.25 9.41421 8.25 9C8.25 8.58579 8.58579 8.25 9 8.25H10Z" fill="currentColor"/></svg>',
+  car:'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M17.95 15H18C19.1046 15 20 14.1046 20 13V12.3555C20 10.5029 18.7278 8.89266 16.9255 8.46402L16.138 8.27673C15.7235 8.17816 15.3514 7.94981 15.0757 7.62496L13.1981 5.41209C12.4381 4.51637 11.3228 4 10.1481 4H6.42384C4.94239 4 3.58505 4.86448 2.94398 6.20004C2.65519 6.80168 2.20868 7.32202 1.65589 7.6959C0.620404 8.39622 0 9.5648 0 10.8149V13C0 14.1046 0.89543 15 2 15H2.05001C2.28164 16.1411 3.29052 17 4.5 17C5.70948 17 6.71836 16.1411 6.94999 15H13.05C13.2816 16.1411 14.2905 17 15.5 17C16.7095 17 17.7184 16.1411 17.95 15ZM18.5 13V12.3555C18.5 11.1976 17.7049 10.1912 16.5784 9.92331L15.7909 9.73603C15.0656 9.56353 14.4143 9.16392 13.932 8.59542L12.0544 6.38256C11.5794 5.82273 10.8823 5.5 10.1481 5.5H6.42384C5.52651 5.5 4.69085 6.02709 4.29626 6.84914C3.89366 7.6879 3.27158 8.41401 2.49623 8.93841C1.87325 9.35974 1.5 10.0628 1.5 10.8149V13C1.5 13.2761 1.72386 13.5 2 13.5H2.20802C2.5938 12.617 3.47484 12 4.5 12C5.52516 12 6.4062 12.617 6.79198 13.5H13.208C13.5938 12.617 14.4748 12 15.5 12C16.5252 12 17.4062 12.617 17.792 13.5H18C18.2761 13.5 18.5 13.2761 18.5 13ZM16.3662 15C16.1933 15.2989 15.8701 15.5 15.5 15.5C15.1299 15.5 14.8067 15.2989 14.6338 15C14.5487 14.8529 14.5 14.6821 14.5 14.5C14.5 13.9477 14.9477 13.5 15.5 13.5C16.0523 13.5 16.5 13.9477 16.5 14.5C16.5 14.6821 16.4513 14.8529 16.3662 15ZM4.5 15.5C4.12986 15.5 3.80669 15.2989 3.63378 15C3.5487 14.8529 3.5 14.6821 3.5 14.5C3.5 13.9477 3.94772 13.5 4.5 13.5C5.05228 13.5 5.5 13.9477 5.5 14.5C5.5 14.6821 5.4513 14.8529 5.36622 15C5.19331 15.2989 4.87014 15.5 4.5 15.5Z" fill="currentColor"/></svg>',
+  smartphone:'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M13 0C14.6569 0 16 1.34315 16 3V17C16 18.6569 14.6569 20 13 20H7C5.39489 20 4.08421 18.7394 4.00391 17.1543L4 17V3C4 1.34315 5.34315 0 7 0H13ZM7 1.5C6.17157 1.5 5.5 2.17157 5.5 3V17C5.5 17.8284 6.17157 18.5 7 18.5H13C13.8284 18.5 14.5 17.8284 14.5 17V3C14.5 2.17157 13.8284 1.5 13 1.5H7ZM11.25 15.5C11.6642 15.5 11.9999 15.8359 12 16.25C12 16.6642 11.6642 17 11.25 17H8.75C8.33579 17 8 16.6642 8 16.25C8.0001 15.8359 8.33585 15.5 8.75 15.5H11.25ZM10.5 3C10.9142 3 11.2499 3.33587 11.25 3.75C11.25 4.16421 10.9142 4.5 10.5 4.5H9.5C9.08579 4.5 8.75 4.16421 8.75 3.75C8.7501 3.33587 9.08585 3 9.5 3H10.5Z" fill="currentColor"/></svg>',
+  calendar:'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M13 1C13.4142 1 13.75 1.33579 13.75 1.75V2.5H15L15.2061 2.50488C17.3194 2.61211 19 4.35996 19 6.5V15L18.9951 15.2061C18.8913 17.2512 17.2512 18.8913 15.2061 18.9951L15 19H5L4.79395 18.9951C2.7488 18.8913 1.10865 17.2512 1.00488 15.2061L1 15V6.5C1 4.35996 2.68056 2.61211 4.79395 2.50488L5 2.5H6.25V1.75C6.25 1.33579 6.58579 1 7 1C7.41421 1 7.75 1.33579 7.75 1.75V2.5H12.25V1.75C12.25 1.33579 12.5858 1 13 1ZM2.5 15C2.5 16.3807 3.61929 17.5 5 17.5H15C16.3807 17.5 17.5 16.3807 17.5 15V8.75H2.5V15ZM5 4C3.61929 4 2.5 5.11929 2.5 6.5V7.25H17.5V6.5C17.5 5.11929 16.3807 4 15 4H13.75V4.75C13.75 5.16421 13.4142 5.5 13 5.5C12.5858 5.5 12.25 5.16421 12.25 4.75V4H7.75V4.75C7.75 5.16421 7.41421 5.5 7 5.5C6.58579 5.5 6.25 5.16421 6.25 4.75V4H5Z" fill="currentColor"/></svg>',
+  shield:'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M18 7.6631V4.52379C17.9947 4.40575 17.91 4.30529 17.7908 4.27264C15.3576 3.6925 12.9959 2.86623 10.7506 1.80389L10 1.5L9.24939 1.80389C7.0015 2.86372 4.6424 3.6925 2.20918 4.27264C2.09003 4.30529 2.0053 4.40575 2.00001 4.52379V7.6631C2.00795 10.0138 2.76784 12.3068 4.17906 14.2381C5.58763 16.1694 7.58134 17.6511 9.89807 18.4849C9.96162 18.505 10.0331 18.505 10.0967 18.4849C12.4107 17.6511 14.4071 16.1694 15.8157 14.2381C17.2269 12.3068 17.9868 10.0138 17.9947 7.66561L18 7.6631ZM10.6051 19.8961C13.1916 18.9642 15.4361 17.3036 17.0268 15.123C18.5949 12.977 19.4571 10.4267 19.4936 7.80221C19.4978 7.75626 19.5 7.70985 19.5 7.6631V4.52379C19.5 4.50137 19.4995 4.47895 19.4985 4.45656C19.4616 3.63441 18.8805 3.01594 18.1873 2.82597C18.1712 2.82156 18.155 2.81741 18.1387 2.81354C15.8049 2.2571 13.5417 1.46507 11.3922 0.448C11.3663 0.435754 11.3401 0.424251 11.3135 0.413505L10.5629 0.10962C10.2019 -0.03654 9.79815 -0.03654 9.43712 0.10962L8.6865 0.413506C8.66059 0.423994 8.63498 0.435204 8.6097 0.447123C6.45512 1.46296 4.19379 2.25741 1.86129 2.81354C1.84504 2.81741 1.82886 2.82156 1.81275 2.82597C1.11952 3.01593 0.538399 3.63441 0.501516 4.45656C0.500511 4.47895 0.500009 4.50137 0.500009 4.52379V7.6631H0.5L0.500017 7.66817C0.509049 10.341 1.37339 12.9406 2.96754 15.1225C4.55792 17.3028 6.79986 18.9641 9.39011 19.8963C9.40857 19.903 9.42716 19.9092 9.44587 19.9151C9.8037 20.0283 10.191 20.0283 10.5489 19.9151C10.5677 19.9092 10.5865 19.9028 10.6051 19.8961ZM14.1873 6.14071C14.5238 6.3822 14.6009 6.85079 14.3594 7.18732L10.0538 13.1873C9.93113 13.3583 9.74228 13.4698 9.53334 13.4948C9.32441 13.5197 9.11461 13.4557 8.95514 13.3185L5.7607 10.5685C5.44678 10.2982 5.41138 9.82466 5.68162 9.51074C5.95186 9.19683 6.42541 9.16142 6.73933 9.43166L9.31281 11.6471L13.1407 6.31279C13.3822 5.97626 13.8507 5.89922 14.1873 6.14071Z" fill="currentColor"/></svg>',
+  toggles:'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.25 6C5.25 5.30964 5.80964 4.75 6.5 4.75C7.19036 4.75 7.75 5.30964 7.75 6C7.75 6.69036 7.19036 7.25 6.5 7.25C5.80964 7.25 5.25 6.69036 5.25 6ZM3.85352 5.25H1.5C1.08579 5.25 0.75 5.58579 0.75 6C0.75 6.41421 1.08579 6.75 1.5 6.75H3.85352C4.17998 7.90425 5.24122 8.75 6.5 8.75C7.75878 8.75 8.82002 7.90425 9.14648 6.75H18.5C18.9142 6.75 19.25 6.41421 19.25 6C19.25 5.58579 18.9142 5.25 18.5 5.25H9.14648C8.82002 4.09575 7.75878 3.25 6.5 3.25C5.24122 3.25 4.17998 4.09575 3.85352 5.25ZM0.75 14C0.75 13.5858 1.08579 13.25 1.5 13.25H13.8535C14.18 12.0957 15.2412 11.25 16.5 11.25C18.0188 11.25 19.25 12.4812 19.25 14C19.25 15.5188 18.0188 16.75 16.5 16.75C15.2412 16.75 14.18 15.9043 13.8535 14.75H1.5C1.08579 14.75 0.75 14.4142 0.75 14ZM15.25 14C15.25 14.6904 15.8096 15.25 16.5 15.25C17.1904 15.25 17.75 14.6904 17.75 14C17.75 13.3096 17.1904 12.75 16.5 12.75C15.8096 12.75 15.25 13.3096 15.25 14Z" fill="currentColor"/></svg>'
 };
+
+/* Per-question spot illustrations, exported from the Figma design. Only two
+   exist so far, so questions alternate between them until the remaining four
+   are drawn. Fills are the resolved illustration tokens: background
+   accent@18%, midground #B59F00, foreground accent. */
+const QGFX = [
+'<svg viewBox="0 0 88 88" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M87.9162 46.6898C87.8764 47.358 87.8134 48.0228 87.7389 48.6877C86.1035 63.8587 76.7285 77.0997 62.9659 83.6738C61.7149 84.269 60.4258 84.8095 59.0986 85.2953C36.314 93.6634 11.0639 81.9643 2.70292 59.1648C-5.65967 36.3652 6.03172 11.0985 28.8163 2.73045C28.8743 2.7089 28.9323 2.68735 28.9903 2.66745C29.562 2.45688 30.1353 2.26455 30.7069 2.08382C53.8412 -5.28446 78.5644 7.50889 85.9295 30.6583C87.5765 35.833 88.2492 41.2697 87.9178 46.6898H87.9162Z" fill="#F2D400" fill-opacity="0.18"/><path d="M63.6017 32.5337C64.1418 32.1012 64.9473 32.2859 65.1446 32.9491C65.3756 33.7258 65.5 34.5483 65.5 35.4V52.6C65.5 57.3496 61.6497 61.2 56.9 61.2H31.1C26.3504 61.2 22.5 57.3496 22.5 52.6V35.4C22.5 34.5949 22.6108 33.8157 22.8179 33.0768C23.0056 32.4068 23.8144 32.2126 24.3599 32.6445L42.3455 46.8827C43.327 47.6597 44.7148 47.6563 45.6923 46.8743L63.6017 32.5337Z" fill="#B59F00"/><path d="M61.7678 28.3115C60.3838 27.3586 58.7074 26.8 56.9 26.8H31.1C29.2455 26.8 27.5288 27.3876 26.1244 28.3861C25.5919 28.7647 25.6284 29.535 26.1407 29.9406L43.3394 43.5569C43.7321 43.8679 44.2876 43.8664 44.6786 43.5533L61.767 29.8706C62.2799 29.46 62.309 28.6842 61.7678 28.3115Z" fill="#F2D400"/></svg>',
+'<svg viewBox="0 0 88 88" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M87.9162 46.6898C87.8764 47.358 87.8134 48.0228 87.7389 48.6877C86.1035 63.8587 76.7285 77.0997 62.9659 83.6738C61.7149 84.269 60.4258 84.8095 59.0986 85.2953C36.314 93.6634 11.0639 81.9643 2.70292 59.1648C-5.65967 36.3652 6.03172 11.0985 28.8163 2.73045C28.8743 2.7089 28.9323 2.68735 28.9903 2.66745C29.562 2.45688 30.1353 2.26455 30.7069 2.08382C53.8411 -5.28446 78.5644 7.50889 85.9295 30.6583C87.5765 35.833 88.2492 41.2697 87.9178 46.6898H87.9162Z" fill="#F2D400" fill-opacity="0.18"/><path fill-rule="evenodd" clip-rule="evenodd" d="M41.8008 63.7992V87.9465C43.2594 88.0188 44.7277 88.0182 46.2008 87.9424V63.7992H41.8008ZM41.8008 46.1992H46.2008V39.6H41.8008V46.1992ZM41.8008 22H46.2008V15.3992C46.2008 14.1842 45.2158 13.1992 44.0008 13.1992C42.7858 13.1992 41.8008 14.1842 41.8008 15.3992V22Z" fill="#F2D400"/><path fill-rule="evenodd" clip-rule="evenodd" d="M26.7801 22C25.8109 22 25.3153 23.1626 25.9866 23.8618L31.9159 30.0382C32.3246 30.4639 32.3246 31.1361 31.9159 31.5618L25.9866 37.7382C25.3153 38.4374 25.8109 39.6 26.7801 39.6H66.7629C67.3227 39.6 67.8615 39.3866 68.2695 39.0032L75.2931 32.4032C76.2177 31.5344 76.2177 30.0656 75.2931 29.1968L68.2695 22.5968C67.8615 22.2134 67.3227 22 66.7629 22H26.7801ZM21.2363 46.1992C20.6765 46.1992 20.1378 46.4126 19.7298 46.796L12.7062 53.396C11.7815 54.2648 11.7815 55.7336 12.7062 56.6025L19.7298 63.2025C20.1378 63.5858 20.6765 63.7992 21.2363 63.7992H61.2192C62.1884 63.7992 62.6839 62.6366 62.0127 61.9374L56.0833 55.761C55.6747 55.3353 55.6747 54.6631 56.0833 54.2374L62.0127 48.061C62.6839 47.3618 62.1884 46.1992 61.2192 46.1992H21.2363Z" fill="#B59F00"/></svg>'
+];
 
 /* ---------------------------------------------------------------
    QUESTIONS. Each option maps 1:1 to a persona code:
@@ -565,42 +602,30 @@ const Qs=[
 /* Persona profiles. `art` is the illustration key: all six point at the
    star placeholder until the sourced artwork lands. */
 const P={
-  CH:{art:'star',name:"The Cost Hawk",
+  CH:{art:'star',name:"The Cost Hawk",product:"Allstar Online",
     subtitle:"“You spotted the 20p variance the moment the invoice arrived.”",
     desc:"You have a forensic instinct for where fleet money goes, and where it quietly disappears. The catch is not spotting the problem, it is the time it takes to act on it. Weekly data instead of daily. Reports that need reformatting before they are usable. By the time the picture is clear, the spend has already happened.",
-    fitTag:"Where Allstar Online fits in",
-    fitText:"Allstar Online gives you spend visibility per driver, per vehicle, per transaction, without the manual processing. We are also building a proactive insight feed into it, shaped right now by fleet managers like you.",
-    cta:"Allstar match: Allstar Online and the AI insight feed"},
-  MD:{art:'star',name:"The Mileage Detective",
+    fitText:"Allstar Online gives you spend visibility per driver, per vehicle, per transaction, without the manual processing. We are also building a proactive insight feed into it, shaped right now by fleet managers like you."},
+  MD:{art:'star',name:"The Mileage Detective",product:"MileagePoint",
     subtitle:"“Somewhere between what the driver entered and what actually happened is the truth.”",
     desc:"Mileage accuracy looks simple from the outside and is anything but in practice. The gap between what a driver enters and what actually happened runs from minor rounding to figures that are plainly wrong. The downstream effects are real: unreliable MPG, business and personal splits that become guesswork, and efficiency analysis built on a foundation that shifts every month.",
-    fitTag:"Where MileagePoint fits in",
-    fitText:"MileagePoint removes the manual entry problem by capturing mileage automatically and accurately, with no driver input at the pump. Business and personal mileage is split correctly, giving you clean data for tax and efficiency figures you can actually report on.",
-    cta:"Allstar match: MileagePoint"},
-  FF:{art:'star',name:"The Fleet Firefighter",
+    fitText:"MileagePoint removes the manual entry problem by capturing mileage automatically and accurately, with no driver input at the pump. Business and personal mileage is split correctly, giving you clean data for tax and efficiency figures you can actually report on."},
+  FF:{art:'star',name:"The Fleet Firefighter",product:"Allstar ServicePoint",
     subtitle:"“The card declined. The service is due on Friday. The driver just called.”",
     desc:"You keep the fleet moving, and the operation runs as smoothly as it does because of that instinct. The catch is that a lot of what reaches you should never have become an emergency: a service interval nobody tracked closely enough, or a reactive call that takes far longer to resolve because the information is not visible in one place.",
-    fitTag:"Where Allstar ServicePoint fits in",
-    fitText:"Allstar ServicePoint gives you visibility of upcoming MOTs, service schedules and maintenance across the fleet, so the things that are supposed to be planned stay planned. Booking happens in the app, without the back-and-forth that eats the day.",
-    cta:"Allstar match: Allstar ServicePoint"},
-  VD:{art:'star',name:"The Value Defender",
+    fitText:"Allstar ServicePoint gives you visibility of upcoming MOTs, service schedules and maintenance across the fleet, so the things that are supposed to be planned stay planned. Booking happens in the app, without the back-and-forth that eats the day."},
+  VD:{art:'star',name:"The Value Defender",product:"Allstar Online",
     subtitle:"“Takes 47 variables and makes it look like a clean line graph.”",
     desc:"You are accountable for fleet at a strategic level, which means the questions you get are bigger, arrive with less warning, and need answers that hold up under scrutiny. The analysis is not the hard part. Getting clean, trusted, consolidated data fast enough to be useful is where the time goes.",
-    fitTag:"Where Allstar Online fits in",
-    fitText:"Allstar Online gives you consolidated fleet spend in one place, queryable, exportable and structured for the reporting you are already doing. Spend visibility across the fleet means the baseline numbers are always current, not last month’s.",
-    cta:"Allstar match: Allstar Online reports and dashboard"},
-  AP:{art:'star',name:"The Accidental Pioneer",
+    fitText:"Allstar Online gives you consolidated fleet spend in one place, queryable, exportable and structured for the reporting you are already doing. Spend visibility across the fleet means the baseline numbers are always current, not last month’s."},
+  AP:{art:'star',name:"The Accidental Pioneer",product:"Chargepass and Homecharge",
     subtitle:"“You didn’t choose EVs. EVs chose you, and brought a whole new set of admin.”",
     desc:"You are managing a fleet in transition, which in practice means managing two or three fleets at once with tools designed for one. Fuel cards, charge cards and home charging. Multiple invoices. Multiple reporting streams. Mileage that works differently for EVs. Every task you used to do once, you now do twice, and the pieces do not always fit together.",
-    fitTag:"Where Chargepass and Homecharge fit in",
-    fitText:"Allstar Chargepass puts fuel and EV charging on one card, one invoice and one dashboard. Allstar Homecharge removes the reimbursement process entirely: we pay the driver’s energy supplier directly, so there is no claiming back and no money passing through your drivers’ hands.",
-    cta:"Allstar match: Allstar Chargepass or Homecharge"},
-  BO:{art:'star',name:"The Burned Out Manager",
+    fitText:"Allstar Chargepass puts fuel and EV charging on one card, one invoice and one dashboard. Allstar Homecharge removes the reimbursement process entirely: we pay the driver’s energy supplier directly, so there is no claiming back and no money passing through your drivers’ hands."},
+  BO:{art:'star',name:"The Burned Out Manager",product:"New platform in development",
     subtitle:"“Fleet got more complex. The team stayed the same size.”",
     desc:"You are not alone in this. The fleet role has gained enormous strategic importance in a few short years. Electrification, sustainability reporting, cost pressure, compliance, all landing on the same desk, with the same team, often with tools built for a simpler version of the job. No single product solves that, but a meaningful part of what is exhausting is genuinely avoidable.",
-    fitTag:"What we are developing at Allstar",
-    fitText:"We are building a new platform to bring fleet operations together in one place, reducing the manual stitching, the system-hopping and the admin friction that turns a demanding job into an unsustainable one. It is in development now, with direct input from fleet managers like you.",
-    cta:"Allstar match: new platform in development"},
+    fitText:"We are building a new platform to bring fleet operations together in one place, reducing the manual stitching, the system-hopping and the admin friction that turns a demanding job into an unsustainable one. It is in development now, with direct input from fleet managers like you."},
 };
 
 const ART = { star: STAR };
@@ -627,8 +652,8 @@ function mountAssets(){
   if(a1) a1.innerHTML=LOGO_PLAIN;
   const ia=document.getElementById('intro-art');
   if(ia) ia.innerHTML=STAR;
-  const fi=document.getElementById('r-fit-icon');
-  if(fi) fi.innerHTML=I.success;
+  const fl=document.getElementById('fit-logo');
+  if(fl) fl.innerHTML=LOGO_PLAIN;
 }
 
 function show(id){
@@ -638,8 +663,8 @@ function show(id){
 function go(){cur=0;ans=new Array(Qs.length).fill(null);rType=null;show('s-q');renderQ();scrollToQuiz()}
 function renderQ(){
   const q=Qs[cur];
-  document.getElementById('qn').textContent='Question '+(cur+1);
   document.getElementById('qt').textContent=q.t;
+  document.getElementById('qgfx').innerHTML=QGFX[cur % QGFX.length];
   document.getElementById('plb').textContent=(cur+1)+' of '+Qs.length;
   document.getElementById('pfi').style.width=((cur+1)/Qs.length*100)+'%';
   const bk=document.getElementById('bbk');
@@ -698,9 +723,8 @@ function showResult(){
   document.getElementById('r-typ').textContent=p.name;
   document.getElementById('r-sub').textContent=p.subtitle;
   document.getElementById('r-desc').textContent=p.desc;
-  document.getElementById('r-fit-tag').textContent=p.fitTag;
+  document.getElementById('r-fit-product').textContent=p.product;
   document.getElementById('r-fit-text').textContent=p.fitText;
-  document.getElementById('r-fit-cta').textContent=p.cta;
   show('s-result');
   scrollToQuiz();
 }
@@ -772,10 +796,16 @@ if(typeof MktoForms2!=="undefined"){
       + '<input type="' + type + '" name="' + name + '" class="mktoField" style="width:1470px" placeholder="' + label + '">'
       + '<div class="mktoClear"></div></div><div class="mktoClear"></div></div></div>';
   }
-  f.innerHTML = row('Business email','email','Email')
-    + row('Company name','text','Company')
+  f.innerHTML = row('First name','text','FirstName')
+    + row('Last name','text','LastName')
+    + row('Company','text','Company')
+    + row('Email address','email','Email')
+    + '<div class="mktoFormRow" style="width:1600px"><div class="mktoFieldDescriptor mktoFormCol" style="width:1600px">'
+    + '<div class="mktoFieldWrap" style="width:1590px"><div class="mktoHtmlText mktoHasWidth" style="width:1470px">'
+    + "By clicking 'Request Callback', you agree to Allstar and the Corpay group of companies contacting you in "
+    + 'accordance with the terms of our privacy policy</div></div></div></div>'
     + '<div class="mktoButtonRow"><span class="mktoButtonWrap mktoNative" style="margin-left:110px">'
-    + '<button type="button" class="mktoButton" id="pv-submit">Keep me posted</button></span></div>';
+    + '<button type="button" class="mktoButton" id="pv-submit">Request Callback</button></span></div>';
 
   /* Stubbed submit still drives the thank-you screen so that screen can be
      checked on a phone too. */
