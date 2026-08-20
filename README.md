@@ -85,6 +85,24 @@ card causes no layout shift.
 The vertical rule on the result quote stays accent yellow: it is a brand
 device rather than a state affordance.
 
+## Typeface
+
+Inter, decided 2026-08-20. The DS is internally split: the `font/*` tokens
+resolve to Google Sans Flex, but the DS components themselves are set in
+`Inter DS`, a local merged-opsz rename of Inter. Inter is OFL, so unlike Google
+Sans Flex it is usable on the web, and it matches what the components use.
+
+`"Inter DS", Inter, …` — design machines get the exact face, everyone else gets
+Inter from Google Fonts. The Figma frames were converted to Inter DS too, so the
+design and the build no longer diverge.
+
+## Preview page
+
+No stand-in site chrome. It broke immersion when judging the design, and the
+scroll-in-page behaviour it existed to test was already verified. The page
+ground matches the quiz so there is no seam. A small width readout sits bottom
+right.
+
 ## Input fields
 
 They follow the DS `Input/S` component (set key `e6d0c0b5…`):
@@ -103,6 +121,10 @@ The dark fill comes from a mode pin **inside** the component instance: the
 New fields are cloned from an existing instance so that pin and the label
 override travel with them.
 
+forms2 floats its labels so they sit beside the field. Left floated, the input
+rises into the label's padding and the two overlap by about 8px. Clearing the
+float is what actually produces the DS 8px gap.
+
 Two DS values are overridden on coarse pointers only, and left intact on
 desktop: 14px input text (iOS Safari zooms the page on focus below 16px) and the
 40px box (under the 44px minimum touch target). Both become 16px / 44px on
@@ -116,10 +138,6 @@ absence.
 
 ## Open items
 
-- **Typeface.** The DS font tokens resolve to Google Sans Flex, which is
-  proprietary and not on Google Fonts. It is first in the stack so it wins where
-  installed, but most visitors get the Inter fallback until web licensing is
-  confirmed. Self-hosting it is a one-line change.
 - **Question spot illustrations.** Only two exist in the design, so the six
   questions alternate between them. Four more are needed; add them to `QGFX` in
   question order and the alternation stops.

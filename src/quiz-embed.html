@@ -9,12 +9,14 @@
    name is kept in the custom-property name so provenance survives.
    Do not hand-tune these. Re-resolve from Figma if the DS moves.
 
-   TYPEFACE — open item. DS font/title · font/body · font/action all
-   resolve to "Google Sans Flex", which is Google's proprietary brand
-   face and is not on Google Fonts. It is first in the stack so it wins
-   wherever it is installed (i.e. on design machines). Until web
-   licensing is confirmed, phones and most visitors get the Inter
-   fallback. Self-hosting Google Sans Flex is a one-line change here.
+   TYPEFACE — Inter, decided 2026-08-20. The DS is internally split: the
+   font/* tokens resolve to Google Sans Flex, but the DS components
+   themselves (Input/S and friends) are set in "Inter DS", a local
+   merged-opsz rename of Inter. Inter is OFL, so unlike Google Sans Flex
+   it is actually usable on the web, and it matches what the components
+   use. "Inter DS" leads the stack so design machines get the exact face;
+   everyone else gets Inter from Google Fonts, which is the same glyph
+   set without the merged optical sizes.
 --------------------------------------------------------------- */
 #qr{
   /* colour · Fluxus semantics, Allstar pinned */
@@ -67,7 +69,7 @@
   container-name:quiz;
   background:var(--bg-black);
   color:var(--content-primary-white);
-  font-family:"Google Sans Flex","Google Sans",Inter,-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
+  font-family:"Inter DS",Inter,-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
   font-weight:var(--w-regular);
   overflow-x:clip;
   -webkit-font-smoothing:antialiased;
@@ -331,10 +333,15 @@
 .mkto-host .mktoForm .mktoOffset,.mkto-host .mktoForm .mktoGutter,.mkto-host .mktoForm .mktoClear{display:none!important}
 /* Field label per DS Input/S: Medium 14/16, sentence case, no tracking. */
 .mkto-host .mktoForm .mktoLabel{
+  /* forms2 floats labels so they sit beside the field. Left floated, the input
+     rises into the label's padding and the two overlap by ~8px. Clearing the
+     float is what actually produces the DS 8px gap. */
+  float:none!important;display:block!important;
   font-size:14px!important;line-height:16px!important;font-weight:var(--w-medium)!important;
   letter-spacing:normal!important;text-transform:none!important;
   color:var(--content-primary-inverted)!important;
-  width:auto!important;max-width:100%!important;padding:0 0 var(--sp-xs)!important;
+  width:auto!important;max-width:100%!important;
+  margin:0 0 var(--sp-xs)!important;padding:0!important;
 }
 .mkto-host .mktoForm input[type=text],.mkto-host .mktoForm input[type=email],.mkto-host .mktoForm input[type=tel],.mkto-host .mktoForm select,.mkto-host .mktoForm textarea{
   width:100%!important;max-width:100%!important;
