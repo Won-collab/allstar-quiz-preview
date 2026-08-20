@@ -70,6 +70,27 @@ Figma, not redrawn**. They are filled paths, so `fill` is `currentColor` and the
 roundel sets `color`. Logos are the approved `allstar` and `allstar_inverted`
 marks, exported the same way and never recoloured in CSS.
 
+## Selection and rules
+
+The selected option card reads as a fill step plus a rim. The rim uses the
+default border token; on a dark ground that is the `-inverted` member of the
+family, `color/border/default-inverted` (#FFFFFF at 19%). Plain
+`color/border/default` resolves to #000000 at 7%, which is invisible on black.
+Accent yellow is deliberately not used for selection, though the DS does have a
+token for it (`color/border/active-subdued`, accent at 56%).
+
+The base state carries a transparent border of the same width, so selecting a
+card causes no layout shift.
+
+The vertical rule on the result quote stays accent yellow: it is a brand
+device rather than a state affordance.
+
+## Footer
+
+Removed from all screens for now. The `.fbar` CSS is kept so it can be restored
+by putting the markup back. The screens carry their own bottom inset in its
+absence.
+
 ## Open items
 
 - **Typeface.** The DS font tokens resolve to Google Sans Flex, which is

@@ -43,7 +43,7 @@
 
   /* spacing · Primitives */
   --sp-2xs:4px; --sp-xs:8px; --sp-s:12px; --sp-m:16px;
-  --sp-l:20px;  --sp-xl:24px; --sp-2xl:32px;
+  --sp-l:20px;  --sp-xl:24px; --sp-2xl:32px; --sp-3xl:40px;
 
   /* weight · Fluxus */
   --w-bold:700; --w-demibold:600; --w-medium:500; --w-regular:400;
@@ -75,7 +75,7 @@
   display:none;
   flex-direction:column;
   align-items:center;
-  padding:var(--sp-2xl) var(--sp-xl) 0;
+  padding:var(--sp-2xl) var(--sp-xl) var(--sp-3xl);
   gap:var(--sp-2xl);
   animation:fu .38s cubic-bezier(.22,.61,.36,1);
 }
@@ -192,13 +192,18 @@
 .og{display:grid;grid-template-columns:1fr;gap:var(--sp-s);width:100%}
 .op{
   background:var(--bg-subdued-inverted);
+  border:1px solid transparent;
   border-radius:var(--radius-card);
   padding:var(--sp-m);
   display:flex;gap:var(--sp-s);align-items:flex-start;text-align:left;
   cursor:pointer;transition:background .18s,border-color .18s;
   min-height:var(--tap);-webkit-tap-highlight-color:transparent;
 }
-.op.sel{background:var(--bg-subdued-strong-inverted)}
+/* Selected reads as the fill step plus a rim. The rim uses the default
+   border token; on a dark ground that is the -inverted member of the family.
+   Plain color/border/default resolves to #000000 @7%, invisible here. Yellow
+   (color/border/active-subdued) is deliberately not used. */
+.op.sel{background:var(--bg-subdued-strong-inverted);border-color:var(--border-default-inverted)}
 .oi{
   width:40px;height:40px;flex:0 0 40px;
   border-radius:var(--radius-badge);
@@ -242,7 +247,10 @@
   font-weight:var(--w-demibold);
   color:var(--bg-accent);text-align:center;text-wrap:balance;
 }
+/* Brand accent rule, not a state affordance, so it stays accent yellow
+   rather than taking the default border token used on the option cards. */
 .rquote{
+  border-left:3px solid var(--bg-accent);
   padding-left:var(--sp-m);width:100%;
   font-size:16px;line-height:24px;font-weight:var(--w-medium);
   color:var(--content-primary-white);
@@ -376,7 +384,7 @@
   .persona-art.square{aspect-ratio:16/9}
 }
 @container quiz (min-width:720px){
-  .sc{padding:44px var(--sp-2xl) 0}
+  .sc{padding:44px var(--sp-2xl) var(--sp-3xl)}
   .fbar{padding:var(--sp-m) var(--sp-2xl)}
   .persona-art.square{max-width:520px}
 }
@@ -406,7 +414,6 @@
     <h1 class="htitle">What kind of fleet manager are you?</h1>
     <div class="persona-art square" id="intro-art"></div>
     <button class="btn btn-lg btn-primary btn-block" onclick="go()">Take the quiz</button>
-    <div class="fbar"><div class="fbar-l">Allstar 2026</div></div>
   </div>
 
   <!-- 02 / 03 Question. No logo and no question-number eyebrow, by design. -->
@@ -424,7 +431,6 @@
         <button class="btn btn-md btn-primary" id="bnx" onclick="nxt()"><span id="bnx-t">Next</span></button>
       </div>
     </div>
-    <div class="fbar"><div class="fbar-l">Allstar 2026</div></div>
   </div>
 
   <!-- 04 Result -->
@@ -462,7 +468,6 @@
         <button class="btn btn-md btn-secondary-dark" onclick="restart()">Try again</button>
       </div>
     </div>
-    <div class="fbar"><div class="fbar-l">Allstar 2026</div></div>
   </div>
 
   <!-- 05 Thank you -->
@@ -476,7 +481,6 @@
       <div class="ty-card-text">The Allstar team are on stand [X]. Bring your result and let us talk fleet.</div>
     </div>
     <button class="btn btn-md btn-secondary-accent" onclick="restart()">Take the quiz again</button>
-    <div class="fbar"><div class="fbar-l">Allstar 2026</div></div>
   </div>
 </div>
 
