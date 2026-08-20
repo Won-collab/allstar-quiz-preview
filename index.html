@@ -55,6 +55,10 @@
   --content-primary-white:#FFFFFF;
   --content-secondary-white:#C7C7C7;
   --content-tertiary-inverted:#5C5C5C;
+  --content-primary-inverted:#F7F7F7;   /* content/primary-inverted, input label */
+  --content-tertiary:#7D7D7D;           /* content/tertiary, input placeholder */
+  --bg-default-dark:#0F0F0F;            /* bg/default under Allstar Dark, input fill */
+  --border-input:#A8A8A8;               /* border/input */
   --bg-subdued-inverted:rgba(255,255,255,.04);
   --bg-subdued-strong-inverted:rgba(255,255,255,.19);
   --bg-secondary-on-dark:rgba(255,255,255,.20);
@@ -356,24 +360,40 @@
 .mkto-host .mktoForm *{font-family:inherit!important;box-sizing:border-box!important}
 .mkto-host .mktoForm .mktoFormRow,.mkto-host .mktoForm .mktoFieldWrap,.mkto-host .mktoForm .mktoFormCol,.mkto-host .mktoForm .mktoFieldDescriptor{width:100%!important;max-width:100%!important;float:none!important;margin:0!important;display:block!important}
 .mkto-host .mktoForm .mktoOffset,.mkto-host .mktoForm .mktoGutter,.mkto-host .mktoForm .mktoClear{display:none!important}
+/* Field label per DS Input/S: Medium 14/16, sentence case, no tracking. */
 .mkto-host .mktoForm .mktoLabel{
-  font-size:10px!important;line-height:12px!important;font-weight:500!important;
-  letter-spacing:.12em!important;text-transform:uppercase!important;
-  color:var(--content-secondary-white)!important;
-  width:auto!important;max-width:100%!important;padding:0 0 8px!important;
+  font-size:14px!important;line-height:16px!important;font-weight:var(--w-medium)!important;
+  letter-spacing:normal!important;text-transform:none!important;
+  color:var(--content-primary-inverted)!important;
+  width:auto!important;max-width:100%!important;padding:0 0 var(--sp-xs)!important;
 }
 .mkto-host .mktoForm input[type=text],.mkto-host .mktoForm input[type=email],.mkto-host .mktoForm input[type=tel],.mkto-host .mktoForm select,.mkto-host .mktoForm textarea{
   width:100%!important;max-width:100%!important;
-  min-height:48px!important;height:auto!important;
-  padding:0 14px!important;font-size:16px!important;
+  height:40px!important;min-height:40px!important;
+  padding:0 var(--sp-m)!important;
+  font-size:14px!important;line-height:16px!important;font-weight:var(--w-regular)!important;
   color:var(--content-primary-white)!important;
-  background:var(--bg-subdued-strong-inverted)!important;
-  border:1px solid var(--border-default-inverted)!important;
+  background:var(--bg-default-dark)!important;
+  border:1px solid var(--border-input)!important;
   border-radius:var(--radius-input)!important;
   box-shadow:none!important;margin-bottom:var(--sp-s)!important;
 }
-.mkto-host .mktoForm input::placeholder{color:var(--content-tertiary-inverted)!important}
+.mkto-host .mktoForm input::placeholder{color:var(--content-tertiary)!important}
 .mkto-host .mktoForm input:focus,.mkto-host .mktoForm select:focus{outline:none!important;border-color:var(--bg-accent)!important}
+
+/* Two DS input values do not survive contact with a touch screen, so they are
+   overridden only on coarse pointers and left intact on desktop:
+   14px text -> iOS Safari zooms the whole page on focus below 16px
+   40px box  -> under the 44px minimum touch target */
+@media (pointer: coarse){
+  .mkto-host .mktoForm input[type=text],
+  .mkto-host .mktoForm input[type=email],
+  .mkto-host .mktoForm input[type=tel],
+  .mkto-host .mktoForm select,
+  .mkto-host .mktoForm textarea{
+    font-size:16px!important;height:44px!important;min-height:44px!important;
+  }
+}
 /* Marketo renders the privacy consent as an mktoHtmlText block. */
 .mkto-host .mktoForm .mktoHtmlText{
   width:100%!important;max-width:100%!important;

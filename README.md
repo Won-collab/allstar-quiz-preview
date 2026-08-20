@@ -85,6 +85,29 @@ card causes no layout shift.
 The vertical rule on the result quote stays accent yellow: it is a brand
 device rather than a state affordance.
 
+## Input fields
+
+They follow the DS `Input/S` component (set key `e6d0c0b5…`):
+
+| part | value | token |
+|---|---|---|
+| label | Medium 14/16, sentence case | `color/content/primary-inverted` #F7F7F7 |
+| box | 40px tall, 16px inset, radius 12 | `radius/input` |
+| box fill | #0F0F0F | `color/bg/default`, Allstar **Dark** |
+| box border | 1px #A8A8A8 | `color/border/input` |
+| placeholder | Regular 14/16 #7D7D7D | `color/content/tertiary` |
+
+The dark fill comes from a mode pin **inside** the component instance: the
+`Input` frame carries `Allstar = Dark`, which is why the same
+`color/bg/default` token reads #0F0F0F there and #FFFFFF elsewhere on the page.
+New fields are cloned from an existing instance so that pin and the label
+override travel with them.
+
+Two DS values are overridden on coarse pointers only, and left intact on
+desktop: 14px input text (iOS Safari zooms the page on focus below 16px) and the
+40px box (under the 44px minimum touch target). Both become 16px / 44px on
+touch.
+
 ## Footer
 
 Removed from all screens for now. The `.fbar` CSS is kept so it can be restored
