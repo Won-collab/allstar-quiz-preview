@@ -238,8 +238,9 @@ a.tlink,.rcopy .tlink{min-height:0;padding:14px 0;margin:-14px 0}
 @media (hover:hover) and (pointer:fine){
   .st-coin:hover{transform:translateY(-36px)}
 }
-.st-coin:active,.st-coin.lift{transform:translateY(-36px) scale(.97);transition-duration:.2s}
-/* Opening a coin lands it with the same single spring as an option pick.
+.st-coin:active,.st-coin.lift{transform:translateY(-36px);transition-duration:.2s}
+/* Opening a coin lands it with a single spring, in position only: the coin
+   never changes size. It dips 4px past its place and settles.
    The landing is started from wherever the coin actually is at that moment
    (a quick tap releases it part-way up), in script, so it never jumps. */
 .st-item.open .st-coin:not(.lift){transform:none}
@@ -995,7 +996,7 @@ function buildStack(){
       if(opening&&!reduceMotion()&&btn.animate){
         btn.animate([
           {transform:from==='none'?'none':from},
-          {transform:'translateY(0) scale(1.025)',offset:.55},
+          {transform:'translateY(4px)',offset:.6},
           {transform:'none'}
         ],{duration:450,easing:'cubic-bezier(.3,.7,.4,1)'});
       }
