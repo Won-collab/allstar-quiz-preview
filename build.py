@@ -149,7 +149,6 @@ PREVIEW_PAGE = """<!doctype html>
      ground matches the quiz so there is no seam at the edges. */
   body{background:#000;color:#fff;-webkit-font-smoothing:antialiased}
   .embed-shell{max-width:1200px;margin:0 auto}
-  .pv-badge{position:fixed;z-index:9999;right:6px;bottom:6px;background:rgba(255,255,255,.10);color:rgba(255,255,255,.55);font-size:9px;line-height:1.3;padding:4px 6px;border-radius:6px;font-variant-numeric:tabular-nums;pointer-events:none;font-family:-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}
 </style>
 </head>
 <body>
@@ -157,8 +156,6 @@ PREVIEW_PAGE = """<!doctype html>
 <div class="embed-shell">
 __FRAGMENT__
 </div>
-
-<div class="pv-badge" id="pvb"><span id="pvw"></span></div>
 
 <script>
 /* Reproduces what Marketo forms2 actually injects: fixed pixel widths written
@@ -232,14 +229,6 @@ __FRAGMENT__
   });
 })();
 
-/* Live width readout, so a layout note can name the width it happened at. */
-(function(){
-  var out = document.getElementById('pvw'), qr = document.getElementById('qr');
-  function tick(){ if(!qr) return; out.textContent = Math.round(qr.getBoundingClientRect().width) + 'px'; }
-  tick();
-  addEventListener('resize', tick);
-  addEventListener('orientationchange', function(){ setTimeout(tick, 250); });
-})();
 </script>
 
 </body>
