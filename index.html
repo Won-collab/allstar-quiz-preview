@@ -19,46 +19,40 @@
 
 <div class="embed-shell">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,400..700&display=swap');
 
 /* ---------------------------------------------------------------
    ALLSTAR FLEET MANAGER QUIZ
-   Built from Figma: file 4hG6HmgGe9p2ZtbeF1vTzF, page "Design".
+   Built from Figma: file PlAGPK7iFhxeddZaoLWfTp (Spark-GTM), section
+   "Fleet personality quiz - full page" (475:4798).
    Colour, radius and type below are the resolved values of Fluxus
    semantic tokens with the Allstar brand collection pinned. The token
    name is kept in the custom-property name so provenance survives.
    Do not hand-tune these. Re-resolve from Figma if the DS moves.
 
-   TYPEFACE — Inter, decided 2026-08-20. The DS is internally split: the
-   font/* tokens resolve to Google Sans Flex, but the DS components
-   themselves (Input/S and friends) are set in "Inter DS", a local
-   merged-opsz rename of Inter. Inter is OFL, so unlike Google Sans Flex
-   it is actually usable on the web, and it matches what the components
-   use. "Inter DS" leads the stack so design machines get the exact face;
-   everyone else gets Inter from Google Fonts, which is the same glyph
-   set without the merged optical sizes.
+   TYPEFACE: Google Sans Flex, 2026-09-28. The design moved back to it
+   (the font/* tokens always resolved to it), and it is now served by
+   Google Fonts under the OFL, which removes the reason Inter was chosen
+   on 2026-08-20. Inter stays in the stack as the fallback.
 --------------------------------------------------------------- */
 #qr{
   /* colour · Fluxus semantics, Allstar pinned */
   --bg-black:#000000;
-  --bg-accent:#F2D400;
+  --bg-accent:#FFD000;
+  --bg-accent-hover:#E6BB00;
   --content-on-accent:#0F0F0F;
+  --content-primary:#0F0F0F;
   --content-primary-white:#FFFFFF;
+  --content-primary-white-strong:#F7F7F7;
   --content-secondary-white:#C7C7C7;
   --content-tertiary-inverted:#5C5C5C;
-  --content-primary-inverted:#F7F7F7;   /* content/primary-inverted, input label */
-  --content-tertiary:#7D7D7D;           /* content/tertiary, input placeholder */
-  --bg-default-dark:#0F0F0F;            /* bg/default under Allstar Dark, input fill */
-  --border-input:#A8A8A8;               /* border/input */
+  --content-placeholder:#757575;
+  --border-input:#A8A8A8;
   --bg-subdued-inverted:rgba(255,255,255,.04);
   --bg-subdued-strong-inverted:rgba(255,255,255,.19);
   --bg-secondary-on-dark:rgba(255,255,255,.20);
-  --bg-secondary-on-accent:rgba(0,0,0,.03);
-  --border-subtle-inverted:rgba(255,255,255,.04);
   --border-default-inverted:rgba(255,255,255,.19);
-  --illustration-background:rgba(242,212,0,.18);
   --surface-default:#FFFFFF;
-  --surface-light:#F7F7F7;      /* TO VERIFY: no confirmed Fluxus token */
 
   /* radius · Fluxus */
   --radius-button:12px;
@@ -75,6 +69,7 @@
   --w-bold:700; --w-demibold:600; --w-medium:500; --w-regular:400;
 
   --tap:44px;
+  --ease-out:cubic-bezier(.16,1,.3,1);
 }
 
 /* Scoped reset. :where() keeps specificity at zero so every class rule
@@ -82,14 +77,14 @@
 :where(#qr, #qr *){box-sizing:border-box;margin:0;padding:0}
 
 /* The quiz sizes itself off its own width, not the viewport, so it survives
-   any column width on the site. No fixed height, no vertical clipping,
-   header and footer sit in normal flow. */
+   any column width on the site. No fixed height, no vertical clipping. */
 #qr{
   container-type:inline-size;
   container-name:quiz;
   background:var(--bg-black);
   color:var(--content-primary-white);
-  font-family:"Inter DS",Inter,-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
+  font-family:"Google Sans Flex",Inter,-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif;
+  font-variation-settings:"GRAD" 0,"ROND" 0;
   font-weight:var(--w-regular);
   overflow-x:clip;
   -webkit-font-smoothing:antialiased;
@@ -101,73 +96,138 @@
   display:none;
   flex-direction:column;
   align-items:center;
-  padding:var(--sp-2xl) var(--sp-xl) var(--sp-3xl);
+  padding:var(--sp-2xl) var(--sp-m) var(--sp-3xl);
   gap:var(--sp-2xl);
   animation:fu .38s cubic-bezier(.22,.61,.36,1);
 }
 .sc.on{display:flex}
 @keyframes fu{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 
-/* --- logo + footer ---------------------------------------------------- */
+/* --- logo ------------------------------------------------------------- */
 /* Approved marks exported from the Figma `allstar` component set. Never
-   recoloured here: the dark screens use allstar_inverted, the accent
-   screen uses allstar. Brand-book minimum digital width is 120px. */
-.brandlogo{width:120px;height:auto;display:block}
-/* Intro sits at 82px in the design. NOTE: the brand book minimum digital width
-   is 120px, so this is under it. Flagged, not silently corrected. */
-#s-intro .brandlogo{width:82px}
-.lbar{display:flex;flex-direction:column;align-items:center;gap:var(--sp-s);width:100%}
-
-.fbar{
-  width:100%;
-  border-top:2px solid var(--bg-accent);
-  padding:var(--sp-m) var(--sp-xl);
-  display:flex;align-items:center;justify-content:space-between;gap:var(--sp-s);
-  margin-top:var(--sp-2xl);
-}
-.fbar-l{
-  font-size:10px;line-height:12px;font-weight:var(--w-medium);
-  letter-spacing:.12em;text-transform:uppercase;
-  color:var(--content-secondary-white);
-}
+   recoloured here. 82px on the dark screens per the design. NOTE: the brand
+   book minimum digital width is 120px, so this is under it. Flagged, not
+   silently corrected. */
+.brandlogo{width:82px;height:auto;display:block}
+.lbar{display:flex;justify-content:center;width:100%}
 
 /* --- type ------------------------------------------------------------- */
-.eyebrow{
-  font-size:10px;line-height:12px;font-weight:var(--w-demibold);
-  letter-spacing:.12em;text-transform:uppercase;
-  color:var(--content-secondary-white);
-}
-.eyebrow.wide{letter-spacing:.16em}
 .htitle{
-  font-size:clamp(28px,9.2cqw,36px);line-height:1.222;
+  font-size:clamp(34px,10.5cqw,41px);line-height:1.073;letter-spacing:-.01em;
   font-weight:var(--w-demibold);
-  color:var(--content-primary-white);text-align:center;text-wrap:balance;
+  color:var(--content-primary-white);text-align:center;
 }
-.hsub{
-  font-size:16px;line-height:24px;font-weight:var(--w-regular);
-  color:var(--content-secondary-white);text-align:center;max-width:34ch;
+.tytitle{
+  font-size:28px;line-height:36px;font-weight:var(--w-demibold);
+  color:var(--content-primary-white-strong);text-align:center;text-wrap:balance;
+  max-width:358px;
 }
 
-/* --- persona illustration -------------------------------------------- */
-/* Intro hero: three stacked cards (two plain colour, one carrying the
-   illustration), percentages taken from the Figma group bbox so the stack
-   scales with the card instead of being pinned to the 390 frame. */
-.intro-stack{position:relative;width:100%;max-width:380px;margin:0 auto;aspect-ratio:318.22/277.73}
-.intro-card{
-  position:absolute;border-radius:24px;
-  box-shadow:0 24px 56px rgba(18,22,32,.05),0 8px 16px rgba(18,22,32,.03),0 4px 8px rgba(18,22,32,.02),0 1px 2px rgba(18,22,32,.02);
+/* Text links: underlined Medium, as drawn. Real <button>s so they are
+   keyboard and screen-reader operable. */
+.tlink{
+  font-family:inherit;background:none;border:0;cursor:pointer;
+  font-weight:var(--w-medium);text-decoration:underline;text-underline-offset:.18em;
+  min-height:var(--tap);display:inline-flex;align-items:center;
+  -webkit-tap-highlight-color:transparent;
 }
-.intro-card.back{left:8.734%;top:15.463%;width:79.917%;height:69.079%;background:rgba(146,122,12,.53);transform:rotate(23.65deg)}
-.intro-card.mid{left:27.006%;top:8.541%;width:79.917%;height:69.079%;background:#c6a81d;transform:rotate(11.66deg)}
-.intro-card.front{left:8.462%;top:.313%;width:79.973%;height:68.865%;background:#fed61c;overflow:hidden}
-.intro-card.front .art{position:absolute;top:10.39%;right:3.47%;bottom:-35.81%;left:2.77%}
-.intro-card.front .art svg{width:100%;height:100%;display:block}
+.tlink-l{font-size:16px;line-height:20px}
+.tlink-s{font-size:14px;line-height:16px}
+.tlink-grey{color:var(--content-secondary-white)}
+.tlink-white{color:var(--content-primary-white-strong)}
+.tlink-dim{color:var(--content-placeholder)}
+.tlink-dark{color:var(--content-primary)}
+.tlink:focus-visible{outline:3px solid var(--bg-accent);outline-offset:2px;border-radius:4px}
+/* Inline links keep the drawn 16px line box; padding and a matching negative
+   margin grow the touch target to 44px without moving anything. */
+a.tlink,.rcopy .tlink{min-height:0;padding:14px 0;margin:-14px 0}
 
-/* Result persona art. Sourced illustration is a flattened export (art +
-   baked persona name on yellow #fed61c), so this card has no padding and
-   no separate heading, unlike the intro cards. */
-.persona-card{width:100%;aspect-ratio:1/1;background:#fed61c;border-radius:32px;overflow:hidden}
-.persona-card img{width:100%;height:100%;display:block;object-fit:cover}
+/* --- coins: persona art ---------------------------------------------- */
+/* Every persona illustration is a circle, so it is animated as a coin: a
+   front face carrying the art and a back face in accent yellow with the
+   Allstar star, so the turn never shows the art mirrored. */
+.coin{position:relative;aspect-ratio:1/1;transform-style:preserve-3d;will-change:transform}
+.coin-face{position:absolute;inset:0;border-radius:50%;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden}
+.coin-face img{width:100%;height:100%;display:block}
+.coin-back{
+  transform:rotateY(180deg);
+  background:radial-gradient(circle at 35% 30%,#FFE676 0%,var(--bg-accent) 55%,#E6BB00 100%);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:inset 0 0 0 6px rgba(0,0,0,.08);
+}
+.coin-back svg{width:42%;height:auto;display:block}
+.coin-back svg path{fill:rgba(0,0,0,.14)}
+
+/* Shine: one light sweep across the face as the coin lands. */
+.coin-front::after{
+  content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;
+  background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.55) 50%,transparent 65%);
+  background-size:250% 100%;background-position:150% 0;opacity:0;
+}
+
+/* Result: one full-size coin spins in and settles. */
+.result-coin{width:min(300px,100%)}
+.result-coin:not(.go){opacity:0}
+.result-coin.go{animation:coinIn 1.5s var(--ease-out) both}
+.result-coin.go .coin-front::after{animation:shine .9s ease-out 1.05s both}
+@keyframes coinIn{
+  0%  {transform:perspective(1100px) translateY(28px) scale(.45) rotateY(-1080deg);opacity:0}
+  12% {opacity:1}
+  78% {transform:perspective(1100px) translateY(0) scale(1.04) rotateY(10deg)}
+  100%{transform:perspective(1100px) translateY(0) scale(1) rotateY(0)}
+}
+@keyframes shine{
+  0%  {opacity:0;background-position:150% 0}
+  25% {opacity:1}
+  100%{opacity:0;background-position:-60% 0}
+}
+/* The copy under the coin arrives once the coin has mostly landed. */
+.result-rise{opacity:0}
+.go-rise .result-rise{animation:rise .5s var(--ease-out) both}
+.go-rise .result-rise:nth-child(1){animation-delay:.85s}
+.go-rise .result-rise:nth-child(2){animation-delay:.95s}
+.go-rise .result-rise:nth-child(3){animation-delay:1.05s}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* Intro: two coins, positioned as percentages of the Figma group
+   (313.44 x 226) so the pair scales with the column. The pioneer sits in
+   front, as drawn. Each coin has an outer wrapper that floats and an inner
+   coin that does the entrance, so the two transforms never fight. */
+.intro-pair{position:relative;width:min(313.44px,100%);aspect-ratio:313.44/226}
+.intro-slot{position:absolute;width:57.43%}
+.intro-slot.a{left:0;top:0;z-index:2;animation:floatA 6s ease-in-out 1.6s infinite}
+.intro-slot.b{left:42.57%;top:20.35%;z-index:1;animation:floatB 7s ease-in-out 1.8s infinite}
+.intro-slot .coin{width:100%;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.intro-slot.a .coin{animation:inA 1.3s var(--ease-out) .15s both}
+.intro-slot.b .coin{animation:inB 1.3s var(--ease-out) .4s both}
+.intro-slot .coin.flip{animation:flip .9s var(--ease-out) both}
+@keyframes inA{
+  0%  {transform:perspective(900px) translate(-45%,10%) rotate(-12deg) rotateY(-540deg) scale(.6);opacity:0}
+  15% {opacity:1}
+  100%{transform:perspective(900px) translate(0,0) rotate(0) rotateY(0) scale(1)}
+}
+@keyframes inB{
+  0%  {transform:perspective(900px) translate(45%,-10%) rotate(12deg) rotateY(540deg) scale(.6);opacity:0}
+  15% {opacity:1}
+  100%{transform:perspective(900px) translate(0,0) rotate(0) rotateY(0) scale(1)}
+}
+@keyframes flip{
+  from{transform:perspective(900px) rotateY(0)}
+  to  {transform:perspective(900px) rotateY(360deg)}
+}
+@keyframes floatA{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-6px) rotate(-1.5deg)}}
+@keyframes floatB{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-5px) rotate(1.5deg)}}
+
+/* All personality types: a grid of the six coins, flipping in in turn. */
+.types{width:100%;display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp-s)}
+.types[hidden]{display:none}
+.types .coin{width:100%;animation:typeIn .7s var(--ease-out) both}
+.types .coin.me .coin-front{box-shadow:0 0 0 3px var(--bg-black),0 0 0 5px var(--bg-accent)}
+.types .coin.me{z-index:1}
+@keyframes typeIn{
+  from{transform:perspective(700px) rotateY(-180deg) scale(.7);opacity:0}
+  to  {transform:perspective(700px) rotateY(0) scale(1);opacity:1}
+}
 
 /* --- buttons · DS Button ---------------------------------------------- */
 /* Sizes are the DS ladder: Large 56, Medium 48. Radius is radius/button
@@ -177,41 +237,44 @@
   border:0;border-radius:var(--radius-button);cursor:pointer;
   display:inline-flex;align-items:center;justify-content:center;gap:var(--sp-xs);
   padding:0 var(--sp-m);min-height:var(--tap);
-  transition:background .18s,color .18s,opacity .18s;
+  transition:background .18s,color .18s;
   -webkit-tap-highlight-color:transparent;
 }
 .btn-lg{height:56px}
 .btn-md{height:48px}
 .btn-primary{background:var(--bg-accent);color:var(--content-on-accent)}
 .btn-secondary-dark{background:var(--bg-secondary-on-dark);color:var(--content-primary-white)}
-.btn-secondary-accent{background:var(--bg-secondary-on-accent);color:var(--content-on-accent)}
 .btn-block{width:100%}
 /* DS State=Disabled, replacing the old opacity hack on the whole button */
 .btn[disabled]{background:var(--bg-subdued-strong-inverted);color:var(--content-tertiary-inverted);cursor:default}
 
 @media (hover:hover) and (pointer:fine){
-  .btn-primary:hover{background:#D5BB00}
+  .btn-primary:hover{background:var(--bg-accent-hover)}
   .btn-secondary-dark:hover{background:rgba(255,255,255,.28)}
-  .btn-secondary-accent:hover{background:rgba(0,0,0,.08)}
   .btn[disabled]:hover{background:var(--bg-subdued-strong-inverted)}
   .op:hover{background:var(--bg-subdued-strong-inverted)}
 }
-.btn-primary:active{background:#D5BB00}
+.btn-primary:active{background:var(--bg-accent-hover)}
 .btn-secondary-dark:active{background:rgba(255,255,255,.28)}
 .op:active{background:var(--bg-subdued-strong-inverted)}
-.btn:focus-visible,.op:focus-visible{outline:3px solid var(--bg-accent);outline-offset:2px}
+.btn:focus-visible,.op:focus-visible,.intro-slot .coin:focus-visible{outline:3px solid var(--bg-accent);outline-offset:2px}
+
+.actions{display:flex;flex-direction:column;align-items:center;gap:var(--sp-2xl);width:100%}
+
+/* --- intro ------------------------------------------------------------ */
+#s-intro .actions{max-width:339px}
 
 /* --- progress --------------------------------------------------------- */
 .pbar{width:100%;display:flex;flex-direction:column;gap:var(--sp-xs)}
 .plb{
   font-size:10px;line-height:12px;font-weight:var(--w-medium);
-  text-transform:uppercase;text-align:right;
-  color:var(--content-secondary-white);
+  text-align:right;color:var(--content-secondary-white);
 }
-.ptr{height:4px;background:var(--bg-subdued-strong-inverted);border-radius:var(--radius-badge);overflow:hidden}
-.pfi{height:100%;background:var(--bg-accent);border-radius:var(--radius-badge);transition:width .42s cubic-bezier(.22,.61,.36,1)}
+.ptr{height:4px;background:var(--bg-subdued-strong-inverted);border-radius:4px;overflow:hidden}
+.pfi{height:100%;background:var(--bg-accent);transition:width .42s cubic-bezier(.22,.61,.36,1)}
 
 /* --- question --------------------------------------------------------- */
+#s-q{padding:var(--sp-xl) var(--sp-xl) var(--sp-3xl);gap:0}
 .qbody{display:flex;flex-direction:column;gap:var(--sp-xl);width:100%;max-width:620px}
 .qt{
   font-size:clamp(21px,6.2cqw,24px);line-height:1.333;
@@ -219,47 +282,47 @@
   color:var(--content-primary-white);
 }
 
-/* Option card · Figma component `Option card`, Selected=False/True */
+/* Option card · Figma component `Option card`, Selected=False/True.
+   Unselected carries the default border token on a 4% fill; selected
+   steps the fill to 19% and drops the rim, with the roundel going accent.
+   The border stays at 1px transparent when selected so nothing shifts. */
 .og{display:grid;grid-template-columns:1fr;gap:var(--sp-s);width:100%}
 .op{
   background:var(--bg-subdued-inverted);
-  border:1px solid transparent;
+  border:1px solid var(--border-default-inverted);
   border-radius:var(--radius-card);
   padding:var(--sp-m);
   display:flex;gap:var(--sp-s);align-items:flex-start;text-align:left;
   cursor:pointer;transition:background .18s,border-color .18s;
   min-height:var(--tap);-webkit-tap-highlight-color:transparent;
 }
-/* Selected reads as the fill step plus a rim. The rim uses the default
-   border token; on a dark ground that is the -inverted member of the family.
-   Plain color/border/default resolves to #000000 @7%, invisible here. Yellow
-   (color/border/active-subdued) is deliberately not used. */
-.op.sel{background:var(--bg-subdued-strong-inverted);border-color:var(--border-default-inverted)}
+.op.sel{background:var(--bg-subdued-strong-inverted);border-color:transparent}
 .oi{
   width:40px;height:40px;flex:0 0 40px;
   border-radius:var(--radius-badge);
   background:var(--bg-subdued-strong-inverted);
+  color:var(--content-primary-white);
   display:flex;align-items:center;justify-content:center;
-  transition:background .18s;
+  transition:background .18s,color .18s;
 }
-.op.sel .oi{background:var(--bg-accent)}
-/* DS icons are filled paths, so colour flows through currentColor. */
-.oi{color:var(--content-primary-white)}
-.op.sel .oi{color:var(--content-on-accent)}
-.oi svg{width:20px;height:20px;display:block;fill:currentColor}
+.op.sel .oi{background:var(--bg-accent);color:var(--content-on-accent)}
+.oi svg{width:20px;height:20px;display:block}
 .otext{display:flex;flex-direction:column;gap:var(--sp-2xs);min-width:0}
 .ol{font-size:16px;line-height:20px;font-weight:var(--w-demibold);color:var(--content-primary-white)}
 .os{font-size:14px;line-height:20px;font-weight:var(--w-regular);color:var(--content-secondary-white)}
 
 .qnav{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-s);width:100%}
 
-/* Per-question spot illustration, 88x88, exported from the design. */
-.qgfx{width:88px;height:88px;flex:0 0 88px;align-self:center}
+/* Per-question spot illustration: the Figma `Medium` illustration set,
+   342 x 144, one per question. */
+.qgfx{width:100%;max-width:342px;height:144px;align-self:center}
 .qgfx svg{width:100%;height:100%;display:block}
 
 /* --- result ----------------------------------------------------------- */
+#s-result{padding:var(--sp-2xl) var(--sp-m) var(--sp-3xl)}
 .rw{display:flex;flex-direction:column;gap:var(--sp-2xl);width:100%;max-width:560px}
 .blockA{display:flex;flex-direction:column;align-items:center;gap:var(--sp-l);width:100%}
+.rcopy{display:flex;flex-direction:column;align-items:flex-start;gap:var(--sp-l);width:100%}
 /* Brand accent rule, not a state affordance, so it stays accent yellow
    rather than taking the default border token used on the option cards. */
 .rquote{
@@ -270,38 +333,34 @@
 }
 .rdesc{
   width:100%;
-  font-size:14px;line-height:20px;font-weight:var(--w-regular);
+  font-size:16px;line-height:24px;font-weight:var(--w-regular);
   color:var(--content-secondary-white);
 }
 
 .blockB{display:flex;flex-direction:column;align-items:center;gap:var(--sp-m);width:100%}
 .panel{
   width:100%;
-  background:var(--bg-subdued-inverted);
   border-radius:var(--radius-surface);
-  padding:var(--sp-l);
   display:flex;flex-direction:column;gap:var(--sp-s);
 }
-.ptag{
-  font-size:10px;line-height:12px;font-weight:var(--w-medium);
-  text-transform:uppercase;
-  color:var(--bg-accent);
-}
-.ptext{font-size:14px;line-height:20px;color:var(--content-secondary-white)}
-.pmatch{display:flex;align-items:flex-start;gap:var(--sp-xs);font-size:14px;line-height:20px;font-weight:var(--w-demibold);color:var(--content-primary-white)}
-.pmatch svg{width:18px;height:18px;flex:0 0 18px;stroke:var(--bg-accent);margin-top:1px}
-/* Product fit moved onto a light surface in the updated design, with the
-   mark top-right. #F7F7F7 has no confirmed Fluxus background token yet, so it
-   is a named literal rather than a guessed semantic. The mark here is the
+/* Product fit on a white surface with the mark top right. The mark is the
    plain black variant: the design specifies allstar_inverted, which is white
-   and unreadable on this surface, and recolouring a mark is not allowed. */
-.panel-light{background:var(--surface-light)}
-.panel-light .ptext{color:var(--content-on-accent)}
+   and unreadable here, and recolouring a mark is not allowed. */
+.panel-light{background:var(--surface-default);padding:var(--sp-l)}
 .panel-logo{display:flex;justify-content:flex-end;width:100%}
 .panel-logo svg{width:62px;height:auto;display:block}
-.match-label{font-size:14px;line-height:20px;font-weight:var(--w-medium);color:var(--content-on-accent)}
-.match-product{font-size:24px;line-height:32px;font-weight:var(--w-demibold);color:var(--content-on-accent)}
+.fit-head{display:flex;flex-direction:column;gap:var(--sp-2xs)}
+.match-label{font-size:14px;line-height:20px;font-weight:var(--w-medium);color:var(--content-primary)}
+.match-product{font-size:24px;line-height:32px;font-weight:var(--w-demibold);color:var(--content-primary)}
+.ptext{font-size:14px;line-height:20px;color:var(--content-primary)}
 
+/* Email capture · Figma `Email capture (Marketo)`: 4% fill, 20px top and
+   bottom, and no side padding, so the fields run the full panel width. */
+.panel-capture{background:var(--bg-subdued-inverted);padding:var(--sp-l) 0}
+.ptag{
+  font-size:10px;line-height:12px;font-weight:var(--w-medium);
+  text-transform:uppercase;color:var(--bg-accent);
+}
 .psub{font-size:14px;line-height:20px;color:var(--content-secondary-white)}
 .pconsent{font-size:12px;line-height:16px;color:var(--content-tertiary-inverted)}
 
@@ -310,79 +369,52 @@
    #gate-slot and hide .blockB until submit. Nothing else changes. */
 #gate-slot:empty{display:none}
 
-/* --- thank you: full-bleed accent ------------------------------------ */
-#s-thankyou{background:var(--bg-accent)}
-#s-thankyou .htitle,#s-thankyou .hsub{color:var(--content-on-accent)}
-#s-thankyou .fbar{border-top-color:var(--bg-black)}
-#s-thankyou .fbar-l{color:var(--content-on-accent)}
-.divl{width:56px;height:4px;background:var(--bg-black)}
-.ty-card{
-  width:100%;max-width:342px;
-  background:var(--surface-default);
-  border-radius:var(--radius-surface);
-  padding:var(--sp-l);
-  display:flex;flex-direction:column;gap:var(--sp-xs);
-  text-align:left;
-}
-.ty-card-label{
-  font-size:10px;line-height:12px;font-weight:var(--w-demibold);
-  letter-spacing:.12em;text-transform:uppercase;color:var(--content-on-accent);
-}
-.ty-card-text{font-size:14px;line-height:20px;color:var(--content-on-accent)}
+/* --- thank you -------------------------------------------------------- */
+#s-thankyou{gap:var(--sp-2xl)}
+#s-thankyou .tybody{display:flex;flex-direction:column;align-items:center;gap:var(--sp-xl);width:100%;max-width:358px}
 
 /* --- Marketo form, restyled -------------------------------------------- */
 /* forms2 writes fixed pixel widths onto the form and its rows, which is
    what forces horizontal scroll on a phone. Everything is forced back to
-   100% and inputs are 16px so iOS Safari does not zoom the page on focus. */
-.mkto-host .mktoForm{width:100%!important;max-width:100%!important;padding:0!important;font-family:inherit!important;color:var(--content-primary-white)!important}
+   100%. Fields follow DS Input/M on a white ground: 48px, 16px text, so
+   iOS Safari does not zoom the page on focus. */
+.mkto-host .mktoForm{width:100%!important;max-width:100%!important;padding:0!important;font-family:inherit!important;color:var(--content-primary)!important;display:flex!important;flex-direction:column!important;gap:var(--sp-s)!important}
 .mkto-host .mktoForm *{font-family:inherit!important;box-sizing:border-box!important}
-.mkto-host .mktoForm .mktoFormRow,.mkto-host .mktoForm .mktoFieldWrap,.mkto-host .mktoForm .mktoFormCol,.mkto-host .mktoForm .mktoFieldDescriptor{width:100%!important;max-width:100%!important;float:none!important;margin:0!important;display:block!important}
+.mkto-host .mktoForm .mktoFormRow,.mkto-host .mktoForm .mktoFieldWrap,.mkto-host .mktoForm .mktoFormCol,.mkto-host .mktoForm .mktoFieldDescriptor{width:100%!important;max-width:100%!important;float:none!important;margin:0!important;display:block!important;position:relative!important}
 .mkto-host .mktoForm .mktoOffset,.mkto-host .mktoForm .mktoGutter,.mkto-host .mktoForm .mktoClear{display:none!important}
-/* Field label per DS Input/S: Medium 14/16, sentence case, no tracking. */
+.mkto-host .mktoForm .mktoFormRow:empty{display:none!important}
 .mkto-host .mktoForm .mktoLabel{
-  /* forms2 floats labels so they sit beside the field. Left floated, the input
-     rises into the label's padding and the two overlap by ~8px. Clearing the
-     float is what actually produces the DS 8px gap. */
   float:none!important;display:block!important;
   font-size:14px!important;line-height:16px!important;font-weight:var(--w-medium)!important;
-  letter-spacing:normal!important;text-transform:none!important;
-  color:var(--content-primary-inverted)!important;
+  color:var(--content-primary-white-strong)!important;
   width:auto!important;max-width:100%!important;
   margin:0 0 var(--sp-xs)!important;padding:0!important;
 }
+/* The design shows placeholder-only fields. Labels are hidden visually only
+   once the script has copied each label into its field's placeholder, so a
+   form without hint text never ends up with blank, unlabelled fields. */
+.mkto-host .mktoForm.ph-ready .mktoLabel{
+  position:absolute!important;width:1px!important;height:1px!important;margin:-1px!important;
+  overflow:hidden!important;clip:rect(0 0 0 0)!important;white-space:nowrap!important;
+}
 .mkto-host .mktoForm input[type=text],.mkto-host .mktoForm input[type=email],.mkto-host .mktoForm input[type=tel],.mkto-host .mktoForm select,.mkto-host .mktoForm textarea{
   width:100%!important;max-width:100%!important;
-  height:40px!important;min-height:40px!important;
+  height:48px!important;min-height:48px!important;
   padding:0 var(--sp-m)!important;
-  font-size:14px!important;line-height:16px!important;font-weight:var(--w-regular)!important;
-  color:var(--content-primary-white)!important;
-  background:var(--bg-default-dark)!important;
+  font-size:16px!important;line-height:20px!important;font-weight:var(--w-regular)!important;
+  color:var(--content-primary)!important;
+  background:var(--surface-default)!important;
   border:1px solid var(--border-input)!important;
   border-radius:var(--radius-input)!important;
-  box-shadow:none!important;margin-bottom:var(--sp-s)!important;
+  box-shadow:none!important;margin:0!important;
 }
-.mkto-host .mktoForm input::placeholder{color:var(--content-tertiary)!important}
-.mkto-host .mktoForm input:focus,.mkto-host .mktoForm select:focus{outline:none!important;border-color:var(--bg-accent)!important}
-
-/* Two DS input values do not survive contact with a touch screen, so they are
-   overridden only on coarse pointers and left intact on desktop:
-   14px text -> iOS Safari zooms the whole page on focus below 16px
-   40px box  -> under the 44px minimum touch target */
-@media (pointer: coarse){
-  .mkto-host .mktoForm input[type=text],
-  .mkto-host .mktoForm input[type=email],
-  .mkto-host .mktoForm input[type=tel],
-  .mkto-host .mktoForm select,
-  .mkto-host .mktoForm textarea{
-    font-size:16px!important;height:44px!important;min-height:44px!important;
-  }
-}
-/* Marketo renders the privacy consent as an mktoHtmlText block. */
+.mkto-host .mktoForm input::placeholder{color:var(--content-placeholder)!important;opacity:1!important}
+.mkto-host .mktoForm input:focus,.mkto-host .mktoForm select:focus{outline:none!important;border-color:var(--bg-accent)!important;box-shadow:0 0 0 2px var(--bg-accent)!important}
+/* Marketo renders any consent copy as an mktoHtmlText block. */
 .mkto-host .mktoForm .mktoHtmlText{
   width:100%!important;max-width:100%!important;
   font-size:12px!important;line-height:16px!important;
   color:var(--content-tertiary-inverted)!important;
-  margin:0 0 var(--sp-xs)!important;
 }
 .mkto-host .mktoForm .mktoHtmlText *{color:var(--content-tertiary-inverted)!important;font-size:12px!important;line-height:16px!important}
 .mkto-host .mktoForm .mktoHtmlText a{text-decoration:underline!important}
@@ -397,13 +429,13 @@
   padding:0 var(--sp-m)!important;box-shadow:none!important;cursor:pointer;
   transition:background .18s;
 }
-.mkto-host .mktoForm .mktoButton:active{background:#D5BB00!important}
-@media (hover:hover) and (pointer:fine){ .mkto-host .mktoForm .mktoButton:hover{background:#D5BB00!important} }
+.mkto-host .mktoForm .mktoButton:active{background:var(--bg-accent-hover)!important}
+@media (hover:hover) and (pointer:fine){ .mkto-host .mktoForm .mktoButton:hover{background:var(--bg-accent-hover)!important} }
 .mkto-host .mktoForm .mktoError{position:static!important}
 .mkto-host .mktoForm .mktoError .mktoErrorArrowWrap{display:none!important}
 .mkto-host .mktoForm .mktoError .mktoErrorMsg{
   position:static!important;display:block!important;
-  margin:0 0 var(--sp-s)!important;padding:9px 12px!important;max-width:100%!important;
+  margin:var(--sp-xs) 0 0!important;padding:9px 12px!important;max-width:100%!important;
   background:var(--surface-default)!important;background-image:none!important;
   border:0!important;border-radius:var(--radius-input)!important;
   color:var(--content-on-accent)!important;
@@ -412,14 +444,16 @@
 }
 .mkto-host .mktoForm .mktoError .mktoErrorMsg *{color:var(--content-on-accent)!important}
 
+/* Visually hidden live region for "Link copied". */
+.sr{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
 /* --- container-driven breakpoints ------------------------------------- */
 @container quiz (min-width:560px){
   .og{grid-template-columns:1fr 1fr}
 }
 @container quiz (min-width:720px){
-  .sc{padding:44px var(--sp-2xl) var(--sp-3xl)}
-  .fbar{padding:var(--sp-m) var(--sp-2xl)}
-  .intro-stack{max-width:480px}
+  .sc,#s-q,#s-result{padding:44px var(--sp-2xl) var(--sp-3xl)}
+  .intro-pair{width:min(400px,100%)}
 }
 @container quiz (min-width:900px){
   .og.six{grid-template-columns:1fr 1fr 1fr}
@@ -428,13 +462,16 @@
 /* Browsers without container query support fall back to viewport widths. */
 @supports not (container-type:inline-size){
   @media (min-width:560px){.og{grid-template-columns:1fr 1fr}}
-  .htitle{font-size:clamp(28px,6.4vw,36px)}
+  .htitle{font-size:clamp(34px,6.4vw,41px)}
   .qt{font-size:clamp(21px,3.6vw,24px)}
 }
 
+/* Reduced motion: every animation collapses to its end state, and the
+   idle float stops. Coins simply appear. */
 @media (prefers-reduced-motion:reduce){
-  #qr *,#qr *::before,#qr *::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  #qr *,#qr *::before,#qr *::after{animation-duration:.001ms!important;animation-delay:0s!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
   .sc{animation:none}
+  .intro-slot{animation:none!important}
 }
 </style>
 
@@ -443,13 +480,15 @@
   <!-- 01 Intro -->
   <div class="sc on" id="s-intro">
     <div class="lbar" id="logo-dark-1"></div>
-    <h1 class="htitle">What kind of fleet manager are you?</h1>
-    <div class="intro-stack">
-      <div class="intro-card back"></div>
-      <div class="intro-card mid"></div>
-      <div class="intro-card front"><div class="art" id="intro-art"></div></div>
+    <h1 class="htitle">What kind of<br>fleet manager<br>are you?</h1>
+    <div class="intro-pair" aria-hidden="true">
+      <div class="intro-slot a"><div class="coin" data-art="intro-ap"></div></div>
+      <div class="intro-slot b"><div class="coin" data-art="intro-md"></div></div>
     </div>
-    <button class="btn btn-lg btn-primary btn-block" onclick="go()">Take the quiz</button>
+    <div class="actions">
+      <button class="btn btn-md btn-primary btn-block" onclick="go()">Take the quiz</button>
+      <button class="tlink tlink-l tlink-grey" data-share>Share the quiz</button>
+    </div>
   </div>
 
   <!-- 02 / 03 Question. No logo and no question-number eyebrow, by design. -->
@@ -473,9 +512,13 @@
   <div class="sc" id="s-result">
     <div class="rw">
       <div class="blockA">
-        <div class="persona-card" id="result-art"></div>
-        <div class="rquote" id="r-sub"></div>
-        <p class="rdesc" id="r-desc"></p>
+        <div class="coin result-coin" id="result-art"></div>
+        <div class="rcopy" id="r-copy">
+          <div class="rquote result-rise" id="r-sub"></div>
+          <p class="rdesc result-rise" id="r-desc"></p>
+          <button class="tlink tlink-s tlink-white result-rise" id="types-toggle" aria-expanded="false" aria-controls="types">Check all personality types</button>
+        </div>
+        <div class="types" id="types" hidden></div>
       </div>
 
       <div id="gate-slot"></div>
@@ -483,79 +526,84 @@
       <div class="blockB">
         <div class="panel panel-light">
           <div class="panel-logo" id="fit-logo"></div>
-          <div>
+          <div class="fit-head">
             <div class="match-label">Your Allstar match</div>
             <div class="match-product" id="r-fit-product"></div>
           </div>
           <p class="ptext" id="r-fit-text"></p>
+          <a class="tlink tlink-s tlink-dark" id="r-fit-link" href="#" target="_blank" rel="noopener">Discover more</a>
         </div>
 
-        <div class="panel mkto-host">
+        <div class="panel panel-capture mkto-host">
           <div class="ptag">Stay in the loop</div>
-          <p class="psub">Leave your work email and we'll keep you posted on the Allstar products built for fleet managers like you.</p>
+          <p class="psub">Leave your details to help us to assist Fleet Managers like you navigate the ever evolving world of fleet management.</p>
           <form id="mktoForm_0000"></form>
-          <p class="pconsent">By submitting your email address, you agree to take part in future research.</p>
+          <p class="pconsent">By submitting your email address you agree to Allstar contacting you about participating in future research studies.</p>
         </div>
 
-        <button class="btn btn-md btn-secondary-dark" onclick="restart()">Try again</button>
+        <div class="actions">
+          <button class="btn btn-md btn-secondary-dark btn-block" onclick="restart()">Take the quiz again</button>
+          <button class="tlink tlink-l tlink-white" data-share>Share the quiz</button>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- 05 Thank you -->
   <div class="sc" id="s-thankyou">
-    <div class="lbar" id="logo-accent-1"></div>
-    <h2 class="htitle">Thanks for taking part</h2>
-    <div class="divl"></div>
-    <p class="hsub">That is a wrap. Come and find us at the Allstar stand to talk through your result.</p>
-    <div class="ty-card">
-      <div class="ty-card-label">Find us today</div>
-      <div class="ty-card-text">The Allstar team are on stand [X]. Bring your result and let us talk fleet.</div>
+    <div class="lbar" id="logo-dark-2"></div>
+    <div class="tybody">
+      <h2 class="tytitle">Thanks for taking part. Your result will be in your inbox shortly.</h2>
+      <div class="actions">
+        <button class="btn btn-md btn-primary btn-block" onclick="restart()">Take the quiz again</button>
+        <button class="tlink tlink-l tlink-dim" data-share>Share the quiz</button>
+      </div>
     </div>
-    <button class="btn btn-md btn-secondary-accent" onclick="restart()">Take the quiz again</button>
   </div>
+
+  <div class="sr" aria-live="polite" id="share-status"></div>
 </div>
 
 <script>
 /* ---------------------------------------------------------------
    ASSETS — approved marks exported from the Figma `allstar`
-   component set, and the star character from the same file.
-   Inlined as SVG so they stay vector and recolour-free.
+   component set. Inlined as SVG so they stay vector and recolour-free.
 --------------------------------------------------------------- */
 const LOGO_INVERTED = '<svg class="brandlogo" viewBox="0 0 215 144" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Allstar"><g clip-path="url(#li)"><path d="M0.274902 130.625C0.274902 119.378 8.05818 116.708 25.5155 116.708H27.1062C27.0362 113.121 26.1058 111.288 19.3229 111.288C15.3044 111.333 11.3694 112.448 7.91812 114.522L2.49584 106.461C5.27701 104.566 12.2299 101.614 20.5034 101.614C34.6894 101.614 37.6007 106.179 37.6007 117.424V129.516C37.6007 132.681 37.8107 133.173 41.0121 133.173V142.172C39.4963 142.435 37.9564 142.53 36.4201 142.454C32.2484 142.454 30.4176 141.608 28.9169 138.514C26.9161 141.255 22.5243 142.948 15.0811 142.948C2.91601 142.928 0.274902 137.577 0.274902 130.625ZM27.1062 125.768V124.296H26.2058C12.3 124.296 10.6293 125.425 10.6293 129.708C10.6293 132.66 12.2299 134.071 17.242 134.071C24.1249 134.071 27.1062 131.612 27.1062 125.768Z" fill="white"/><path d="M43.9338 130.271V87.749H54.7784V128.932C54.7784 132.166 55.3987 133.083 58.67 133.083H59.9907V142.152C58.2373 142.355 56.4732 142.449 54.7084 142.434C47.6154 142.434 43.9338 139.694 43.9338 130.271Z" fill="white"/><path d="M62.4194 130.271V87.749H73.304V128.932C73.304 132.166 73.9342 133.083 77.1957 133.083H78.5162V142.152C76.7629 142.355 74.9988 142.45 73.234 142.434C66.151 142.434 62.4595 139.694 62.4595 130.271" fill="white"/><path d="M80.6082 137.928L86.1706 129.868C90.3433 132.503 95.1521 133.938 100.076 134.019C105.569 134.019 107.169 133.455 107.169 130.714C107.169 128.396 105.569 127.902 100.216 127.198C90.4824 125.857 83.0392 124.457 83.0392 114.098C83.0392 106.037 87.7712 101.653 100.216 101.653C106.539 101.653 112.652 102.913 116.833 105.311L111.611 113.886C108.168 112.193 104.389 111.304 100.557 111.287C95.0043 111.287 93.8838 112.294 93.8838 114.168C93.8838 116.416 95.2744 116.91 100.357 117.605C110.361 119.016 117.804 120.214 117.804 130.12C117.804 139.259 112.932 142.988 99.3761 142.988C92.6333 142.988 85.8904 141.577 80.6082 137.949" fill="white"/><path d="M119.055 102.51H126.059L127.93 92.8062L136.333 91.0529V102.51H145.657V111.922H136.333V128.306C136.333 131.399 136.754 133.082 141.416 133.082H145.657V142.312C144.056 142.453 141.135 142.453 139.184 142.453C128.55 142.453 125.488 138.795 125.488 129.938V111.922H119.026L119.055 102.51Z" fill="white"/><path d="M148.117 130.625C148.117 119.378 155.901 116.708 173.348 116.708H174.949C174.879 113.121 173.948 111.288 167.165 111.288C163.146 111.329 159.211 112.445 155.76 114.522L150.338 106.461C153.119 104.566 160.072 101.614 168.346 101.614C182.522 101.614 185.442 106.179 185.442 117.424V129.516C185.442 132.681 185.653 133.173 188.844 133.173V142.172C187.332 142.434 185.796 142.529 184.263 142.454C180.09 142.454 178.26 141.608 176.749 138.514C174.749 141.255 170.357 142.948 162.923 142.948C150.758 142.948 148.117 137.597 148.117 130.645V130.625ZM174.949 125.788V124.316H174.038C160.142 124.316 158.472 125.445 158.472 129.727C158.472 132.681 160.072 134.091 165.074 134.091C171.957 134.091 174.949 131.632 174.949 125.788Z" fill="white"/><path d="M192.045 103.135L200.529 102.511L201.639 106.864C203.311 104.334 208.103 102.299 214.225 102.087V112.627C204.981 112.698 202.96 116.355 202.96 122.614V142.312H192.045V103.135Z" fill="white"/><path d="M159.962 1.24139L180.661 30.1811L214.275 19.2179L193.456 48.0669L214.155 77.0067L180.591 65.9024L159.763 94.7514L159.842 59.0302L126.268 47.9259L159.882 36.9627L159.962 1.24139Z" fill="#F2D400"/></g><defs><clipPath id="li"><rect width="214" height="142.667" fill="white" transform="translate(0.274902 1.24139)"/></clipPath></defs></svg>';
-
 const LOGO_PLAIN = '<svg class="brandlogo" viewBox="0 0 215 145" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Allstar"><g clip-path="url(#lp)"><path d="M0.274902 130.911C0.274902 119.665 8.05818 116.995 25.5155 116.995H27.1062C27.0362 113.408 26.1058 111.575 19.3229 111.575C15.3044 111.619 11.3694 112.735 7.91812 114.809L2.49584 106.748C5.27701 104.853 12.2299 101.901 20.5034 101.901C34.6894 101.901 37.6007 106.466 37.6007 117.711V129.803C37.6007 132.967 37.8107 133.46 41.0121 133.46V142.459C39.4963 142.722 37.9564 142.817 36.4201 142.741C32.2484 142.741 30.4176 141.895 28.9169 138.801C26.9161 141.542 22.5243 143.235 15.0811 143.235C2.91601 143.215 0.274902 137.864 0.274902 130.911ZM27.1062 126.054V124.583H26.2058C12.3 124.583 10.6293 125.712 10.6293 129.995C10.6293 132.947 12.2299 134.358 17.242 134.358C24.1249 134.358 27.1062 131.898 27.1062 126.054Z" fill="black"/><path d="M43.9338 130.558V88.0358H54.7784V129.219C54.7784 132.453 55.3987 133.37 58.67 133.37H59.9907V142.439C58.2373 142.642 56.4732 142.736 54.7084 142.721C47.6154 142.721 43.9338 139.98 43.9338 130.558Z" fill="black"/><path d="M62.4194 130.558V88.0358H73.304V129.219C73.304 132.453 73.9342 133.37 77.1957 133.37H78.5162V142.439C76.7629 142.642 74.9988 142.737 73.234 142.721C66.151 142.721 62.4595 139.98 62.4595 130.558" fill="black"/><path d="M80.6082 138.215L86.1706 130.155C90.3433 132.79 95.1521 134.225 100.076 134.306C105.569 134.306 107.169 133.741 107.169 131.001C107.169 128.683 105.569 128.189 100.216 127.484C90.4824 126.144 83.0392 124.744 83.0392 114.385C83.0392 106.323 87.7712 101.94 100.216 101.94C106.539 101.94 112.652 103.2 116.833 105.598L111.611 114.173C108.168 112.48 104.389 111.591 100.557 111.574C95.0043 111.574 93.8838 112.581 93.8838 114.455C93.8838 116.702 95.2744 117.196 100.357 117.892C110.361 119.302 117.804 120.501 117.804 130.407C117.804 139.546 112.932 143.275 99.3761 143.275C92.6333 143.275 85.8904 141.864 80.6082 138.235" fill="black"/><path d="M119.055 102.797H126.059L127.93 93.093L136.333 91.3397V102.797H145.657V112.208H136.333V128.593C136.333 131.686 136.754 133.369 141.416 133.369H145.657V142.598C144.056 142.74 141.135 142.74 139.184 142.74C128.55 142.74 125.488 139.082 125.488 130.225V112.208H119.026L119.055 102.797Z" fill="black"/><path d="M148.117 130.911C148.117 119.665 155.901 116.995 173.348 116.995H174.949C174.879 113.408 173.948 111.575 167.165 111.575C163.146 111.616 159.211 112.732 155.76 114.809L150.338 106.748C153.119 104.853 160.072 101.901 168.346 101.901C182.522 101.901 185.442 106.466 185.442 117.711V129.803C185.442 132.967 185.653 133.46 188.844 133.46V142.459C187.332 142.721 185.796 142.816 184.263 142.741C180.09 142.741 178.26 141.895 176.749 138.801C174.749 141.542 170.357 143.235 162.923 143.235C150.758 143.235 148.117 137.884 148.117 130.932V130.911ZM174.949 126.075V124.603H174.038C160.142 124.603 158.472 125.732 158.472 130.014C158.472 132.967 160.072 134.378 165.074 134.378C171.957 134.378 174.949 131.919 174.949 126.075Z" fill="black"/><path d="M192.045 103.422L200.529 102.797L201.639 107.15C203.311 104.621 208.103 102.586 214.225 102.374V112.914C204.981 112.985 202.96 116.642 202.96 122.9V142.599H192.045V103.422Z" fill="black"/><path d="M159.962 1.52818L180.661 30.4679L214.275 19.5047L193.456 48.3537L214.155 77.2935L180.591 66.1892L159.763 95.0382L159.842 59.317L126.268 48.2127L159.882 37.2495L159.962 1.52818Z" fill="#F2D400"/></g><defs><clipPath id="lp"><rect width="214" height="142.667" fill="white" transform="translate(0.274902 1.52818)"/></clipPath></defs></svg>';
 
-const STAR = '<svg viewBox="0 0 211 223" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Allstar star character"><path d="M80.5719 15.4668C80.5828 10.6156 86.8014 8.6207 89.6323 12.5603L127.996 65.9473C129.265 67.7138 131.531 68.4569 133.6 67.7852L195.937 47.548C200.541 46.0535 204.37 51.3197 201.529 55.2386L162.855 108.582C161.591 110.326 161.586 112.684 162.843 114.434L201.294 167.947C204.119 171.878 200.267 177.128 195.67 175.614L133.426 155.116C131.36 154.436 129.092 155.169 127.815 156.93L89.2125 210.15C86.3641 214.077 80.1542 212.054 80.1651 207.203L80.3132 141.236C80.3181 139.073 78.9314 137.152 76.8767 136.476L14.5272 115.95C9.93524 114.438 9.94866 107.938 14.5468 106.445L76.9677 86.1808C79.0245 85.5131 80.4189 83.5988 80.4238 81.4363L80.5719 15.4668Z" fill="#F2D400"/><ellipse cx="135.483" cy="93.5009" rx="4.99369" ry="5.3266" fill="#494000"/><ellipse cx="107.716" cy="98.1289" rx="4.99369" ry="5.3266" fill="#494000"/><path d="M144.499 110.681C145.361 109.603 145.186 108.03 144.108 107.167C143.03 106.304 141.457 106.479 140.594 107.557L142.547 109.119L144.499 110.681ZM119.051 111.611L117.568 113.624C120.127 115.509 124.47 117.61 129.379 117.846C134.431 118.089 139.973 116.338 144.499 110.681L142.547 109.119L140.594 107.557C137.146 111.868 133.194 113.024 129.62 112.852C125.902 112.673 122.485 111.036 120.534 109.598L119.051 111.611Z" fill="#494000"/></svg>';
-const INTRO_ART = '<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="238.597" height="239.897" viewBox="0 0 238.597 239.897" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="Group"><path id="Vector" d="M83.429 199.291L72.6117 224.022L66.1174 222.112C57.9799 219.735 49.862 218.585 41.6463 215.389C46.8692 209.191 50.5271 202.584 51.603 193.97C61.1488 197.751 77.0912 198.238 77.5998 194.691C78.0301 191.651 63.7113 195.393 51.9159 190.111C51.603 190.15 51.29 190.131 50.9575 190.092C51.0357 190.092 51.1139 190.111 51.1922 190.131C50.8596 190.092 50.5075 190.111 50.175 190.131C50.0381 190.17 49.9011 190.189 49.7642 190.248C49.7055 190.267 49.6664 190.287 49.6077 190.325C49.6077 190.325 49.5882 190.325 49.5686 190.345C49.4512 190.442 49.3534 190.54 49.2361 190.657C49.2361 190.676 49.1969 190.696 49.1774 190.715C48.7862 191.3 48.4536 191.924 48.1798 192.547C47.5734 194.048 47.0648 195.568 46.4193 197.049C46.3606 197.166 46.2823 197.283 46.2041 197.4C45.3043 207.535 33.6654 216.11 36.7365 217.61C47.2995 222.756 58.4103 224.51 69.7557 227.16C71.4771 227.569 73.0811 228.661 74.8808 227.823C76.1131 227.238 76.3674 225.27 76.9738 223.633C80.2014 214.999 87.6151 200.557 85.3851 198.667C85.033 198.375 83.8007 198.472 83.429 199.31V199.291Z" fill="#131313"/><path id="Vector_2" d="M217.305 149.632L209.05 140.784C212.963 139.459 216.933 138.893 220.494 135.229C214.097 127.999 208.131 121.489 204.864 111.959C207.916 111.277 212.102 112.076 214.645 110.088C217.305 108.003 208.816 100.441 208.424 89.8388C214.214 83.5633 219.809 78.0089 223.995 70.2326C214.508 66.1594 206.331 61.3845 200.502 53.0041C203.573 51.9127 206.996 51.328 208.776 47.6641C199.309 40.0048 194.477 30.1237 192.462 18.3717C183.367 20.9248 175.933 23.0686 167.678 24.4134C164.862 15.3314 157.546 8.64655 148.293 6.32733C132.566 2.37101 119.03 7.08741 103.87 0.363613C102.559 -0.221065 101.523 -0.14311 100.662 0.909311C100.153 1.55246 100.114 2.66334 100.74 3.52087L111.694 6.98996L117.308 8.06187L142.19 9.50408C151.54 10.0498 159.267 16.1499 163.023 24.5888C161.947 25.8751 160.812 26.1869 159.795 26.2064C159.306 25.5632 158.7 25.037 158.015 24.6667C156.353 23.8092 154.572 23.8287 153.145 23.8287L130.688 23.9456C129.612 23.9456 128.732 24.8226 128.732 25.8946C128.732 26.9665 129.612 27.8435 130.688 27.8435L153.145 27.7265C154.201 27.7265 155.394 27.7265 156.176 28.1358C156.235 28.1553 156.274 28.1943 156.313 28.2333C156.392 28.6815 156.529 29.1882 156.705 29.7534C156.705 30.1042 156.842 30.4355 157.018 30.7279C157.917 33.4564 159.385 37.3542 160.382 42.4214L162.593 53.7642C150.738 53.0041 139.862 53.9591 127.148 56.2588C127.558 46.7091 126.267 37.9584 124.644 28.5451C124.448 27.4537 125.896 24.238 124.976 24.2964C116.995 24.8811 98.6471 22.9712 98.6471 22.9712C91.9963 22.8542 85.9714 20.6519 84.2305 19.9113L80.8855 18.5081C79.3793 17.865 78.5382 18.0794 77.9122 18.781C76.8559 19.9893 77.2667 21.6849 79.1446 22.2695C79.8879 22.5034 81.9418 23.6533 81.4919 24.6278L77.1885 33.7877C77.1885 33.7877 77.1885 33.8852 77.1689 33.9436C76.7386 35.912 75.5845 37.5102 74.3521 39.0498L69.3053 38.4261C68.7576 38.3482 67.6231 38.2118 66.6254 38.9718C65.8626 39.537 65.5887 40.3166 65.4518 40.7259C64.5911 43.1426 63.7891 45.5982 62.9675 48.0538C60.9136 54.2514 58.801 60.566 55.945 66.4322L45.695 65.5552C43.778 65.3993 42.0371 66.7051 41.685 68.6345C39.2789 82.0236 32.4325 94.4383 22.3781 103.579L19.6395 106.073L23.2583 106.911C25.6252 107.457 28.3638 107.749 30.9263 107.749C31.0046 107.749 31.0828 107.749 31.1611 107.749C31.1219 107.769 31.1024 107.808 31.0632 107.827L36.247 108.451C32.3347 118.196 25.8991 125.719 18.7788 132.988C22.9062 135.931 26.2708 136.204 30.3199 137.782C21.5174 143.025 0.723871 154.582 2.30833 159.045C2.56262 159.747 3.95146 160.468 4.94908 159.649C10.5827 154.972 31.3958 141.31 37.2837 139.946C37.2837 139.946 41.685 140.413 35.1907 151.211L27.3857 163.625C24.9993 163.625 22.6519 163.157 19.6786 162.222L17.7225 161.598L17.1944 163.586C14.4167 174.11 9.05693 183.933 1.72149 192.002L0.000107416 193.892L2.2692 195.042C11.1891 199.583 20.6958 202.818 30.5351 204.65C31.2784 204.787 32.0609 204.903 32.8824 204.903C33.8018 204.903 34.7603 204.748 35.6601 204.241C37.1272 203.442 37.9097 202.058 38.5356 200.83C42.9369 192.196 45.7537 182.569 46.7513 172.922C53.1869 174.968 59.0357 176.547 60.4246 176.469C58.8792 176.956 56.7471 181.536 58.4098 182.218C64.8258 184.81 71.7505 184.459 78.4991 184.907C87.0473 185.473 95.0478 186.116 103.655 185.687C102.501 195.373 95.0674 206.93 99.8403 206.716L111.675 206.19C111.792 216.772 109.093 226.887 107 237.392C106.726 238.737 110.247 239.438 111.518 239.283C129.378 237.236 156.216 244.116 153.634 235.151L151.071 226.283C158.895 225.582 166.485 223.438 174.134 220.242L192.619 212.524L189.548 205.742C199.896 202.078 210.146 199.33 219.594 194.048C221.139 193.132 218.264 190.462 217.423 189.565C212.708 184.557 209.578 176.975 207.133 169.959L188.413 176.566C187.631 176.839 186.946 177.93 187.044 178.437C187.181 179.178 188.452 180.074 189.626 179.684L205.275 174.481C207.27 181.38 209.931 186.778 214.41 192.469C205.295 196.055 197.059 199.369 187.435 201.863C183.367 194.165 182.819 183.582 179.748 183.991C176.148 184.479 182.095 201.941 187.161 210.926C175.014 215.798 163.375 220.709 150.308 222.21L147.941 206.716C150.699 206.813 152.871 207.028 155.003 205.586C153.477 198.784 151.306 192.684 151.071 185.687C160.441 184.401 170.084 183.173 178.828 180.99C182.662 180.308 179.924 172.551 179.924 172.551C187.69 171.44 194.223 166.977 201.617 163.625L209.011 159.123C209.011 159.123 202.478 150.489 201.363 147.605C203.241 145.987 206.41 144.545 206.41 144.545C210.811 147.43 230.528 173.175 235.595 181.38C236.084 182.179 237.688 181.887 238.177 181.38C241.463 177.93 224.621 157.467 217.246 149.573L217.305 149.632ZM209.97 107.321C197.431 108.12 185.303 109.328 172.119 108.295C172.334 99.7589 172.158 91.8462 168.657 82.9201C178.339 81.3415 191.934 84.6157 193.538 82.8227C194.047 82.2575 194.34 80.8738 194.262 79.3146L202.321 79.1003C202.967 88.9813 205.627 98.3362 209.95 107.321H209.97ZM164.764 143.493C164.314 143.551 163.884 143.571 163.277 143.61C163.199 143.61 163.14 143.59 163.082 143.61L137.378 146.903C135.05 147.196 132.664 147.527 130.297 148.151C130.258 146.611 130.258 145.032 130.258 143.415C130.062 142.811 129.906 142.187 129.749 141.563C130.121 141.524 130.493 141.466 130.845 141.427C132.058 141.271 133.231 141.115 134.542 141.018C134.679 141.602 134.933 142.382 135.657 143.006C136.42 143.668 137.339 143.824 138.063 143.824C138.474 143.824 138.826 143.785 139.06 143.746L144.244 143.025C144.244 143.025 144.244 143.064 144.244 143.084C149.193 142.772 159.6 141.388 159.854 141.31C160.793 141.057 166.016 140.082 166.876 140.004C167.268 139.965 169.439 148.151 169.204 151.815C168.402 149.32 167.17 146.923 166.446 144.545C166.231 143.844 165.527 143.415 164.783 143.512L164.764 143.493ZM85.3259 82.0041V81.9067C86.0301 80.9128 86.9104 78.73 88.3188 77.3657C87.7906 84.07 87.1647 89.0983 87.0082 95.6272C85.1499 95.4518 80.3769 94.146 78.5773 93.6003C73.7066 92.1191 68.6598 90.6964 68.1512 90.1702C69.0119 87.695 69.677 83.8361 70.0291 80.7568C76.7386 81.361 83.1351 81.9067 85.3455 82.0236L85.3259 82.0041ZM86.5192 97.9074C87.9276 97.9269 89.4729 97.8489 90.7835 97.5761V98.1023H98.3341C98.3732 98.7844 98.3537 99.447 98.3341 100.129L95.3217 123.945C85.5215 125.407 76.719 124.12 67.5253 122.6L54.9474 121.762C60.092 113.323 63.7695 104.397 67.271 94.984C68.4055 95.4323 82.1375 98.2777 86.5192 97.9074ZM129.495 122.366C129.886 122.483 131.06 122.639 132.801 122.815C132.742 127.609 133.094 132.403 133.838 137.12C132.566 137.237 131.432 137.373 130.317 137.529C127.95 137.841 125.505 138.172 121.573 138.094H121.534C121.534 138.094 121.436 138.114 121.377 138.133C111.421 136.847 101.718 136.964 90.94 137.237L93.346 127.94L98.7253 127.531L100.642 105.801C107.489 106.833 123.372 105.567 129.984 105.372C129.045 110.848 129.163 122.269 129.475 122.366H129.495ZM68.1512 127.122L79.6532 129.597C82.47 130.903 85.0325 131.293 88.4362 131.936C87.8493 133.651 85.5607 137.334 87.1451 139.127C89.1795 141.427 93.8742 140.472 96.9453 140.667C95.4782 147.858 91.9572 154.153 88.1819 160.838C76.0344 159.338 64.8063 157.291 53.5586 154.446C60.4441 146.104 64.8454 137.081 68.1317 127.122H68.1512ZM100.505 140.842C107.645 140.433 114.492 140.784 121.475 141.992C121.475 141.992 121.495 141.992 121.514 141.992C123.138 142.265 124.781 142.596 126.444 142.967C125.837 152.263 126.717 160.332 129.495 170.271L90.1575 165.477C94.1871 157.135 98.4906 149.788 100.486 140.842H100.505ZM148.43 138.698C148.156 138.62 147.863 138.562 147.57 138.62L138.493 139.868C138.493 139.868 138.337 139.868 138.278 139.887C138.278 139.887 138.278 139.868 138.278 139.848C137.183 134.352 136.654 128.739 136.713 123.127C146.298 123.828 162.788 124.51 171.141 123.711C171.63 127.96 172.314 130.922 173.703 134.489C164.999 136.438 156.842 137.88 148.43 138.679V138.698ZM218.322 72.1036L207.622 84.6547C206.253 81.4974 206.664 78.8664 206.136 75.7286L193.48 74.6957L192.052 56.5317C191.954 55.3039 196.003 54.154 196.805 55.1479C202.713 62.359 209.226 68.1083 218.342 72.0841L218.322 72.1036ZM161.654 28.4671C170.769 27.8825 180.96 25.4073 189.724 22.8737C191.778 32.4819 196.042 40.5115 202.713 47.5666L187.924 53.8032L188.805 59.3381C188.726 66.5297 188.961 73.1171 190.467 79.5485L165.077 78.2037C162.573 71.4994 163.238 64.6782 162.788 57.6815C164.529 57.6621 165.957 57.3307 166.446 56.6486C166.994 55.8885 167.131 53.9786 166.798 51.8932L184.032 54.8361C184.834 54.9725 185.303 53.5888 185.01 53.1405C184.638 52.5754 184.129 51.9322 182.995 51.6594L167.639 47.7225L161.654 28.4476V28.4671ZM122.962 61.1896C134.972 58.8899 146.494 56.785 158.583 57.5646L158.954 78.4376C154.788 78.652 151.462 78.574 148.117 80.7179C150.015 84.6352 153.79 82.4719 156.079 82.6083C156.939 82.6473 160.128 82.4914 161.399 82.4914C162.456 82.4914 164.549 82.0042 164.862 83.3684C166.72 91.398 162.612 105.664 166.857 120.32C155.179 119.618 144.988 118.683 133.075 119.229C134.444 107.808 135.109 97.8489 135.755 86.2528C140.899 86.8375 145.555 87.7925 145.966 85.7461C146.083 85.1419 145.966 84.2844 144.772 84.07L132.194 81.8288L130.258 101.279C123.92 103.501 109.112 101.571 102.442 102.838L100.916 103.131L101.151 100.441L102.266 100.499C102.325 99.2522 102.305 98.0048 102.188 96.7575C102.149 96.4457 102.07 95.6077 101.405 94.9255C100.642 94.1849 99.7034 94.1849 99.3317 94.1849H92.5831C91.9572 89.9363 91.5659 84.986 91.8594 80.6204C92.0158 78.3207 91.8202 76.0209 91.5855 73.7212C91.116 69.0828 93.2678 63.5478 98.0994 53.3939C101.796 54.3489 106.863 57.6621 110.188 55.2064C112.653 53.3939 119.46 37.7245 121.534 35.8536C122.081 38.6795 122.981 61.1701 122.981 61.1701L122.962 61.1896ZM85.189 24.9006C96.8475 27.863 108.78 27.863 121.221 27.6096C117.895 36.2434 112.731 43.318 107.9 52.0492C101.777 50.5875 97.0626 48.0149 91.1356 48.0149C85.2086 48.0149 79.6141 48.3072 73.198 46.8065C78.4013 39.7514 82.6656 33.3979 85.1694 24.8811L85.189 24.9006ZM66.7233 49.2817C67.5057 46.9624 68.2686 44.6237 69.0902 42.324L72.2395 42.7138C71.4571 44.0391 70.3421 45.6957 69.0706 47.3912C69.1293 48.2098 69.3445 48.9504 69.9313 49.7299L94.1089 51.8737C95.0674 54.4074 93.5416 56.4732 92.2506 58.5975C88.5926 64.6002 86.3431 71.0317 84.3674 78.0478C78.8316 77.658 62.9479 76.2158 55.3582 75.4752C60.6984 67.4846 63.7695 58.2467 66.7428 49.2817H66.7233ZM27.9139 103.696C37.0098 94.3409 43.2303 82.316 45.5581 69.4531L53.9889 70.1742C52.8544 72.1621 51.622 74.072 50.2332 75.8845L48.1206 78.6325L51.5829 79.0028C53.5781 79.2172 59.114 79.7434 65.1975 80.3086C65.0019 85.7851 63.926 90.9107 62.8697 94.1265L57.5295 107.126C50.0571 105.82 43.0151 104.612 35.8753 103.832C35.5232 103.637 35.1124 103.54 34.6625 103.598C32.7259 103.891 30.2808 103.93 27.9139 103.715V103.696ZM24.6863 132.072C30.4568 126.401 35.0733 119.54 39.2398 111.92C42.2914 111.238 51.2504 110.946 56.3558 111.355C54.341 114.61 50.9765 122.152 50.4679 124.92L63.6913 126.42L57.06 141.992L24.7059 132.072H24.6863ZM35.132 199.096C34.7603 199.836 34.3495 200.577 33.8605 200.85C33.2932 201.162 32.276 201.006 31.3371 200.85C22.6911 199.232 14.3189 196.504 6.39661 192.723C12.8518 185.083 17.6834 176.118 20.5198 166.549C23.8452 167.445 27.0141 167.835 30.9459 167.328C34.0561 168.634 38.516 170.252 43.0542 171.752C42.174 181.205 39.455 190.676 35.1515 199.135L35.132 199.096ZM33.1172 163.021C37.2641 157.135 40.0223 151.854 43.7193 145.539C46.1058 148.599 48.8248 149.281 51.6416 151.581C49.4703 152.049 47.2012 156.765 48.8248 157.194L68.8163 162.378L63.5348 172.22C52.737 171.012 42.7217 167.465 33.0976 163.021H33.1172ZM149.408 235.599C136.909 237.353 124.468 233.514 111.479 235.56C114.1 225.796 115.724 216.207 116.233 206.092C125.681 206.813 134.053 207.983 143.188 207.067C143.873 216.811 146.592 225.289 149.428 235.619L149.408 235.599ZM132.742 203.227C122.649 203.286 113.142 201.727 103.107 202.76C105.493 195.354 107.352 189.838 107.626 182.354C93.033 181.945 79.125 180.639 64.1803 179.275C68.1121 173.565 70.968 168.829 73.3545 162.982L86.3235 164.775C85.6585 165.438 85.4433 168.79 86.5974 168.965C94.8913 170.291 102.911 170.524 110.951 172.668L109.347 182.783C109.171 183.875 109.719 184.401 110.012 184.771C112.438 187.831 112.477 179.236 114.942 172.766L132.742 175.416L135.442 188.396C140.215 188.532 143.814 187.266 147.883 186.623C148.156 192.508 148.861 197.595 150.915 203.11L132.703 203.227H132.742ZM174.897 177.735L157.976 180.834L138.611 184.654C138.611 184.654 133.896 163.08 133.329 165.769C131.549 161.384 130.747 156.882 130.434 152.107C132.801 151.386 135.363 151.055 137.848 150.723L163.551 147.43C163.551 147.43 163.668 147.391 163.747 147.371C164.353 150.275 165.312 153.959 167.189 157.798L175.894 175.748C176.285 176.566 175.796 177.541 174.897 177.716V177.735ZM204.453 158.266L188.707 166.198C184.638 168.244 180.374 169.862 175.444 168.985C177.772 155.732 170.417 144.038 174.799 143.337C178.437 142.752 177.185 146.163 180.393 149.885L195.494 145.11C197.098 150.645 199.837 154.368 204.453 158.266ZM196.629 140.881L181.88 145.403C179.669 141.739 179.611 137.49 178.261 133.514C175.894 126.615 174.134 120.106 173.821 112.992C183.367 113.129 191.524 112.524 200.776 112.193C203.515 120.534 208.229 127.726 213.96 134.235C208.463 137.373 202.908 138.971 196.649 140.881H196.629Z" fill="#131313"/><path id="Vector_3" d="M106.316 94.5942C107.998 97.5566 112.321 99.447 116.155 98.648C117.681 98.3361 118.052 97.2642 117.857 96.3288C117.544 94.6722 110.071 95.939 109.387 91.32C108.448 84.9275 118.835 81.8287 121.339 72.5713C121.788 70.9342 121.456 69.5895 119.735 69.531C118.933 69.5115 118.287 69.9988 117.876 71.2851C114.883 80.4255 101.132 85.4732 106.316 94.6137V94.5942Z" fill="#131313"/><path id="Vector_4" d="M132.606 73.5264C134.832 73.5264 136.636 71.7289 136.636 69.5116C136.636 67.2943 134.832 65.4968 132.606 65.4968C130.381 65.4968 128.577 67.2943 128.577 69.5116C128.577 71.7289 130.381 73.5264 132.606 73.5264Z" fill="#131313"/><path id="Vector_5" d="M109.837 69.5115C109.837 67.3482 108.076 65.5942 105.905 65.5942C103.733 65.5942 101.973 67.3482 101.973 69.5115C101.973 71.6748 103.733 73.4289 105.905 73.4289C108.076 73.4289 109.837 71.6748 109.837 69.5115Z" fill="#131313"/><path id="Vector_6" d="M96.1636 11.6479C105.964 15.4483 116.664 17.3972 127.227 17.2023C128.322 17.2023 129.437 17.1439 130.533 17.1049C133.408 17.0075 136.127 16.91 138.846 17.1829C141.702 17.4947 145.692 18.4107 148.47 21.0807C148.842 21.451 149.331 21.6264 149.839 21.6264C150.348 21.6264 150.857 21.4315 151.248 21.0417C151.991 20.2622 151.972 19.0343 151.209 18.2937C148.372 15.5652 144.265 13.8502 139.276 13.324C136.284 13.0121 133.291 13.1096 130.415 13.2265C129.339 13.2655 128.264 13.3045 127.188 13.324C117.153 13.5189 106.942 11.6674 97.6111 8.04239C96.6135 7.6526 95.479 8.13983 95.0878 9.15328C94.6965 10.1472 95.1856 11.2776 96.2027 11.6674L96.1636 11.6479Z" fill="#131313"/><path id="Vector_7" d="M87.9859 16.949C93.9325 19.8919 100.544 21.451 107.195 21.451C107.469 21.451 107.723 21.451 107.997 21.451C109.073 21.4315 109.934 20.535 109.914 19.4631C109.894 18.3912 109.014 17.5531 107.958 17.5531H107.919C101.62 17.6896 95.3604 16.2474 89.7268 13.4604C88.7488 12.9732 87.5947 13.3824 87.1056 14.3374C86.6166 15.2924 87.0078 16.4617 87.9859 16.949Z" fill="#131313"/></g></svg>';
+/* The Allstar star alone, lifted from the mark, for the back of the coins. */
+const STAR_MARK = '<svg viewBox="126 1 89 94" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M159.962 1.24139L180.661 30.1811L214.275 19.2179L193.456 48.0669L214.155 77.0067L180.591 65.9024L159.763 94.7514L159.842 59.0302L126.268 47.9259L159.882 36.9627L159.962 1.24139Z"/></svg>';
 
-/* Option-card icons. These are the DS `Icon` set from 0002 Graphics library,
-   exported as SVG from Figma, not redrawn. They are FILLED paths, so the fill
-   is set to currentColor and the roundel sets `color`. Clip-path wrappers were
-   dropped because each clip was a full-bounds 20x20 rect, a no-op that would
-   otherwise collide on duplicate ids. */
+/* Option-card icons. The DS `Icon` set, Filled variant, exported as SVG from
+   Figma and placed at its exact offset inside the 20 x 20 icon slot. Filled
+   paths, so the fill is currentColor and the roundel sets `color`. */
 const I = {
-  reciept:'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M15.2004 0C17.2713 0.000210987 18.9504 1.67906 18.9504 3.75V17.7012C18.9504 18.8325 18.0329 19.7499 16.9016 19.75C16.4895 19.75 16.0866 19.6259 15.7463 19.3936L15.1633 18.9951C14.8183 18.7595 14.3555 18.7942 14.05 19.0791C13.1815 19.8894 11.8506 19.9402 10.923 19.1982L10.7111 19.0293C10.2952 18.6968 9.70404 18.6967 9.28827 19.0293L9.09003 19.1885C8.15309 19.9378 6.80273 19.8629 5.95428 19.0146C5.6534 18.7138 5.17651 18.6802 4.83612 18.9355L4.29022 19.3447C3.93974 19.6076 3.51349 19.7499 3.07538 19.75C1.95693 19.75 1.04999 18.8431 1.04999 17.7246V3.75C1.04999 1.67893 2.72892 5.74331e-08 4.79999 0H15.2004ZM4.79999 1.5C3.55735 1.5 2.54999 2.50736 2.54999 3.75V17.7246C2.54999 18.0146 2.78536 18.25 3.07538 18.25C3.1889 18.2499 3.29901 18.2126 3.38983 18.1445L3.93671 17.7354C4.87424 17.0323 6.18613 17.1255 7.01483 17.9541C7.32292 18.262 7.81338 18.2887 8.1535 18.0166L8.35175 17.8584C9.31542 17.0874 10.6849 17.0875 11.6486 17.8584L11.8596 18.0273C12.2057 18.3042 12.7025 18.2848 13.0266 17.9824C13.8451 17.2186 15.0844 17.1246 16.009 17.7559L16.592 18.1543C16.6832 18.2166 16.7911 18.25 16.9016 18.25C17.2045 18.2499 17.4504 18.0041 17.4504 17.7012V3.75C17.4504 2.50749 16.4428 1.50021 15.2004 1.5H4.79999ZM14.5002 12.75C14.9144 12.75 15.2502 13.0858 15.2502 13.5C15.2502 13.9142 14.9144 14.25 14.5002 14.25H5.50018C5.08597 14.25 4.75018 13.9142 4.75018 13.5C4.75018 13.0858 5.08597 12.75 5.50018 12.75H14.5002ZM14.5002 8.75C14.9144 8.75 15.2502 9.08579 15.2502 9.5C15.2502 9.91421 14.9144 10.25 14.5002 10.25H5.50018C5.08597 10.25 4.75018 9.91421 4.75018 9.5C4.75018 9.08579 5.08597 8.75 5.50018 8.75H14.5002ZM9.50018 4.25C9.9144 4.25 10.2502 4.58579 10.2502 5C10.2502 5.41421 9.9144 5.75 9.50018 5.75H5.50018C5.08597 5.75 4.75018 5.41421 4.75018 5C4.75018 4.58579 5.08597 4.25 5.50018 4.25H9.50018Z" fill="currentColor"/></svg>',
-  wrench:'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M18.354 7.10512C18.3873 8.47973 17.8298 9.79578 16.7455 10.6583C15.3867 11.7393 13.3267 11.7154 11.6638 10.8148L11.2044 10.5659L4.53059 16.4266C3.77505 17.0901 2.61815 16.9867 1.99218 16.1998C1.36621 15.4129 1.52569 14.2624 2.34209 13.6754L9.55349 8.49059L9.41434 7.98694C8.91121 6.16577 9.35389 4.15772 10.7139 3.07589C11.7981 2.21336 13.2059 1.96609 14.5377 2.30773L12.6042 3.84585C11.8478 4.44754 11.7224 5.54846 12.3241 6.30483L13.9615 8.36316C14.5631 9.11953 15.6641 9.24493 16.4204 8.64325L18.354 7.10512ZM19.7394 6.0127C19.5827 5.19985 18.6475 4.95493 18.0775 5.40838L15.4866 7.46936C15.3786 7.55532 15.2213 7.5374 15.1353 7.42935L13.498 5.37102C13.412 5.26297 13.4299 5.10569 13.538 5.01974L16.1288 2.95876C16.6989 2.5053 16.6705 1.53896 15.9137 1.20352C13.9204 0.319975 11.5585 0.487242 9.78004 1.902C7.9745 3.33828 7.43253 5.75096 7.84698 7.87007L1.46645 12.4575C-0.0458183 13.5448 -0.341224 15.676 0.818296 17.1336C1.97782 18.5912 4.12082 18.7827 5.52036 17.5537L11.4252 12.3683C13.3962 13.2489 15.8729 13.2692 17.6794 11.8322C19.4578 10.4174 20.152 8.1537 19.7394 6.0127Z" fill="currentColor"/></svg>',
-  chart:'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2.75 2C2.75 1.58579 2.41421 1.25 2 1.25C1.58579 1.25 1.25 1.58579 1.25 2V14C1.25 16.6234 3.37665 18.75 6 18.75H18C18.4142 18.75 18.75 18.4142 18.75 18C18.75 17.5858 18.4142 17.25 18 17.25H6C4.20507 17.25 2.75 15.7949 2.75 14V2Z" fill="currentColor"/><path d="M11.75 4C11.75 3.58579 11.4142 3.25 11 3.25C10.5858 3.25 10.25 3.58579 10.25 4V13C10.25 13.4142 10.5858 13.75 11 13.75C11.4142 13.75 11.75 13.4142 11.75 13V4Z" fill="currentColor"/><path d="M7.75 9C7.75 8.58579 7.41421 8.25 7 8.25C6.58579 8.25 6.25 8.58579 6.25 9V13C6.25 13.4142 6.58579 13.75 7 13.75C7.41421 13.75 7.75 13.4142 7.75 13V9Z" fill="currentColor"/><path d="M15 6.25C15.4142 6.25 15.75 6.58579 15.75 7V13C15.75 13.4142 15.4142 13.75 15 13.75C14.5858 13.75 14.25 13.4142 14.25 13V7C14.25 6.58579 14.5858 6.25 15 6.25Z" fill="currentColor"/></svg>',
-  fuel:'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M3.25 5.03125C3.25 4.61704 3.58579 4.28125 4 4.28125H10C10.4142 4.28125 10.75 4.61704 10.75 5.03125V9.03125C10.75 9.44546 10.4142 9.78125 10 9.78125H4C3.58579 9.78125 3.25 9.44546 3.25 9.03125V5.03125ZM4.75 5.78125V8.28125H9.25V5.78125H4.75Z" fill="currentColor"/><path fill-rule="evenodd" clip-rule="evenodd" d="M0.25 4C0.25 1.92893 1.92893 0.25 4 0.25H10C12.0711 0.25 13.75 1.92893 13.75 4V12.0781H15C15.9662 12.0781 16.75 12.8619 16.75 13.8281V15.3281C16.75 15.7419 17.0862 16.0781 17.5 16.0781C17.9138 16.0781 18.25 15.7419 18.25 15.3281V10.5781H17.133C16.0816 10.5781 15.2657 9.65643 15.3968 8.6111L15.6467 6.61143C15.7555 5.73591 16.4997 5.07812 17.383 5.07812H18.108C18.0497 4.96644 17.9744 4.86318 17.8837 4.77246L16.4697 3.35846C16.1768 3.06556 16.1768 2.59069 16.4697 2.29779C16.7626 2.0049 17.2374 2.0049 17.5303 2.29779L18.9443 3.71179C19.4598 4.22729 19.75 4.92699 19.75 5.65613V15.3281C19.75 16.5703 18.7422 17.5781 17.5 17.5781C16.2578 17.5781 15.25 16.5703 15.25 15.3281V13.8281C15.25 13.6903 15.1378 13.5781 15 13.5781H13.75V16C13.75 18.0711 12.0711 19.75 10 19.75H4C1.92893 19.75 0.25 18.0711 0.25 16V4ZM12.25 12.8281V4C12.25 2.75736 11.2426 1.75 10 1.75H4C2.75736 1.75 1.75 2.75736 1.75 4V16C1.75 17.2426 2.75736 18.25 4 18.25H10C11.2426 18.25 12.25 17.2426 12.25 16V12.8281ZM17.383 6.57812C17.2564 6.57812 17.1507 6.67214 17.1353 6.79642L16.8852 8.79715C16.8666 8.94563 16.9826 9.07812 17.133 9.07812H18.25V6.57812H17.383Z" fill="currentColor"/></svg>',
-  banknote:'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.8218 1.89401L3.77294 6.15061C3.28127 6.38189 2.90003 6.75279 2.65425 7.19374C2.55754 7.36724 2.41316 7.51836 2.23698 7.61009C1.642 7.91987 0.872864 7.55614 1.12092 6.9329C1.48309 6.0229 2.17827 5.24308 3.13445 4.79329L12.1833 0.536686C14.1823 -0.403656 16.5651 0.454567 17.5055 2.45358L18.7824 5.16823C19.0327 5.70016 18.3365 5.97047 17.8771 5.60364C17.6957 5.45877 17.5055 5.3256 17.3077 5.20489C17.1619 5.11585 17.0409 4.98992 16.9681 4.83529L16.1481 3.09207C15.5604 1.84269 14.0712 1.3063 12.8218 1.89401ZM13.9112 7.48411L4.25189 10.0723C2.91823 10.4297 2.12677 11.8005 2.48413 13.1342L3.26058 16.0319C3.61794 17.3656 4.98878 18.1571 6.32245 17.7997L15.9817 15.2115C17.3154 14.8542 18.1068 13.4833 17.7495 12.1497L16.973 9.25188C16.6157 7.91822 15.2448 7.12676 13.9112 7.48411ZM3.86367 8.62341C1.7298 9.19518 0.463471 11.3885 1.03524 13.5224L1.8117 16.4202C2.38346 18.554 4.57681 19.8204 6.71068 19.2486L16.3699 16.6604C18.5038 16.0886 19.7701 13.8953 19.1984 11.7614L18.4219 8.86365C17.8501 6.72979 15.6568 5.46346 13.5229 6.03522L3.86367 8.62341ZM12.2819 11.3921C12.9723 12.5878 12.5626 14.1168 11.3668 14.8072C10.1711 15.4975 8.64213 15.0878 7.95178 13.8921C7.26142 12.6964 7.67111 11.1674 8.86684 10.4771C10.0626 9.78669 11.5915 10.1964 12.2819 11.3921ZM10.6168 13.5081C11.0951 13.232 11.259 12.6204 10.9829 12.1421C10.7067 11.6638 10.0951 11.4999 9.61684 11.7761C9.13855 12.0522 8.97467 12.6638 9.25081 13.1421C9.52696 13.6204 10.1385 13.7843 10.6168 13.5081ZM7.01091 13.2064C7.28706 13.6847 7.12318 14.2962 6.64489 14.5724C6.1666 14.8485 5.55501 14.6847 5.27886 14.2064C5.00272 13.7281 5.1666 13.1165 5.64489 12.8403C6.12318 12.5642 6.73477 12.7281 7.01091 13.2064ZM14.5848 12.4449C15.0631 12.1688 15.2269 11.5572 14.9508 11.0789C14.6747 10.6006 14.0631 10.4367 13.5848 10.7129C13.1065 10.989 12.9426 11.6006 13.2187 12.0789C13.4949 12.5572 14.1065 12.7211 14.5848 12.4449Z" fill="currentColor"/></svg>',
-  pin:'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M15.5 7.125C15.5 8.77303 14.9448 10.5102 14.0128 12.3963C13.1726 14.0965 12.0854 15.8066 10.9414 17.6059C10.8121 17.8092 10.6822 18.0136 10.5517 18.2193C10.4432 18.3905 10.2475 18.5013 10 18.5013C9.75252 18.5013 9.55682 18.3905 9.44827 18.2193C9.31816 18.0141 9.18851 17.8102 9.05957 17.6074L9.05864 17.6059C7.91464 15.8066 6.82744 14.0965 5.98724 12.3963C5.05524 10.5102 4.5 8.77303 4.5 7.125C4.5 3.99326 6.98735 1.5 10 1.5C13.0126 1.5 15.5 3.99326 15.5 7.125ZM17 7.125C17 10.8744 14.6137 14.6267 12.2102 18.406L12.2094 18.4074C12.079 18.6123 11.9486 18.8174 11.8185 19.0226C10.9911 20.3275 9.00892 20.3275 8.18148 19.0226C8.05114 18.817 7.92048 18.6116 7.78987 18.4062C5.38638 14.6269 3 10.8744 3 7.125C3 3.18997 6.13401 0 10 0C13.866 0 17 3.18997 17 7.125ZM11.5 7C11.5 7.82843 10.8284 8.5 10 8.5C9.17157 8.5 8.5 7.82843 8.5 7C8.5 6.17157 9.17157 5.5 10 5.5C10.8284 5.5 11.5 6.17157 11.5 7ZM13 7C13 8.65685 11.6569 10 10 10C8.34315 10 7 8.65685 7 7C7 5.34315 8.34315 4 10 4C11.6569 4 13 5.34315 13 7Z" fill="currentColor"/></svg>',
-  info:'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M10 19.5C15.2467 19.5 19.5 15.2467 19.5 10C19.5 4.75329 15.2467 0.5 10 0.5C4.75329 0.5 0.5 4.75329 0.5 10C0.5 15.2467 4.75329 19.5 10 19.5ZM10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM10 6.5C10.5523 6.5 11 6.05228 11 5.5C11 4.94772 10.5523 4.5 10 4.5C9.44772 4.5 9 4.94772 9 5.5C9 6.05228 9.44772 6.5 10 6.5ZM10 8.25C10.4142 8.25 10.75 8.58579 10.75 9V13.25H11C11.4142 13.25 11.75 13.5858 11.75 14C11.75 14.4142 11.4142 14.75 11 14.75H10H9C8.58579 14.75 8.25 14.4142 8.25 14C8.25 13.5858 8.58579 13.25 9 13.25H9.25V9.75H9C8.58579 9.75 8.25 9.41421 8.25 9C8.25 8.58579 8.58579 8.25 9 8.25H10Z" fill="currentColor"/></svg>',
-  car:'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M17.95 15H18C19.1046 15 20 14.1046 20 13V12.3555C20 10.5029 18.7278 8.89266 16.9255 8.46402L16.138 8.27673C15.7235 8.17816 15.3514 7.94981 15.0757 7.62496L13.1981 5.41209C12.4381 4.51637 11.3228 4 10.1481 4H6.42384C4.94239 4 3.58505 4.86448 2.94398 6.20004C2.65519 6.80168 2.20868 7.32202 1.65589 7.6959C0.620404 8.39622 0 9.5648 0 10.8149V13C0 14.1046 0.89543 15 2 15H2.05001C2.28164 16.1411 3.29052 17 4.5 17C5.70948 17 6.71836 16.1411 6.94999 15H13.05C13.2816 16.1411 14.2905 17 15.5 17C16.7095 17 17.7184 16.1411 17.95 15ZM18.5 13V12.3555C18.5 11.1976 17.7049 10.1912 16.5784 9.92331L15.7909 9.73603C15.0656 9.56353 14.4143 9.16392 13.932 8.59542L12.0544 6.38256C11.5794 5.82273 10.8823 5.5 10.1481 5.5H6.42384C5.52651 5.5 4.69085 6.02709 4.29626 6.84914C3.89366 7.6879 3.27158 8.41401 2.49623 8.93841C1.87325 9.35974 1.5 10.0628 1.5 10.8149V13C1.5 13.2761 1.72386 13.5 2 13.5H2.20802C2.5938 12.617 3.47484 12 4.5 12C5.52516 12 6.4062 12.617 6.79198 13.5H13.208C13.5938 12.617 14.4748 12 15.5 12C16.5252 12 17.4062 12.617 17.792 13.5H18C18.2761 13.5 18.5 13.2761 18.5 13ZM16.3662 15C16.1933 15.2989 15.8701 15.5 15.5 15.5C15.1299 15.5 14.8067 15.2989 14.6338 15C14.5487 14.8529 14.5 14.6821 14.5 14.5C14.5 13.9477 14.9477 13.5 15.5 13.5C16.0523 13.5 16.5 13.9477 16.5 14.5C16.5 14.6821 16.4513 14.8529 16.3662 15ZM4.5 15.5C4.12986 15.5 3.80669 15.2989 3.63378 15C3.5487 14.8529 3.5 14.6821 3.5 14.5C3.5 13.9477 3.94772 13.5 4.5 13.5C5.05228 13.5 5.5 13.9477 5.5 14.5C5.5 14.6821 5.4513 14.8529 5.36622 15C5.19331 15.2989 4.87014 15.5 4.5 15.5Z" fill="currentColor"/></svg>',
-  smartphone:'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M13 0C14.6569 0 16 1.34315 16 3V17C16 18.6569 14.6569 20 13 20H7C5.39489 20 4.08421 18.7394 4.00391 17.1543L4 17V3C4 1.34315 5.34315 0 7 0H13ZM7 1.5C6.17157 1.5 5.5 2.17157 5.5 3V17C5.5 17.8284 6.17157 18.5 7 18.5H13C13.8284 18.5 14.5 17.8284 14.5 17V3C14.5 2.17157 13.8284 1.5 13 1.5H7ZM11.25 15.5C11.6642 15.5 11.9999 15.8359 12 16.25C12 16.6642 11.6642 17 11.25 17H8.75C8.33579 17 8 16.6642 8 16.25C8.0001 15.8359 8.33585 15.5 8.75 15.5H11.25ZM10.5 3C10.9142 3 11.2499 3.33587 11.25 3.75C11.25 4.16421 10.9142 4.5 10.5 4.5H9.5C9.08579 4.5 8.75 4.16421 8.75 3.75C8.7501 3.33587 9.08585 3 9.5 3H10.5Z" fill="currentColor"/></svg>',
-  calendar:'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M13 1C13.4142 1 13.75 1.33579 13.75 1.75V2.5H15L15.2061 2.50488C17.3194 2.61211 19 4.35996 19 6.5V15L18.9951 15.2061C18.8913 17.2512 17.2512 18.8913 15.2061 18.9951L15 19H5L4.79395 18.9951C2.7488 18.8913 1.10865 17.2512 1.00488 15.2061L1 15V6.5C1 4.35996 2.68056 2.61211 4.79395 2.50488L5 2.5H6.25V1.75C6.25 1.33579 6.58579 1 7 1C7.41421 1 7.75 1.33579 7.75 1.75V2.5H12.25V1.75C12.25 1.33579 12.5858 1 13 1ZM2.5 15C2.5 16.3807 3.61929 17.5 5 17.5H15C16.3807 17.5 17.5 16.3807 17.5 15V8.75H2.5V15ZM5 4C3.61929 4 2.5 5.11929 2.5 6.5V7.25H17.5V6.5C17.5 5.11929 16.3807 4 15 4H13.75V4.75C13.75 5.16421 13.4142 5.5 13 5.5C12.5858 5.5 12.25 5.16421 12.25 4.75V4H7.75V4.75C7.75 5.16421 7.41421 5.5 7 5.5C6.58579 5.5 6.25 5.16421 6.25 4.75V4H5Z" fill="currentColor"/></svg>',
-  shield:'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M18 7.6631V4.52379C17.9947 4.40575 17.91 4.30529 17.7908 4.27264C15.3576 3.6925 12.9959 2.86623 10.7506 1.80389L10 1.5L9.24939 1.80389C7.0015 2.86372 4.6424 3.6925 2.20918 4.27264C2.09003 4.30529 2.0053 4.40575 2.00001 4.52379V7.6631C2.00795 10.0138 2.76784 12.3068 4.17906 14.2381C5.58763 16.1694 7.58134 17.6511 9.89807 18.4849C9.96162 18.505 10.0331 18.505 10.0967 18.4849C12.4107 17.6511 14.4071 16.1694 15.8157 14.2381C17.2269 12.3068 17.9868 10.0138 17.9947 7.66561L18 7.6631ZM10.6051 19.8961C13.1916 18.9642 15.4361 17.3036 17.0268 15.123C18.5949 12.977 19.4571 10.4267 19.4936 7.80221C19.4978 7.75626 19.5 7.70985 19.5 7.6631V4.52379C19.5 4.50137 19.4995 4.47895 19.4985 4.45656C19.4616 3.63441 18.8805 3.01594 18.1873 2.82597C18.1712 2.82156 18.155 2.81741 18.1387 2.81354C15.8049 2.2571 13.5417 1.46507 11.3922 0.448C11.3663 0.435754 11.3401 0.424251 11.3135 0.413505L10.5629 0.10962C10.2019 -0.03654 9.79815 -0.03654 9.43712 0.10962L8.6865 0.413506C8.66059 0.423994 8.63498 0.435204 8.6097 0.447123C6.45512 1.46296 4.19379 2.25741 1.86129 2.81354C1.84504 2.81741 1.82886 2.82156 1.81275 2.82597C1.11952 3.01593 0.538399 3.63441 0.501516 4.45656C0.500511 4.47895 0.500009 4.50137 0.500009 4.52379V7.6631H0.5L0.500017 7.66817C0.509049 10.341 1.37339 12.9406 2.96754 15.1225C4.55792 17.3028 6.79986 18.9641 9.39011 19.8963C9.40857 19.903 9.42716 19.9092 9.44587 19.9151C9.8037 20.0283 10.191 20.0283 10.5489 19.9151C10.5677 19.9092 10.5865 19.9028 10.6051 19.8961ZM14.1873 6.14071C14.5238 6.3822 14.6009 6.85079 14.3594 7.18732L10.0538 13.1873C9.93113 13.3583 9.74228 13.4698 9.53334 13.4948C9.32441 13.5197 9.11461 13.4557 8.95514 13.3185L5.7607 10.5685C5.44678 10.2982 5.41138 9.82466 5.68162 9.51074C5.95186 9.19683 6.42541 9.16142 6.73933 9.43166L9.31281 11.6471L13.1407 6.31279C13.3822 5.97626 13.8507 5.89922 14.1873 6.14071Z" fill="currentColor"/></svg>',
-  toggles:'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.25 6C5.25 5.30964 5.80964 4.75 6.5 4.75C7.19036 4.75 7.75 5.30964 7.75 6C7.75 6.69036 7.19036 7.25 6.5 7.25C5.80964 7.25 5.25 6.69036 5.25 6ZM3.85352 5.25H1.5C1.08579 5.25 0.75 5.58579 0.75 6C0.75 6.41421 1.08579 6.75 1.5 6.75H3.85352C4.17998 7.90425 5.24122 8.75 6.5 8.75C7.75878 8.75 8.82002 7.90425 9.14648 6.75H18.5C18.9142 6.75 19.25 6.41421 19.25 6C19.25 5.58579 18.9142 5.25 18.5 5.25H9.14648C8.82002 4.09575 7.75878 3.25 6.5 3.25C5.24122 3.25 4.17998 4.09575 3.85352 5.25ZM0.75 14C0.75 13.5858 1.08579 13.25 1.5 13.25H13.8535C14.18 12.0957 15.2412 11.25 16.5 11.25C18.0188 11.25 19.25 12.4812 19.25 14C19.25 15.5188 18.0188 16.75 16.5 16.75C15.2412 16.75 14.18 15.9043 13.8535 14.75H1.5C1.08579 14.75 0.75 14.4142 0.75 14ZM15.25 14C15.25 14.6904 15.8096 15.25 16.5 15.25C17.1904 15.25 17.75 14.6904 17.75 14C17.75 13.3096 17.1904 12.75 16.5 12.75C15.8096 12.75 15.25 13.3096 15.25 14Z" fill="currentColor"/></svg>'
+  "receipt":'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g transform="translate(1.0498 0)"><path d="M14.1504 0C16.2213 0.000210987 17.9004 1.67906 17.9004 3.75V17.7012C17.9004 18.8325 16.9829 19.7499 15.8516 19.75C15.4395 19.75 15.0366 19.6259 14.6963 19.3936L14.1133 18.9951C13.7683 18.7595 13.3055 18.7942 13 19.0791C12.1316 19.8894 10.8006 19.9402 9.87305 19.1982L9.66113 19.0293C9.24526 18.6968 8.65405 18.6967 8.23828 19.0293L8.04004 19.1885C7.1031 19.9378 5.75275 19.8629 4.9043 19.0146C4.60341 18.7138 4.12652 18.6802 3.78613 18.9355L3.24023 19.3447C2.88975 19.6076 2.4635 19.7499 2.02539 19.75C0.906947 19.75 0 18.8431 0 17.7246V3.75C2.81866e-07 1.67893 1.67893 5.74331e-08 3.75 0H14.1504ZM3.9502 13.25C3.53598 13.25 3.2002 13.5858 3.2002 14C3.2002 14.4142 3.53598 14.75 3.9502 14.75H13.9502C14.3644 14.75 14.7002 14.4142 14.7002 14C14.7002 13.5858 14.3644 13.25 13.9502 13.25H3.9502ZM3.9502 9.25C3.53598 9.25 3.2002 9.58579 3.2002 10C3.2002 10.4142 3.53598 10.75 3.9502 10.75H13.9502C14.3644 10.75 14.7002 10.4142 14.7002 10C14.7002 9.58579 14.3644 9.25 13.9502 9.25H3.9502ZM3.9502 4.25C3.53598 4.25 3.2002 4.58579 3.2002 5C3.2002 5.41421 3.53598 5.75 3.9502 5.75H8.4502C8.86441 5.75 9.2002 5.41421 9.2002 5C9.2002 4.58579 8.86441 4.25 8.4502 4.25H3.9502Z" fill="currentColor"/></g></svg>',
+  "wrench":'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g transform="translate(0.0952 0.6489)"><g><path fill-rule="evenodd" clip-rule="evenodd" d="M18.2446 6.44497C18.278 7.81957 17.7205 9.13562 16.6362 9.99815C15.2773 11.0791 13.2173 11.0553 11.5545 10.1546L11.095 9.90578L4.42122 15.7664C3.66567 16.4299 2.50877 16.3265 1.88281 15.5396C1.25684 14.7527 1.41631 13.6022 2.23271 13.0153L9.44411 7.83043L9.30497 7.32679C8.80184 5.50562 9.24451 3.49756 10.6045 2.41573C11.6888 1.5532 13.0965 1.30594 14.4284 1.64757L12.4948 3.1857C11.7384 3.78738 11.613 4.8883 12.2147 5.64467L13.8521 7.703C14.4538 8.45937 15.5547 8.58477 16.3111 7.98309L18.2446 6.44497ZM19.63 5.35254C19.4733 4.53969 18.5381 4.29477 17.9681 4.74822L15.3772 6.80921C15.2692 6.89516 15.1119 6.87725 15.026 6.7692L13.3886 4.71087C13.3026 4.60281 13.3206 4.44554 13.4286 4.35958L16.0195 2.2986C16.5895 1.84515 16.5612 0.878808 15.8044 0.543361C13.811 -0.340181 11.4492 -0.172914 9.67067 1.24185C7.86513 2.67813 7.32316 5.0908 7.7376 7.20992L1.35708 11.7974C-0.155193 12.8847 -0.450599 15.0158 0.708921 16.4735C1.86844 17.9311 4.01145 18.1225 5.41098 16.8935L11.3158 11.7082C13.2868 12.5887 15.7635 12.6091 17.57 11.172C19.3485 9.75727 20.0426 7.49354 19.63 5.35254Z" fill="currentColor"/><path d="M18.2446 6.44497C18.278 7.81957 17.7205 9.13562 16.6362 9.99815C15.2773 11.0791 13.2173 11.0553 11.5545 10.1546L11.095 9.90578L4.42122 15.7664C3.66567 16.4299 2.50877 16.3265 1.88281 15.5396C1.25684 14.7527 1.41631 13.6022 2.23271 13.0153L9.44411 7.83043L9.30497 7.32679C8.80184 5.50562 9.24451 3.49756 10.6045 2.41573C11.6888 1.5532 13.0965 1.30594 14.4284 1.64757L12.4948 3.1857C11.7384 3.78738 11.613 4.8883 12.2147 5.64467L13.8521 7.703C14.4538 8.45937 15.5547 8.58477 16.3111 7.98309L18.2446 6.44497Z" fill="currentColor"/></g></g></svg>',
+  "chart2":'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g transform="translate(1 1)"><g><path fill-rule="evenodd" clip-rule="evenodd" d="M10 2.5C10 1.94772 9.55228 1.5 9 1.5C8.44772 1.5 8 1.94772 8 2.5V15.5C8 16.0523 8.44772 16.5 9 16.5C9.55228 16.5 10 16.0523 10 15.5V2.5ZM9 0C7.61929 0 6.5 1.11929 6.5 2.5V15.5C6.5 16.8807 7.61929 18 9 18C10.3807 18 11.5 16.8807 11.5 15.5V2.5C11.5 1.11929 10.3807 0 9 0ZM3.5 15.5V11.5C3.5 10.9477 3.05228 10.5 2.5 10.5C1.94772 10.5 1.5 10.9477 1.5 11.5V15.5C1.5 16.0523 1.94772 16.5 2.5 16.5C3.05228 16.5 3.5 16.0523 3.5 15.5ZM2.5 9C1.11929 9 0 10.1193 0 11.5V15.5C0 16.8807 1.11929 18 2.5 18C3.88071 18 5 16.8807 5 15.5V11.5C5 10.1193 3.88071 9 2.5 9ZM15.5 6.5C16.0523 6.5 16.5 6.94772 16.5 7.5V15.5C16.5 16.0523 16.0523 16.5 15.5 16.5C14.9477 16.5 14.5 16.0523 14.5 15.5V7.5C14.5 6.94772 14.9477 6.5 15.5 6.5ZM13 7.5C13 6.11929 14.1193 5 15.5 5C16.8807 5 18 6.11929 18 7.5V15.5C18 16.8807 16.8807 18 15.5 18C14.1193 18 13 16.8807 13 15.5V7.5Z" fill="currentColor"/><path d="M9 1.5C9.55228 1.5 10 1.94772 10 2.5V15.5C10 16.0523 9.55228 16.5 9 16.5C8.44772 16.5 8 16.0523 8 15.5V2.5C8 1.94772 8.44772 1.5 9 1.5Z" fill="currentColor"/><path d="M3.5 11.5V15.5C3.5 16.0523 3.05228 16.5 2.5 16.5C1.94772 16.5 1.5 16.0523 1.5 15.5V11.5C1.5 10.9477 1.94772 10.5 2.5 10.5C3.05228 10.5 3.5 10.9477 3.5 11.5Z" fill="currentColor"/><path d="M16.5 7.5C16.5 6.94772 16.0523 6.5 15.5 6.5C14.9477 6.5 14.5 6.94772 14.5 7.5V15.5C14.5 16.0523 14.9477 16.5 15.5 16.5C16.0523 16.5 16.5 16.0523 16.5 15.5V7.5Z" fill="currentColor"/></g></g></svg>',
+  "charging-point":'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g transform="translate(1 1)"><path fill-rule="evenodd" clip-rule="evenodd" d="M0 4C0 1.79086 1.79086 0 4 0H8C10.2091 0 12 1.79086 12 4V6.75L13.25 6.75C14.2165 6.75 15 7.5335 15 8.5V12.5C15 12.9142 15.3358 13.25 15.75 13.25C16.1642 13.25 16.5 12.9142 16.5 12.5V5.75147C16.5 5.44869 16.3901 5.1562 16.1907 4.92834L14.9356 3.49388C14.6628 3.18215 14.6944 2.70833 15.0061 2.43557C15.3178 2.16281 15.7917 2.19439 16.0644 2.50612L17.3196 3.94058C17.7582 4.44188 18 5.08536 18 5.75147V12.5C18 13.7426 16.9926 14.75 15.75 14.75C14.5074 14.75 13.5 13.7426 13.5 12.5V8.5C13.5 8.36193 13.3881 8.25 13.25 8.25L12 8.25V14C12 16.2091 10.2091 18 8 18H4C1.79086 18 0 16.2091 0 14V4ZM7.19746 4.38368C7.53785 4.61972 7.62243 5.087 7.3864 5.42738L5.43012 8.24848L8.002 8.25533C8.28095 8.25607 8.53645 8.41157 8.66525 8.65901C8.79406 8.90644 8.7749 9.20492 8.61552 9.43386L5.83435 13.4285C5.59768 13.7685 5.13024 13.8522 4.7903 13.6155C4.45036 13.3788 4.36665 12.9114 4.60332 12.5715L6.56662 9.75151L3.998 9.74467C3.7193 9.74393 3.46399 9.5887 3.33507 9.34161C3.20615 9.09452 3.22487 8.79632 3.38368 8.56729L6.15377 4.57262C6.3898 4.23224 6.85708 4.14765 7.19746 4.38368Z" fill="currentColor"/></g></svg>',
+  "smartphone":'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g transform="translate(4 0)"><path d="M9 0C10.6569 0 12 1.34315 12 3V17C12 18.6569 10.6569 20 9 20H3C1.34315 20 6.44266e-08 18.6569 0 17V3C0 1.34315 1.34315 0 3 0H9ZM4.75 16.5C4.33585 16.5 4.0001 16.8359 4 17.25C4 17.6642 4.33579 18 4.75 18H7.25C7.66421 18 8 17.6642 8 17.25C7.9999 16.8359 7.66415 16.5 7.25 16.5H4.75ZM5.5 2C5.08585 2 4.7501 2.33587 4.75 2.75C4.75 3.16421 5.08579 3.5 5.5 3.5H6.5C6.91421 3.5 7.25 3.16421 7.25 2.75C7.2499 2.33587 6.91415 2 6.5 2H5.5Z" fill="currentColor"/></g></svg>',
+  "eye":'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g transform="translate(0.3013 2)"><path fill-rule="evenodd" clip-rule="evenodd" d="M9.69858 16C14.0338 16 17.7247 11.0707 19.1116 8.95069C19.4923 8.36873 19.4923 7.63127 19.1116 7.04931C17.7247 4.92932 14.0338 0 9.69858 0C5.36335 0 1.67245 4.92932 0.285545 7.04931C-0.0951814 7.63127 -0.0951817 8.36873 0.285545 8.95069C1.67245 11.0707 5.36335 16 9.69858 16ZM12.1986 8C12.1986 9.38071 11.0794 10.5 9.69864 10.5C8.31793 10.5 7.19864 9.38071 7.19864 8C7.19864 6.61929 8.31793 5.5 9.69864 5.5C11.0794 5.5 12.1986 6.61929 12.1986 8ZM13.6986 8C13.6986 10.2091 11.9078 12 9.69864 12C7.4895 12 5.69864 10.2091 5.69864 8C5.69864 5.79086 7.4895 4 9.69864 4C11.9078 4 13.6986 5.79086 13.6986 8Z" fill="currentColor"/></g></svg>',
+  "car":'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g transform="translate(0 4)"><path fill-rule="evenodd" clip-rule="evenodd" d="M17.95 11H18C19.1046 11 20 10.1046 20 9V8.35548C20 6.50285 18.7278 4.89266 16.9255 4.46402L16.138 4.27673C15.7235 4.17816 15.3514 3.94981 15.0757 3.62496L13.1981 1.41209C12.4381 0.516367 11.3228 0 10.1481 0H6.42384C4.94239 0 3.58505 0.864479 2.94398 2.20004C2.65519 2.80168 2.20868 3.32202 1.65589 3.6959C0.620404 4.39622 0 5.5648 0 6.81487V9C0 10.1046 0.89543 11 2 11H2.05001C2.28164 12.1411 3.29052 13 4.5 13C5.70948 13 6.71836 12.1411 6.94999 11H13.05C13.2816 12.1411 14.2905 13 15.5 13C16.7095 13 17.7184 12.1411 17.95 11ZM16.3662 11C16.1933 11.2989 15.8701 11.5 15.5 11.5C15.1299 11.5 14.8067 11.2989 14.6338 11C14.5487 10.8529 14.5 10.6821 14.5 10.5C14.5 9.94772 14.9477 9.5 15.5 9.5C16.0523 9.5 16.5 9.94772 16.5 10.5C16.5 10.6821 16.4513 10.8529 16.3662 11ZM4.5 11.5C4.12986 11.5 3.80669 11.2989 3.63378 11C3.5487 10.8529 3.5 10.6821 3.5 10.5C3.5 9.94772 3.94772 9.5 4.5 9.5C5.05228 9.5 5.5 9.94772 5.5 10.5C5.5 10.6821 5.4513 10.8529 5.36622 11C5.19331 11.2989 4.87014 11.5 4.5 11.5Z" fill="currentColor"/></g></svg>',
+  "calendar":'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g transform="translate(1 1)"><path d="M0 7.75L18 7.75098V14C18 16.2091 16.2091 18 14 18H4C1.79086 18 6.44266e-08 16.2091 0 14V7.75ZM12 0C12.4142 0 12.75 0.335786 12.75 0.75V1.5H14C16.2091 1.5 18 3.29086 18 5.5V6.25098L0 6.25V5.5C6.44266e-08 3.29086 1.79086 1.5 4 1.5H5.25V0.75C5.25 0.335786 5.58579 0 6 0C6.41421 0 6.75 0.335786 6.75 0.75V1.5H11.25V0.75C11.25 0.335786 11.5858 0 12 0Z" fill="currentColor"/></g></svg>',
+  "pin":'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g transform="translate(3 0)"><path fill-rule="evenodd" clip-rule="evenodd" d="M9.21021 18.4061C11.6137 14.6267 14 10.8744 14 7.125C14 3.18997 10.866 0 7 0C3.13401 0 0 3.18997 0 7.125C0 10.8744 2.3863 14.6267 4.78979 18.406C4.92042 18.6115 5.05112 18.817 5.18148 19.0226C6.00892 20.3275 7.99108 20.3275 8.81852 19.0226C8.94888 18.817 9.07957 18.6115 9.21021 18.4061ZM7 9.5C8.38071 9.5 9.5 8.38071 9.5 7C9.5 5.61929 8.38071 4.5 7 4.5C5.61929 4.5 4.5 5.61929 4.5 7C4.5 8.38071 5.61929 9.5 7 9.5Z" fill="currentColor"/></g></svg>',
+  "info":'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g transform="translate(0.5 0.5)"><path fill-rule="evenodd" clip-rule="evenodd" d="M19 9.5C19 14.7467 14.7467 19 9.5 19C4.25329 19 0 14.7467 0 9.5C0 4.25329 4.25329 0 9.5 0C14.7467 0 19 4.25329 19 9.5ZM9.5 6C10.0523 6 10.5 5.55228 10.5 5C10.5 4.44772 10.0523 4 9.5 4C8.94772 4 8.5 4.44772 8.5 5C8.5 5.55228 8.94772 6 9.5 6ZM9.5 7.75C9.91421 7.75 10.25 8.08579 10.25 8.5V12.75H10.5C10.9142 12.75 11.25 13.0858 11.25 13.5C11.25 13.9142 10.9142 14.25 10.5 14.25H9.5H8.5C8.08579 14.25 7.75 13.9142 7.75 13.5C7.75 13.0858 8.08579 12.75 8.5 12.75H8.75V9.25H8.5C8.08579 9.25 7.75 8.91421 7.75 8.5C7.75 8.08579 8.08579 7.75 8.5 7.75H9.5Z" fill="currentColor"/></g></svg>',
+  "banknote":'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g><path d="M13.6954 6.11453C16.0098 5.52016 18.3886 6.8379 19.0089 9.05687L19.8511 12.0703C20.4712 14.2895 19.0979 16.5701 16.7833 17.1648L6.30553 19.8573C3.99088 20.4518 1.61111 19.1342 0.990908 16.915L0.148747 13.9015C-0.471158 11.6824 0.903165 9.40171 3.2176 8.80702L13.6954 6.11453ZM12.349 11.6854C11.6 10.4423 9.94133 10.0162 8.64451 10.7337C7.34769 11.4516 6.9035 13.042 7.65192 14.2854C8.40077 15.529 10.0593 15.955 11.3564 15.2371C12.6531 14.519 13.0977 12.9288 12.349 11.6854ZM6.63074 13.5725C6.33098 13.0756 5.66731 12.9056 5.14875 13.1926C4.63056 13.4799 4.45354 14.1153 4.75256 14.6125C5.05204 15.1098 5.71471 15.2803 6.23349 14.9934C6.75232 14.7062 6.93028 14.0699 6.63074 13.5725ZM9.45807 12.0855C9.97673 11.7985 10.6404 11.9683 10.9401 12.4654C11.2395 12.9627 11.0614 13.599 10.5428 13.8863C10.024 14.1734 9.36035 14.0028 9.06082 13.5054C8.76179 13.0081 8.93952 12.3727 9.45807 12.0855ZM15.2441 11.3604C14.9445 10.8632 14.2808 10.6924 13.7621 10.9795C13.2434 11.2667 13.0656 11.903 13.3648 12.4004C13.6644 12.8976 14.3281 13.0682 14.8468 12.7813C15.3656 12.4941 15.5434 11.8578 15.2441 11.3604ZM12.243 0.396416C14.4113 -0.581082 16.9964 0.311325 18.0163 2.39014L19.4009 5.21365C19.6454 5.7131 18.9672 5.98839 18.5153 5.64632C17.088 4.56605 15.1665 4.12255 13.2748 4.60832L2.79705 7.2998C2.49833 7.37654 2.21047 7.4735 1.93582 7.58926C1.07263 7.95299 -0.0109134 7.47262 0.423111 6.67009C0.846268 5.88773 1.53137 5.22774 2.42735 4.82364L12.243 0.396416Z" fill="currentColor"/></g></svg>',
+  "shield":'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g transform="translate(0.5 0)"><path fill-rule="evenodd" clip-rule="evenodd" d="M16.5268 15.123C14.9361 17.3036 12.6916 18.9642 10.1051 19.8961C10.0865 19.9028 10.0677 19.9092 10.0489 19.9151C9.69102 20.0283 9.3037 20.0283 8.94587 19.9151C8.92716 19.9092 8.90857 19.903 8.89011 19.8963C6.29986 18.9641 4.05792 17.3028 2.46754 15.1225C0.873387 12.9406 0.00904858 10.341 1.71661e-05 7.66817L0 7.6631L8.58307e-06 4.52379C8.58307e-06 4.50137 0.00051105 4.47895 0.00151575 4.45656C0.0383989 3.63441 0.619517 3.01593 1.31275 2.82597C1.32886 2.82156 1.34504 2.81741 1.36129 2.81354C3.69379 2.25741 5.95512 1.46296 8.1097 0.447123C8.13498 0.435204 8.16059 0.423994 8.1865 0.413506L8.93712 0.10962C9.29815 -0.03654 9.70187 -0.03654 10.0629 0.10962L10.8135 0.413505C10.8401 0.424251 10.8663 0.435754 10.8922 0.448C13.0417 1.46507 15.3049 2.2571 17.6387 2.81354C17.655 2.81741 17.6712 2.82156 17.6873 2.82597C18.3805 3.01594 18.9616 3.63441 18.9985 4.45656C18.9995 4.47895 19 4.50137 19 4.52379V7.6631C19 7.70985 18.9978 7.75626 18.9936 7.80221C18.9571 10.4267 18.0949 12.977 16.5268 15.123Z" fill="currentColor"/></g></svg>',
+  "toggles":'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g transform="translate(0.75 3.25)"><path d="M15.75 8C17.2688 8 18.5 9.23122 18.5 10.75C18.5 12.2688 17.2688 13.5 15.75 13.5C14.4915 13.5 13.4332 12.6539 13.1064 11.5H0.75C0.335786 11.5 0 11.1642 0 10.75C0 10.3358 0.335786 10 0.75 10H13.1064C13.4332 8.84614 14.4915 8 15.75 8ZM5.75 0C7.0085 0 8.06684 0.84614 8.39355 2H17.75C18.1642 2 18.5 2.33579 18.5 2.75C18.5 3.16421 18.1642 3.5 17.75 3.5H8.39355C8.06684 4.65386 7.0085 5.5 5.75 5.5C4.4915 5.5 3.43316 4.65386 3.10645 3.5H0.75C0.335786 3.5 0 3.16421 0 2.75C0 2.33579 0.335786 2 0.75 2H3.10645C3.43316 0.84614 4.4915 0 5.75 0Z" fill="currentColor"/></g></svg>',
+  "fuel":'<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g transform="translate(0.5664 0.2264)"><path fill-rule="evenodd" clip-rule="evenodd" d="M0 3.75914C0 1.68302 1.68302 0 3.75914 0L8.89416 0.013555C10.9703 0.013555 12.6533 1.69658 12.6533 3.7727V11.8705H13.9063C14.8749 11.8705 15.6606 12.6562 15.6606 13.6248V15.1284C15.6606 15.5432 15.9976 15.8803 16.4124 15.8803C16.8272 15.8803 17.1643 15.5432 17.1643 15.1284V10.3669H16.0445C14.9906 10.3669 14.3118 9.44291 14.4431 8.39503L14.6937 6.39049C14.8027 5.51283 15.4097 4.85345 16.2951 4.85345H17.022C16.9635 4.74149 16.888 4.63798 16.797 4.54703L15.3796 3.12959C15.086 2.83598 15.086 2.35995 15.3796 2.06634C15.6732 1.77273 16.1492 1.77273 16.4428 2.06634L17.8603 3.48379C18.377 4.00054 18.6679 4.70194 18.6679 5.43286V15.1284C18.6679 16.3737 17.6577 17.3839 16.4124 17.3839C15.1672 17.3839 14.157 16.3737 14.157 15.1284V13.6248C14.157 13.4867 14.0445 13.3742 13.9063 13.3742H12.6533V15.8019C12.6533 17.8781 10.9703 19.5611 8.89416 19.5611L3.75914 19.5475C1.68302 19.5475 0 17.8645 0 15.7884V3.75914ZM3.88939 4.04108C3.47416 4.04108 3.13756 4.37768 3.13756 4.7929V7.80022C3.13756 8.21544 3.47416 8.55204 3.88939 8.55204L8.86987 8.56064C9.2851 8.56064 9.6217 8.22404 9.6217 7.80881V4.8015C9.6217 4.38628 9.2851 4.04967 8.86987 4.04967L3.88939 4.04108Z" fill="currentColor"/></g></svg>'
 };
 
-/* Per-question spot illustrations, exported from the Figma design. Only two
-   exist so far, so questions alternate between them until the remaining four
-   are drawn. Fills are the resolved illustration tokens: background
-   accent@18%, midground #B59F00, foreground accent. */
+/* Per-question spot illustrations, the Figma `Medium` set in question order:
+   Envelope, Notifications, Magnifier, Chart, Road signs, Favorites. */
 const QGFX = [
-'<svg viewBox="0 0 88 88" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M87.9162 46.6898C87.8764 47.358 87.8134 48.0228 87.7389 48.6877C86.1035 63.8587 76.7285 77.0997 62.9659 83.6738C61.7149 84.269 60.4258 84.8095 59.0986 85.2953C36.314 93.6634 11.0639 81.9643 2.70292 59.1648C-5.65967 36.3652 6.03172 11.0985 28.8163 2.73045C28.8743 2.7089 28.9323 2.68735 28.9903 2.66745C29.562 2.45688 30.1353 2.26455 30.7069 2.08382C53.8412 -5.28446 78.5644 7.50889 85.9295 30.6583C87.5765 35.833 88.2492 41.2697 87.9178 46.6898H87.9162Z" fill="#F2D400" fill-opacity="0.18"/><path d="M63.6017 32.5337C64.1418 32.1012 64.9473 32.2859 65.1446 32.9491C65.3756 33.7258 65.5 34.5483 65.5 35.4V52.6C65.5 57.3496 61.6497 61.2 56.9 61.2H31.1C26.3504 61.2 22.5 57.3496 22.5 52.6V35.4C22.5 34.5949 22.6108 33.8157 22.8179 33.0768C23.0056 32.4068 23.8144 32.2126 24.3599 32.6445L42.3455 46.8827C43.327 47.6597 44.7148 47.6563 45.6923 46.8743L63.6017 32.5337Z" fill="#B59F00"/><path d="M61.7678 28.3115C60.3838 27.3586 58.7074 26.8 56.9 26.8H31.1C29.2455 26.8 27.5288 27.3876 26.1244 28.3861C25.5919 28.7647 25.6284 29.535 26.1407 29.9406L43.3394 43.5569C43.7321 43.8679 44.2876 43.8664 44.6786 43.5533L61.767 29.8706C62.2799 29.46 62.309 28.6842 61.7678 28.3115Z" fill="#F2D400"/></svg>',
-'<svg viewBox="0 0 88 88" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M87.9162 46.6898C87.8764 47.358 87.8134 48.0228 87.7389 48.6877C86.1035 63.8587 76.7285 77.0997 62.9659 83.6738C61.7149 84.269 60.4258 84.8095 59.0986 85.2953C36.314 93.6634 11.0639 81.9643 2.70292 59.1648C-5.65967 36.3652 6.03172 11.0985 28.8163 2.73045C28.8743 2.7089 28.9323 2.68735 28.9903 2.66745C29.562 2.45688 30.1353 2.26455 30.7069 2.08382C53.8411 -5.28446 78.5644 7.50889 85.9295 30.6583C87.5765 35.833 88.2492 41.2697 87.9178 46.6898H87.9162Z" fill="#F2D400" fill-opacity="0.18"/><path fill-rule="evenodd" clip-rule="evenodd" d="M41.8008 63.7992V87.9465C43.2594 88.0188 44.7277 88.0182 46.2008 87.9424V63.7992H41.8008ZM41.8008 46.1992H46.2008V39.6H41.8008V46.1992ZM41.8008 22H46.2008V15.3992C46.2008 14.1842 45.2158 13.1992 44.0008 13.1992C42.7858 13.1992 41.8008 14.1842 41.8008 15.3992V22Z" fill="#F2D400"/><path fill-rule="evenodd" clip-rule="evenodd" d="M26.7801 22C25.8109 22 25.3153 23.1626 25.9866 23.8618L31.9159 30.0382C32.3246 30.4639 32.3246 31.1361 31.9159 31.5618L25.9866 37.7382C25.3153 38.4374 25.8109 39.6 26.7801 39.6H66.7629C67.3227 39.6 67.8615 39.3866 68.2695 39.0032L75.2931 32.4032C76.2177 31.5344 76.2177 30.0656 75.2931 29.1968L68.2695 22.5968C67.8615 22.2134 67.3227 22 66.7629 22H26.7801ZM21.2363 46.1992C20.6765 46.1992 20.1378 46.4126 19.7298 46.796L12.7062 53.396C11.7815 54.2648 11.7815 55.7336 12.7062 56.6025L19.7298 63.2025C20.1378 63.5858 20.6765 63.7992 21.2363 63.7992H61.2192C62.1884 63.7992 62.6839 62.6366 62.0127 61.9374L56.0833 55.761C55.6747 55.3353 55.6747 54.6631 56.0833 54.2374L62.0127 48.061C62.6839 47.3618 62.1884 46.1992 61.2192 46.1992H21.2363Z" fill="#B59F00"/></svg>'
+'<svg viewBox="0 0 342 144" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M214.916 102.69C214.876 103.358 214.813 104.023 214.739 104.688C213.103 119.859 203.729 133.1 189.966 139.674C188.715 140.269 187.426 140.81 186.099 141.295C163.314 149.663 138.064 137.964 129.703 115.165C121.34 92.3652 133.032 67.0985 155.816 58.7305C155.874 58.7089 155.932 58.6873 155.99 58.6674C156.562 58.4569 157.135 58.2645 157.707 58.0838C180.841 50.7155 205.564 63.5089 212.93 86.6583C214.577 91.833 215.249 97.2697 214.918 102.69H214.916Z" fill="#FFD000" fill-opacity="0.1"/><path d="M190.602 88.5337C191.142 88.1012 191.947 88.2859 192.145 88.9491C192.376 89.7257 192.5 90.5482 192.5 91.3999V108.6C192.5 113.35 188.65 117.2 183.9 117.2H158.1C153.35 117.2 149.5 113.35 149.5 108.6V91.3999C149.5 90.5948 149.611 89.8157 149.818 89.0767C150.006 88.4068 150.814 88.2126 151.36 88.6444L169.346 102.883C170.327 103.66 171.715 103.656 172.692 102.874L190.602 88.5337Z" fill="#815EFF"/><path d="M188.768 84.3114C187.384 83.3585 185.708 82.7999 183.9 82.7999H158.1C156.246 82.7999 154.529 83.3875 153.125 84.386C152.592 84.7646 152.629 85.5349 153.141 85.9405L170.34 99.5568C170.732 99.8678 171.288 99.8662 171.679 99.5531L188.767 85.8705C189.28 85.4598 189.309 84.684 188.768 84.3114Z" fill="#FFE676"/></svg>',
+'<svg viewBox="0 0 342 144" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M214.916 102.69C214.876 103.358 214.813 104.023 214.739 104.688C213.103 119.859 203.729 133.1 189.966 139.674C188.715 140.269 187.426 140.81 186.099 141.295C163.314 149.663 138.064 137.964 129.703 115.165C121.34 92.3652 133.032 67.0985 155.816 58.7305C155.874 58.7089 155.932 58.6873 155.99 58.6674C156.562 58.4569 157.135 58.2645 157.707 58.0838C180.841 50.7155 205.564 63.5089 212.93 86.6583C214.577 91.833 215.249 97.2697 214.918 102.69H214.916Z" fill="#FFD000" fill-opacity="0.1"/><path d="M179.5 121C178.288 123.948 175.122 126 171.5 126C167.878 126 164.712 123.948 163.5 121H179.5Z" fill="#FFE676"/><path d="M172.117 78C179.65 78.0006 185.759 84.3966 185.759 92.285V99.9697C185.759 103.757 187.304 107.364 190.005 109.882C193.05 112.722 191.132 117.998 187.055 118H154.946C150.868 117.999 148.95 112.723 151.996 109.882L152.488 109.397C154.883 106.912 156.241 103.52 156.241 99.9697V92.285C156.241 84.3962 162.35 78 169.883 78H172.117Z" fill="#815EFF"/></svg>',
+'<svg viewBox="0 0 342 144" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M215.416 102.69C215.376 103.358 215.313 104.023 215.239 104.688C213.604 119.859 204.229 133.1 190.466 139.674C189.215 140.269 187.926 140.81 186.599 141.295C163.814 149.663 138.564 137.964 130.203 115.165C121.84 92.3652 133.532 67.0985 156.316 58.7305C156.374 58.7089 156.432 58.6874 156.49 58.6675C157.062 58.4569 157.635 58.2646 158.207 58.0838C181.341 50.7155 206.064 63.5089 213.429 86.6583C215.076 91.833 215.749 97.2697 215.418 102.69H215.416Z" fill="#FFD000" fill-opacity="0.1"/><path fill-rule="evenodd" clip-rule="evenodd" d="M154.5 100.5C154.5 91.3873 161.887 84 171 84C180.113 84 187.5 91.3873 187.5 100.5C187.5 109.613 180.113 117 171 117C161.887 117 154.5 109.613 154.5 100.5ZM171 80C159.678 80 150.5 89.1782 150.5 100.5C150.5 111.822 159.678 121 171 121C175.472 121 179.61 119.568 182.98 117.137L199.64 133.797C201.701 132.081 203.593 130.187 205.298 128.141L188.439 111.282C190.38 108.15 191.5 104.456 191.5 100.5C191.5 89.1782 182.322 80 171 80Z" fill="#815EFF"/><path fill-rule="evenodd" clip-rule="evenodd" d="M178.627 85.8646C177.277 89.4097 175.554 93.0499 173.466 96.6661C169.608 103.347 165.058 108.993 160.436 113.175C163.298 115.563 166.981 117 171 117C180.113 117 187.5 109.613 187.5 100.5C187.5 94.1388 183.9 88.6184 178.627 85.8646Z" fill="#FFE676"/><path fill-rule="evenodd" clip-rule="evenodd" d="M154.5 100.5C154.5 91.3873 161.887 84 171 84C173.752 84 176.346 84.6735 178.627 85.8646C177.277 89.4097 175.553 93.0499 173.466 96.6661C169.608 103.347 165.058 108.993 160.435 113.175C160.053 112.856 159.685 112.519 159.333 112.167C156.347 109.181 154.5 105.056 154.5 100.5Z" fill="white"/></svg>',
+'<svg viewBox="0 0 342 144" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M215.416 102.69C215.376 103.358 215.313 104.023 215.239 104.688C213.603 119.859 204.229 133.1 190.466 139.674C189.215 140.269 187.926 140.81 186.599 141.295C163.814 149.663 138.564 137.964 130.203 115.165C121.84 92.3652 133.532 67.0985 156.316 58.7305C156.374 58.7089 156.432 58.6873 156.49 58.6674C157.062 58.4569 157.635 58.2645 158.207 58.0838C181.341 50.7155 206.064 63.5089 213.43 86.6583C215.077 91.833 215.749 97.2697 215.418 102.69H215.416Z" fill="#FFD000" fill-opacity="0.1"/><path d="M148.5 102C148.5 99.7909 150.291 98 152.5 98H156.5C158.709 98 160.5 99.7909 160.5 102V117C160.5 119.209 158.709 121 156.5 121H152.5C150.291 121 148.5 119.209 148.5 117V102Z" fill="#FFE676"/><path d="M165.5 83C165.5 80.7909 167.291 79 169.5 79H173.5C175.709 79 177.5 80.7909 177.5 83V117C177.5 119.209 175.709 121 173.5 121H169.5C167.291 121 165.5 119.209 165.5 117V83Z" fill="#815EFF"/><path d="M182.5 96C182.5 93.7909 184.291 92 186.5 92H190.5C192.709 92 194.5 93.7909 194.5 96V117C194.5 119.209 192.709 121 190.5 121H186.5C184.291 121 182.5 119.209 182.5 117V96Z" fill="#382090"/></svg>',
+'<svg viewBox="0 0 342 144" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M214.916 102.69C214.876 103.358 214.813 104.023 214.739 104.688C213.103 119.859 203.729 133.1 189.966 139.674C188.715 140.269 187.426 140.81 186.099 141.295C163.314 149.663 138.064 137.964 129.703 115.165C121.34 92.3652 133.032 67.0985 155.816 58.7305C155.874 58.7089 155.932 58.6873 155.99 58.6674C156.562 58.4569 157.135 58.2645 157.707 58.0838C180.841 50.7155 205.564 63.5089 212.93 86.6583C214.577 91.833 215.249 97.2697 214.918 102.69H214.916Z" fill="#FFD000" fill-opacity="0.1"/><path fill-rule="evenodd" clip-rule="evenodd" d="M168.801 119.799V143.946C170.259 144.019 171.728 144.018 173.201 143.942V119.799H168.801ZM168.801 102.199H173.201V95.6H168.801V102.199ZM168.801 78H173.201V71.3992C173.201 70.1842 172.216 69.1992 171.001 69.1992C169.786 69.1992 168.801 70.1842 168.801 71.3992V78Z" fill="#FFE676"/><path fill-rule="evenodd" clip-rule="evenodd" d="M153.78 78C152.811 78 152.315 79.1626 152.987 79.8618L158.916 86.0382C159.325 86.4639 159.325 87.1361 158.916 87.5618L152.987 93.7382C152.315 94.4374 152.811 95.6 153.78 95.6H193.763C194.323 95.6 194.861 95.3866 195.269 95.0032L202.293 88.4032C203.218 87.5344 203.218 86.0656 202.293 85.1968L195.269 78.5968C194.861 78.2134 194.323 78 193.763 78H153.78ZM148.236 102.199C147.677 102.199 147.138 102.413 146.73 102.796L139.706 109.396C138.782 110.265 138.782 111.734 139.706 112.602L146.73 119.202C147.138 119.586 147.677 119.799 148.236 119.799H188.219C189.188 119.799 189.684 118.637 189.013 117.937L183.083 111.761C182.675 111.335 182.675 110.663 183.083 110.237L189.013 104.061C189.684 103.362 189.188 102.199 188.219 102.199H148.236Z" fill="#815EFF"/></svg>',
+'<svg viewBox="0 0 342 144" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M215.414 102.726C215.416 102.714 215.417 102.702 215.418 102.69C215.749 97.2697 215.076 91.833 213.429 86.6582C206.064 63.5092 181.341 50.7155 158.207 58.0836C157.638 58.2636 157.065 58.4556 156.493 58.6663C156.432 58.6873 156.372 58.7096 156.317 58.7299C156.317 58.73 156.316 58.7303 156.316 58.7304C133.531 67.0989 121.84 92.3654 130.203 115.164C138.564 137.964 163.814 149.663 186.599 141.295C187.926 140.81 189.214 140.269 190.465 139.674C204.228 133.1 213.603 119.859 215.239 104.688C215.312 104.037 215.374 103.384 215.414 102.726Z" fill="#FFD000" fill-opacity="0.1"/><path d="M168.843 87.4985C167.345 86.7555 165.679 86.4082 164.008 86.4889C162.691 86.4668 161.383 86.7059 160.16 87.1927C158.922 87.6857 157.796 88.4227 156.851 89.3598C155.906 90.2969 155.162 91.4148 154.663 92.6462C154.167 93.873 153.925 95.1869 153.952 96.5091C153.956 101.086 155.72 104.584 158.57 107.734C161.164 110.601 164.724 113.247 168.698 116.202C169.007 116.432 169.319 116.663 169.633 116.897C170.758 117.735 172.304 117.73 173.424 116.887C173.808 116.598 174.188 116.313 174.565 116.03L174.567 116.028C178.411 113.143 181.876 110.542 184.419 107.732C187.266 104.584 189.044 101.088 189.048 96.5093C189.076 95.1816 188.832 93.8622 188.331 92.6311C187.829 91.3952 187.079 90.2743 186.127 89.3363C185.175 88.3983 184.041 87.6627 182.795 87.1736C181.566 86.6913 180.253 86.4585 178.932 86.4886C177.262 86.4088 175.599 86.7562 174.102 87.4985C173.12 87.985 172.232 88.6305 171.472 89.4049C170.712 88.6305 169.824 87.985 168.843 87.4985Z" fill="#815EFF"/></svg>'
 ];
 
 /* ---------------------------------------------------------------
@@ -566,83 +614,88 @@ const QGFX = [
 --------------------------------------------------------------- */
 const Qs=[
   {t:"Monday morning. Before you open your email, you check…",opts:[
-    {i:"reciept",l:"Last week’s spend data",s:"Anything spike over the weekend?",type:"CH"},
+    {i:"receipt",l:"Last week’s spend data",s:"Anything spike over the weekend?",type:"CH"},
     {i:"wrench",l:"Which vehicles have a service or MOT coming up this week",s:"Before a driver tells you about it",type:"FF"},
-    {i:"chart",l:"The monthly dashboard",s:"Board meeting’s coming and the numbers need to tell a story",type:"VD"},
-    {i:"fuel",l:"Whether anyone with a home charger used a public one instead",s:"Again",type:"AP"},
+    {i:"chart2",l:"The monthly dashboard",s:"Board meeting’s coming and the numbers need to tell a story",type:"VD"},
+    {i:"charging-point",l:"Which drivers used a public charger instead of their home charger last week?",s:"Before higher charging costs add up",type:"AP"},
   ]},
   {t:"A driver calls at 5:58pm on a Friday. Before you pick up, your first thought is…",opts:[
-    {i:"smartphone",l:"“Pick up. Always pick up.”",s:"That’s the job.",type:"FF"},
-    {i:"chart",l:"“Whatever this is, I need the full story”",s:"Before it becomes someone else’s problem",type:"VD"},
-    {i:"car",l:"“Please don’t let it be an EV”",s:"Please don’t let it be an EV",type:"AP"},
-    {i:"calendar",l:"“I’ve had four calls already this hour”",s:"I already know how this ends",type:"BO"},
+    {i:"smartphone",l:"“Pick up. Always pick up.”",s:"That’s the job",type:"FF"},
+    {i:"eye",l:"“Whatever this is, I need the full story”",s:"Before I decide what to do next",type:"VD"},
+    {i:"car",l:"“Please don’t let it be an EV”",s:"I don’t have a loan vehicle to replace it like for like",type:"AP"},
+    {i:"calendar",l:"“I’ve had four calls already today about this”",s:"This is going to be a problem",type:"BO"},
   ]},
   {t:"Finance flags an unexpected spike in fleet spend. Your first move is…",opts:[
-    {i:"reciept",l:"Pull the transaction data and start cross-referencing",s:"The answer’s in there somewhere",type:"CH"},
+    {i:"receipt",l:"Pull the transaction data and start cross-referencing",s:"The answer’s in there somewhere",type:"CH"},
     {i:"pin",l:"Check whether the mileage figures actually hold up",s:"Inaccurate data has a way of distorting everything",type:"MD"},
-    {i:"chart",l:"Get ahead of it: build the explanation before anyone asks for one",s:"",type:"VD"},
+    {i:"chart2",l:"Get ahead of it",s:"build the explanation before anyone asks for one",type:"VD"},
     {i:"info",l:"Add it to the list",s:"You’ll get to it once you’ve dealt with the other six urgent things",type:"BO"},
   ]},
   {t:"You’re asked to cut fleet costs by 10%. You…",opts:[
     {i:"banknote",l:"Already know where to cut",s:"You’ve been watching the numbers for months",type:"CH"},
-    {i:"shield",l:"Question whether the baseline numbers are accurate first",s:"You can’t cut what you can’t measure correctly",type:"MD"},
-    {i:"chart",l:"Build the 12-month model first",s:"You need to show what 10% actually means across the fleet",type:"VD"},
-    {i:"toggles",l:"Find the fuel savings. Find the charging savings.",s:"Realise neither report includes the other",type:"AP"},
+    {i:"shield",l:"Double check whether the baseline numbers are accurate",s:"Before you look for savings",type:"MD"},
+    {i:"chart2",l:"Build the 12-month model first",s:"You need to show what 10% actually means across the fleet",type:"VD"},
+    {i:"toggles",l:"Find the fuel savings. Find the charging savings",s:"They’re the obvious place to look for a quick win",type:"AP"},
   ]},
-  {t:"The monthly fuel and EV charging invoice lands and the numbers don’t match what you budgeted. You…",opts:[
-    {i:"reciept",l:"Go straight to the transaction data",s:"You’ll find the discrepancy before you call anyone",type:"CH"},
+  {t:"The fuel and EV charging invoice lands and the numbers don’t match what you budgeted. You…",opts:[
+    {i:"receipt",l:"Go straight to the transaction data",s:"You’ll look for any discrepancies before making any decisions.",type:"CH"},
     {i:"pin",l:"Check the mileage entries first",s:"A wrong vehicle, a misread odometer, a forgotten entry. It all adds up",type:"MD"},
-    {i:"smartphone",l:"Ring the card provider",s:"You need an explanation before Finance sees it",type:"FF"},
-    {i:"info",l:"Add it to the pile",s:"You’ll get to it at the weekend, same as everything else",type:"BO"},
+    {i:"smartphone",l:"Ring the card provider",s:"You need an explanation before going to Finance",type:"FF"},
+    {i:"info",l:"Add it to the to do list",s:"You’ll get to it along with all the other ‘priorities’ – even if it means staying late (again)",type:"BO"},
   ]},
   {t:"Finish the sentence: “My job is basically…”",weight:1.5,opts:[
-    {i:"banknote",l:"“…making sure every penny is going where it should.”",s:"",type:"CH"},
-    {i:"pin",l:"“…working out which mileage number to fix and which driver to call.”",s:"",type:"MD"},
+    {i:"banknote",l:"“…making sure every penny is accounted for.”",s:"",type:"CH"},
+    {i:"pin",l:"“…working out which mileage report is incorrect and which driver to call.”",s:"",type:"MD"},
     {i:"wrench",l:"“…keeping the wheels turning and the service record up to date.”",s:"",type:"FF"},
-    {i:"chart",l:"“…turning fleet chaos into something the Board can understand.”",s:"",type:"VD"},
+    {i:"chart2",l:"“…turning fleet data into something my stakeholders can understand.”",s:"",type:"VD"},
     {i:"fuel",l:"“…the same job I always did, but now twice over, for two kinds of vehicle.”",s:"",type:"AP"},
     {i:"info",l:"“…whatever everyone else needs it to be, apparently.”",s:"",type:"BO"},
   ]},
 ];
 
-/* Persona profiles. `art` is the illustration key: all six point at the
-   star placeholder until the sourced artwork lands. */
+/* "Discover more" goes to the persona's product page. Same URLs as the result
+   emails with the medium swapped to website, per the UTM plan. */
+const UTM='?utm_source=content&utm_medium=website&utm_campaign=fy26-09-uk-as-fleet-manager-quiz-';
+const SITE='https://allstarcard.co.uk';
+
+/* Persona profiles. `art` is the file stem under assets/persona/. */
 const P={
-  CH:{art:'ch',name:"The Cost Hawk",product:"Allstar Online",
+  CH:{art:'cost-hawk',name:"The Cost Hawk",product:"Allstar Online",
+    link:SITE+'/solutions/service-and-assistance/allstar-online'+UTM+'cost-hawk',
     subtitle:"“You spotted the 20p variance the moment the invoice arrived.”",
     desc:"You have a forensic instinct for where fleet money goes, and where it quietly disappears. The catch is not spotting the problem, it is the time it takes to act on it. Weekly data instead of daily. Reports that need reformatting before they are usable. By the time the picture is clear, the spend has already happened.",
-    fitText:"Allstar Online gives you spend visibility per driver, per vehicle, per transaction, without the manual processing. We are also building a proactive insight feed into it, shaped right now by fleet managers like you."},
-  MD:{art:'md',name:"The Mileage Detective",product:"MileagePoint",
+    fitText:"Allstar Online gives you spend visibility per driver, vehicle and transaction, without the manual processing. There are many more features we’re developing to provide Fleet Managers more insights."},
+  MD:{art:'mileage-detective',name:"The Mileage Detective",product:"Allstar MileagePoint",
+    link:SITE+'/mileagepoint'+UTM+'mileage-detective',
     subtitle:"“Somewhere between what the driver entered and what actually happened is the truth.”",
     desc:"Mileage accuracy looks simple from the outside and is anything but in practice. The gap between what a driver enters and what actually happened runs from minor rounding to figures that are plainly wrong. The downstream effects are real: unreliable MPG, business and personal splits that become guesswork, and efficiency analysis built on a foundation that shifts every month.",
-    fitText:"MileagePoint removes the manual entry problem by capturing mileage automatically and accurately, with no driver input at the pump. Business and personal mileage is split correctly, giving you clean data for tax and efficiency figures you can actually report on."},
-  FF:{art:'ff',name:"The Fleet Firefighter",product:"Allstar ServicePoint",
+    fitText:"Allstar MileagePoint helps you make mileage claims easier to manage, with a clearer view of business and private journeys. It brings driver mileage together fuel and EV charging spend, supporting accurate reimbursements and HMRC-compliant reporting."},
+  FF:{art:'fleet-firefighter',name:"The Fleet Firefighter",product:"Allstar ServicePoint",
+    link:SITE+'/solutions/service-and-assistance/servicepoint'+UTM+'fleet-firefighter',
     subtitle:"“The card declined. The service is due on Friday. The driver just called.”",
     desc:"You keep the fleet moving, and the operation runs as smoothly as it does because of that instinct. The catch is that a lot of what reaches you should never have become an emergency: a service interval nobody tracked closely enough, or a reactive call that takes far longer to resolve because the information is not visible in one place.",
-    fitText:"Allstar ServicePoint gives you visibility of upcoming MOTs, service schedules and maintenance across the fleet, so the things that are supposed to be planned stay planned. Booking happens in the app, without the back-and-forth that eats the day."},
-  VD:{art:'vd',name:"The Value Defender",product:"Allstar Online",
+    fitText:"Allstar ServicePoint gives you visibility of upcoming MOTs, service schedules and maintenance across the fleet, so the things that are supposed to be planned stay planned. Booking and authorisations happen in the app, without the back-and-forth that eats the day."},
+  VD:{art:'value-defender',name:"The Value Defender",product:"Allstar Online",
+    link:SITE+'/solutions/service-and-assistance/allstar-online'+UTM+'value-defender',
     subtitle:"“Takes 47 variables and makes it look like a clean line graph.”",
-    desc:"You are accountable for fleet at a strategic level, which means the questions you get are bigger, arrive with less warning, and need answers that hold up under scrutiny. The analysis is not the hard part. Getting clean, trusted, consolidated data fast enough to be useful is where the time goes.",
-    fitText:"Allstar Online gives you consolidated fleet spend in one place, queryable, exportable and structured for the reporting you are already doing. Spend visibility across the fleet means the baseline numbers are always current, not last month’s."},
-  AP:{art:'ap',name:"The Accidental Pioneer",product:"Chargepass and Homecharge",
-    subtitle:"“You didn’t choose EVs. EVs chose you, and brought a whole new set of admin.”",
-    desc:"You are managing a fleet in transition, which in practice means managing two or three fleets at once with tools designed for one. Fuel cards, charge cards and home charging. Multiple invoices. Multiple reporting streams. Mileage that works differently for EVs. Every task you used to do once, you now do twice, and the pieces do not always fit together.",
-    fitText:"Allstar Chargepass puts fuel and EV charging on one card, one invoice and one dashboard. Allstar Homecharge removes the reimbursement process entirely: we pay the driver’s energy supplier directly, so there is no claiming back and no money passing through your drivers’ hands."},
-  BO:{art:'bo',name:"The Burned Out Manager",product:"New platform in development",
+    desc:"You are accountable for fleet at a strategic level, which means the questions you are asked are significant, arrive at short notice, and need answers which hold up under scrutiny. The analysis is not the hard part. Getting clean, trusted, consolidated data fast enough to be useful is where the time goes.",
+    fitText:"Allstar Online gives you consolidated fleet spend in one place, queryable, exportable and structured for the basic reporting you provide. Spend visibility across the fleet means access to current and historic data."},
+  AP:{art:'accidental-pioneer',name:"The Accidental Pioneer",product:"Chargepass and Homecharge",
+    link:SITE+'/solutions/ev/allstar-chargepass'+UTM+'accidental-pioneer',
+    subtitle:"“You didn’t choose to run EVs. EVs were chosen for you and brought a whole new set of admin.”",
+    desc:"You are managing a fleet in transition, which in practice means managing two or three fleet types at once with tools which may have only been designed for one. Fuel cards, charge cards and home charging. Multiple invoices. Multiple reporting streams. Mileage payments which work differently for EVs. Every task you used to do once, you now do twice and the reports don’t always align.",
+    fitText:"Allstar Chargepass puts fuel and EV charging on one card, one invoice and one dashboard. Allstar Homecharge removes the reimbursement process entirely for charging at home: we pay the driver’s energy supplier directly* so there are no expense claims to make and no out of pocket transactions."},
+  BO:{art:'burned-out-manager',name:"The Burned Out Manager",product:"New features coming soon",
+    link:SITE+'/solutions/service-and-assistance/allstar-online'+UTM+'burned-out-fleet-manager',
     subtitle:"“Fleet got more complex. The team stayed the same size.”",
-    desc:"You are not alone in this. The fleet role has gained enormous strategic importance in a few short years. Electrification, sustainability reporting, cost pressure, compliance, all landing on the same desk, with the same team, often with tools built for a simpler version of the job. No single product solves that, but a meaningful part of what is exhausting is genuinely avoidable.",
-    fitText:"We are building a new platform to bring fleet operations together in one place, reducing the manual stitching, the system-hopping and the admin friction that turns a demanding job into an unsustainable one. It is in development now, with direct input from fleet managers like you."},
+    desc:"You are not alone in this. The fleet role has gained enormous strategic importance in a few short years. Electrification, sustainability reporting, cost pressure, compliance, all landing on the same desk, with the same team, often with tools built for a simpler version of the job. No single product removes this complexity yet, so a large part of this job is exhausting yet genuinely avoidable.",
+    fitText:"Allstar is building a new capability to bring fleet operations together in one place, reducing the manual stitching, the system-hopping and the admin friction that turns a demanding job into an unsustainable one. It is already underway and is being designed by Fleet Managers like you. Want to get involved?"},
 };
+const ORDER=['CH','MD','FF','VD','AP','BO'];
+const INTRO_ART={'intro-ap':['assets/intro/accidental-pioneer.png','The Accidental Pioneer'],'intro-md':['assets/intro/mileage-detective.png','The Mileage Detective']};
 
-const ART = {
-  ch:'<img src="assets/persona/cost-hawk.png" alt="The Cost Hawk" loading="lazy">',
-  md:'<img src="assets/persona/mileage-detective.png" alt="The Mileage Detective" loading="lazy">',
-  ff:'<img src="assets/persona/fleet-firefighter.png" alt="The Fleet Firefighter" loading="lazy">',
-  vd:'<img src="assets/persona/value-defender.png" alt="The Value Defender" loading="lazy">',
-  ap:'<img src="assets/persona/accidental-pioneer.png" alt="The Accidental Pioneer" loading="lazy">',
-  bo:'<img src="assets/persona/burned-out-manager.png" alt="The Burned Out Manager" loading="lazy">',
-  star: STAR
-};
+/* The link "Share the quiz" copies. */
+const SHARE_URL='https://allstarcard.co.uk/yourfleetpersonality';
 
 let cur=0,ans=new Array(Qs.length).fill(null),rType=null;
 
@@ -659,15 +712,72 @@ function scrollToQuiz(){
   catch(e){ el.scrollIntoView(true); }
 }
 
+/* A coin: front face with the art, back face with the star. */
+function coinHTML(src,alt){
+  return '<div class="coin-face coin-front"><img src="'+src+'" alt="'+alt+'" decoding="async"></div>'
+       + '<div class="coin-face coin-back">'+STAR_MARK+'</div>';
+}
+function personaSrc(code){return 'assets/persona/'+P[code].art+'.png';}
+
+/* Restart a CSS animation: drop the class, force a reflow, add it back. */
+function replay(el,cls){el.classList.remove(cls);void el.offsetWidth;el.classList.add(cls);}
+
+/* Start an entrance only once the art has decoded, so the coin never spins
+   in empty. Falls back after 700ms so a slow image cannot stall the screen. */
+function whenDecoded(img,fn){
+  let done=false;const run=()=>{if(!done){done=true;fn();}};
+  setTimeout(run,700);
+  if(img.decode){img.decode().then(run,run);}else if(img.complete){run();}else{img.onload=img.onerror=run;}
+}
+
 function mountAssets(){
   const d1=document.getElementById('logo-dark-1');
   if(d1) d1.innerHTML=LOGO_INVERTED;
-  const a1=document.getElementById('logo-accent-1');
-  if(a1) a1.innerHTML=LOGO_PLAIN;
-  const ia=document.getElementById('intro-art');
-  if(ia) ia.innerHTML=INTRO_ART;
+  const d2=document.getElementById('logo-dark-2');
+  if(d2) d2.innerHTML=LOGO_INVERTED;
   const fl=document.getElementById('fit-logo');
   if(fl) fl.innerHTML=LOGO_PLAIN;
+  document.querySelectorAll('#s-intro .coin').forEach(c=>{
+    const a=INTRO_ART[c.dataset.art];
+    c.innerHTML=coinHTML(a[0],a[1]);
+    /* Tap a coin to flip it once more. */
+    c.addEventListener('click',()=>replay(c,'flip'));
+  });
+  document.querySelectorAll('#qr [data-share]').forEach(b=>b.addEventListener('click',()=>shareQuiz(b)));
+  document.getElementById('types-toggle').addEventListener('click',toggleTypes);
+  /* Warm the cache so the result coin never waits on the network. */
+  ORDER.forEach(k=>{const im=new Image();im.src=personaSrc(k);});
+}
+
+/* Copy the quiz link. The async Clipboard API needs a secure context and,
+   inside an iframe, the clipboard-write permission, so a hidden textarea
+   with execCommand is kept as the fallback. */
+function copyText(text){
+  if(navigator.clipboard&&window.isSecureContext){
+    return navigator.clipboard.writeText(text).catch(()=>legacyCopy(text));
+  }
+  return legacyCopy(text);
+}
+function legacyCopy(text){
+  return new Promise((res,rej)=>{
+    const ta=document.createElement('textarea');
+    ta.value=text;ta.setAttribute('readonly','');
+    ta.style.cssText='position:fixed;top:0;left:0;opacity:0;pointer-events:none';
+    document.body.appendChild(ta);ta.select();ta.setSelectionRange(0,text.length);
+    let ok=false;try{ok=document.execCommand('copy');}catch(e){}
+    document.body.removeChild(ta);ok?res():rej();
+  });
+}
+function shareQuiz(btn){
+  const label=btn.dataset.label||btn.textContent;btn.dataset.label=label;
+  const status=document.getElementById('share-status');
+  copyText(SHARE_URL).then(()=>{
+    btn.textContent='Link copied';status.textContent='Quiz link copied to clipboard';
+  },()=>{
+    btn.textContent=SHARE_URL;status.textContent='Copy this link: '+SHARE_URL;
+  }).finally(()=>{
+    clearTimeout(btn._t);btn._t=setTimeout(()=>{btn.textContent=label;status.textContent='';},2400);
+  });
 }
 
 function show(id){
@@ -732,18 +842,58 @@ function calcResult(){
 }
 function showResult(){
   const p=P[rType];
-  const art=document.getElementById('result-art');
-  art.innerHTML=ART[p.art]||STAR;
-  const artImg=art.querySelector('img');
-  if(artImg) artImg.alt=p.name;
+  const coin=document.getElementById('result-art');
+  const copy=document.getElementById('r-copy');
+  coin.classList.remove('go');copy.classList.remove('go-rise');
+  coin.innerHTML=coinHTML(personaSrc(rType),p.name);
   document.getElementById('r-sub').textContent=p.subtitle;
   document.getElementById('r-desc').textContent=p.desc;
   document.getElementById('r-fit-product').textContent=p.product;
   document.getElementById('r-fit-text').textContent=p.fitText;
+  document.getElementById('r-fit-link').href=p.link;
+  closeTypes();
   show('s-result');
   scrollToQuiz();
+  whenDecoded(coin.querySelector('img'),()=>{replay(coin,'go');replay(copy,'go-rise');});
 }
 function restart(){go();}
+
+/* All personality types: the six coins, the visitor's own one ringed. */
+function toggleTypes(){
+  const grid=document.getElementById('types');
+  if(!grid.hidden){closeTypes();return;}
+  grid.innerHTML='';
+  ORDER.forEach((k,i)=>{
+    const c=document.createElement('div');
+    c.className='coin'+(k===rType?' me':'');
+    c.style.animationDelay=(i*70)+'ms';
+    c.innerHTML=coinHTML(personaSrc(k),P[k].name);
+    grid.appendChild(c);
+  });
+  grid.hidden=false;
+  document.getElementById('types-toggle').setAttribute('aria-expanded','true');
+}
+function closeTypes(){
+  const grid=document.getElementById('types');
+  grid.hidden=true;grid.innerHTML='';
+  document.getElementById('types-toggle').setAttribute('aria-expanded','false');
+}
+
+/* Placeholder-only fields, as drawn. Each label's text becomes its field's
+   placeholder where Marketo supplied none, then labels are hidden visually
+   (they stay in the accessibility tree). */
+function usePlaceholders(formEl){
+  if(!formEl)return;
+  formEl.querySelectorAll('.mktoFieldWrap').forEach(w=>{
+    const lab=w.querySelector('.mktoLabel');const inp=w.querySelector('input,textarea');
+    if(!lab||!inp||inp.type==='checkbox'||inp.type==='hidden')return;
+    if(!inp.getAttribute('placeholder')){
+      const t=lab.textContent.replace(/\*/g,'').replace(/:\s*$/,'').trim();
+      if(t)inp.setAttribute('placeholder',t);
+    }
+  });
+  formEl.classList.add('ph-ready');
+}
 
 /* ---------------------------------------------------------------
    MARKETO
@@ -768,6 +918,7 @@ if(typeof MktoForms2!=="undefined"){
     try{
       const el=form.getFormElem()[0];
       if(el && el.removeAttribute) el.removeAttribute('style');
+      usePlaceholders(el);
     }catch(e){}
     form.onSuccess(function(){
       show('s-thankyou');
@@ -791,26 +942,27 @@ if(typeof MktoForms2!=="undefined"){
   if(!f) return;
   f.className = 'mktoForm';
   f.setAttribute('style','width:1600px;font-family:Helvetica,Arial,sans-serif;padding:20px 20px 0');
-  function row(label, type, name){
+  function row(label, type, name, hint){
     return '<div class="mktoFormRow" style="width:1600px">'
       + '<div class="mktoFieldDescriptor mktoFormCol" style="width:1600px">'
       + '<div class="mktoOffset" style="width:10px;height:1px"></div>'
       + '<div class="mktoFieldWrap" style="width:1590px">'
       + '<label class="mktoLabel" style="width:100px;padding-left:10px">' + label + '</label>'
       + '<div class="mktoGutter" style="width:10px;height:1px"></div>'
-      + '<input type="' + type + '" name="' + name + '" class="mktoField" style="width:1470px" placeholder="' + label + '">'
+      + '<input type="' + type + '" name="' + name + '" class="mktoField" style="width:1470px"' + (hint ? ' placeholder="' + hint + '"' : '') + '>'
       + '<div class="mktoClear"></div></div><div class="mktoClear"></div></div></div>';
   }
+  /* Field order is the real form 3131's (First name, Last name, Company,
+     Email). Only the email field carries its own hint, as in the design; the
+     other three are left without one so the label-to-placeholder fallback in
+     the component is exercised too. */
   f.innerHTML = row('First name','text','FirstName')
     + row('Last name','text','LastName')
-    + row('Company','text','Company')
-    + row('Email address','email','Email')
-    + '<div class="mktoFormRow" style="width:1600px"><div class="mktoFieldDescriptor mktoFormCol" style="width:1600px">'
-    + '<div class="mktoFieldWrap" style="width:1590px"><div class="mktoHtmlText mktoHasWidth" style="width:1470px">'
-    + "By clicking 'Request Callback', you agree to Allstar and the Corpay group of companies contacting you in "
-    + 'accordance with the terms of our privacy policy</div></div></div></div>'
+    + row('Company name','text','Company')
+    + row('Email address','email','Email','you@company.co.uk')
     + '<div class="mktoButtonRow"><span class="mktoButtonWrap mktoNative" style="margin-left:110px">'
-    + '<button type="button" class="mktoButton" id="pv-submit">Request Callback</button></span></div>';
+    + '<button type="button" class="mktoButton" id="pv-submit">Keep me informed</button></span></div>';
+  if (typeof usePlaceholders === 'function') { usePlaceholders(f); }
 
   /* Stubbed submit still drives the thank-you screen so that screen can be
      checked on a phone too. */

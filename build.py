@@ -4,6 +4,7 @@ Build the Allstar fleet manager quiz from src/quiz-embed.html.
 
     python3 build.py --preview     -> index.html      (GitHub Pages, form stubbed)
     python3 build.py --handover    -> dist/embed.html (real Marketo IDs injected)
+    python3 build.py --lp          -> dist/marketo-lp.html (paste into a Marketo LP)
 
 src/quiz-embed.html is the source of truth and carries __MKTO_*__ placeholders,
 so the whole component can live in a public repo. Real identifiers live only in
@@ -34,6 +35,19 @@ def read_source() -> str:
     return SRC.read_text()
 
 
+def read_config() -> dict:
+    if not CONFIG.exists():
+        sys.exit(
+            f"missing {CONFIG.name}. Create it with:\n"
+            '  {"host": "https://....mktoweb.com", "munchkinId": "...", "formId": "..."}'
+        )
+    cfg = json.loads(CONFIG.read_text())
+    for key in ("host", "munchkinId", "formId"):
+        if not cfg.get(key):
+            sys.exit(f"{CONFIG.name} is missing '{key}'")
+    return cfg
+
+
 def build_preview() -> pathlib.Path:
     frag = read_source()
 
@@ -57,16 +71,7 @@ def build_preview() -> pathlib.Path:
 
 
 def build_handover() -> pathlib.Path:
-    if not CONFIG.exists():
-        sys.exit(
-            f"missing {CONFIG.name}. Create it with:\n"
-            '  {"host": "https://....mktoweb.com", "munchkinId": "...", "formId": "..."}'
-        )
-    cfg = json.loads(CONFIG.read_text())
-    for key in ("host", "munchkinId", "formId"):
-        if not cfg.get(key):
-            sys.exit(f"{CONFIG.name} is missing '{key}'")
-
+    cfg = read_config()
     frag = read_source()
     frag = frag.replace("__MKTO_HOST__", cfg["host"].rstrip("/"))
     frag = frag.replace("__MKTO_MUNCHKIN_ID__", cfg["munchkinId"])
@@ -80,6 +85,54 @@ def build_handover() -> pathlib.Path:
     out = dist / "embed.html"
     out.write_text(frag)
     return out
+
+
+def build_lp() -> pathlib.Path:
+    """
+    Build for pasting into a Marketo landing page.
+
+    A Marketo LP already serves munchkin itself, and it serves forms2 whenever
+    the page carries a form. Loading either a second time is what breaks: two
+    munchkin inits double-count the page view, and a second forms2 re-registers
+    the form. So the munchkin block goes entirely, and forms2 is loaded only if
+    the page has not already provided it.
+    """
+    cfg = read_config()
+    frag = read_source()
+
+    frag = MUNCHKIN.sub("", frag)
+    frag = FORMS2_SRC.sub("", frag)
+    frag = LOADFORM.sub(LP_FORMS2, frag)
+
+    frag = frag.replace("__MKTO_HOST__", cfg["host"].rstrip("/"))
+    frag = frag.replace("__MKTO_MUNCHKIN_ID__", cfg["munchkinId"])
+    frag = frag.replace("__MKTO_FORM_ID__", str(cfg["formId"]))
+
+    if "__MKTO_" in frag:
+        sys.exit("unresolved placeholder remains in landing page build")
+    if "munchkin.marketo.net" in frag:
+        sys.exit("munchkin survived the landing page build")
+
+    dist = ROOT / "dist"
+    dist.mkdir(exist_ok=True)
+    out = dist / "marketo-lp.html"
+    out.write_text(frag)
+    return out
+
+
+LP_FORMS2 = """<script>
+/* Reuse the landing page's own forms2 if it has one, otherwise fetch it. */
+(function(){
+  var host = "__MKTO_HOST__", mid = "__MKTO_MUNCHKIN_ID__", fid = __MKTO_FORM_ID__;
+  function load(){ MktoForms2.loadForm(host, mid, fid); }
+  if (window.MktoForms2) { load(); return; }
+  var s = document.createElement('script');
+  s.src = host + '/js/forms2/js/forms2.min.js';
+  s.onload = load;
+  document.head.appendChild(s);
+})();
+</script>
+"""
 
 
 PREVIEW_PAGE = """<!doctype html>
@@ -116,26 +169,27 @@ __FRAGMENT__
   if(!f) return;
   f.className = 'mktoForm';
   f.setAttribute('style','width:1600px;font-family:Helvetica,Arial,sans-serif;padding:20px 20px 0');
-  function row(label, type, name){
+  function row(label, type, name, hint){
     return '<div class="mktoFormRow" style="width:1600px">'
       + '<div class="mktoFieldDescriptor mktoFormCol" style="width:1600px">'
       + '<div class="mktoOffset" style="width:10px;height:1px"></div>'
       + '<div class="mktoFieldWrap" style="width:1590px">'
       + '<label class="mktoLabel" style="width:100px;padding-left:10px">' + label + '</label>'
       + '<div class="mktoGutter" style="width:10px;height:1px"></div>'
-      + '<input type="' + type + '" name="' + name + '" class="mktoField" style="width:1470px" placeholder="' + label + '">'
+      + '<input type="' + type + '" name="' + name + '" class="mktoField" style="width:1470px"' + (hint ? ' placeholder="' + hint + '"' : '') + '>'
       + '<div class="mktoClear"></div></div><div class="mktoClear"></div></div></div>';
   }
+  /* Field order is the real form 3131's (First name, Last name, Company,
+     Email). Only the email field carries its own hint, as in the design; the
+     other three are left without one so the label-to-placeholder fallback in
+     the component is exercised too. */
   f.innerHTML = row('First name','text','FirstName')
     + row('Last name','text','LastName')
-    + row('Company','text','Company')
-    + row('Email address','email','Email')
-    + '<div class="mktoFormRow" style="width:1600px"><div class="mktoFieldDescriptor mktoFormCol" style="width:1600px">'
-    + '<div class="mktoFieldWrap" style="width:1590px"><div class="mktoHtmlText mktoHasWidth" style="width:1470px">'
-    + "By clicking 'Request Callback', you agree to Allstar and the Corpay group of companies contacting you in "
-    + 'accordance with the terms of our privacy policy</div></div></div></div>'
+    + row('Company name','text','Company')
+    + row('Email address','email','Email','you@company.co.uk')
     + '<div class="mktoButtonRow"><span class="mktoButtonWrap mktoNative" style="margin-left:110px">'
-    + '<button type="button" class="mktoButton" id="pv-submit">Request Callback</button></span></div>';
+    + '<button type="button" class="mktoButton" id="pv-submit">Keep me informed</button></span></div>';
+  if (typeof usePlaceholders === 'function') { usePlaceholders(f); }
 
   /* Stubbed submit still drives the thank-you screen so that screen can be
      checked on a phone too. */
@@ -165,9 +219,10 @@ def main():
     g = ap.add_mutually_exclusive_group(required=True)
     g.add_argument("--preview", action="store_true", help="build index.html with the form stubbed")
     g.add_argument("--handover", action="store_true", help="build dist/embed.html with real Marketo IDs")
+    g.add_argument("--lp", action="store_true", help="build dist/marketo-lp.html to paste into a Marketo landing page")
     args = ap.parse_args()
 
-    out = build_preview() if args.preview else build_handover()
+    out = build_preview() if args.preview else build_lp() if args.lp else build_handover()
     print(f"wrote {out.relative_to(ROOT)} ({out.stat().st_size} bytes)")
 
 
