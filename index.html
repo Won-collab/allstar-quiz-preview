@@ -348,6 +348,29 @@ a.tlink,.rcopy .tlink{min-height:0;padding:14px 0;margin:-14px 0}
   transition:background .18s,color .18s;
 }
 .op.sel .oi{background:var(--bg-accent);color:var(--content-on-accent)}
+
+/* Bouncy selection. Pressing sinks the card slightly; choosing it springs
+   the card back past its size and settles, and the roundel pops as it turns
+   yellow. Layout never moves, so it works the same in the 2- and 3-column
+   grids. Only a fresh pick animates; re-rendering a saved answer does not. */
+.op{transition:background .18s,transform .18s cubic-bezier(.3,.7,.4,1)}
+.op:active{transform:scale(.97)}
+.op.pop{animation:opSpring .6s ease-in-out both}
+.op.pop .oi{animation:oiPop .55s ease-in-out both}
+@keyframes opSpring{
+  0%  {transform:scale(.96)}
+  30% {transform:scale(1.025)}
+  52% {transform:scale(.992)}
+  72% {transform:scale(1.006)}
+  100%{transform:scale(1)}
+}
+@keyframes oiPop{
+  0%  {transform:scale(.55)}
+  35% {transform:scale(1.2)}
+  58% {transform:scale(.93)}
+  78% {transform:scale(1.04)}
+  100%{transform:scale(1)}
+}
 .oi svg{width:20px;height:20px;display:block}
 .otext{display:flex;flex-direction:column;gap:var(--sp-2xs);min-width:0}
 .ol{font-size:16px;line-height:20px;font-weight:var(--w-demibold);color:var(--content-primary-white)}
@@ -886,7 +909,15 @@ function renderQ(){
   });
   updNx();
 }
-function pick(i){ans[cur]=i;document.querySelectorAll('#og .op').forEach((el,idx)=>el.classList.toggle('sel',idx===i));updNx()}
+function pick(i){
+  const fresh=ans[cur]!==i;ans[cur]=i;
+  document.querySelectorAll('#og .op').forEach((el,idx)=>{
+    el.classList.toggle('sel',idx===i);
+    if(idx!==i)el.classList.remove('pop');
+    else if(fresh)replay(el,'pop');
+  });
+  updNx();
+}
 function updNx(){
   const b=document.getElementById('bnx');
   b.disabled = ans[cur]===null;
