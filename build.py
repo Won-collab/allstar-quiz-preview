@@ -3,7 +3,7 @@
 Build the Allstar fleet manager quiz from src/quiz-embed.html.
 
     python3 build.py --preview     -> index.html      (GitHub Pages, form stubbed)
-    python3 build.py --handover    -> dist/embed.html (real Marketo IDs injected)
+    python3 build.py --handover    -> dist/handover/ + .zip (web handover package)
     python3 build.py --lp          -> dist/marketo-lp.html (paste into a Marketo LP)
 
 src/quiz-embed.html is the source of truth and carries __MKTO_*__ placeholders,
@@ -15,6 +15,7 @@ import argparse
 import json
 import pathlib
 import re
+import shutil
 import sys
 
 ROOT = pathlib.Path(__file__).parent
@@ -70,20 +71,56 @@ def build_preview() -> pathlib.Path:
     return out
 
 
+GOOGLE_FONTS = re.compile(r"@import url\('https://fonts\.googleapis\.com/[^']*'\);\n")
+
+
 def build_handover() -> pathlib.Path:
+    """
+    Build the web handover package in dist/handover/:
+
+        embed.html   the component with the real Marketo identifiers
+        assets/      the eight persona and intro images
+        HANDOVER.md  the developer handover (source: docs/HANDOVER.md)
+
+    Google Fonts is not called from the embed: the site self-hosts Google Sans
+    Flex, so visitors' browsers never contact Google. If mkto.config.json has an
+    "assetBase" (the hosted folder URL, ending in /), image paths point there
+    instead of the relative assets/ folder.
+    """
     cfg = read_config()
     frag = read_source()
     frag = frag.replace("__MKTO_HOST__", cfg["host"].rstrip("/"))
     frag = frag.replace("__MKTO_MUNCHKIN_ID__", cfg["munchkinId"])
     frag = frag.replace("__MKTO_FORM_ID__", str(cfg["formId"]))
 
+    if not GOOGLE_FONTS.search(frag):
+        sys.exit("Google Fonts import not found; check the source before handing over")
+    frag = GOOGLE_FONTS.sub(
+        "/* Google Sans Flex is self-hosted by the site under that exact family\n"
+        "   name (see HANDOVER.md). Nothing here calls Google Fonts. */\n", frag, count=1)
+
+    base = cfg.get("assetBase")
+    if base:
+        if not base.endswith("/"):
+            base += "/"
+        frag = frag.replace("'assets/", "'" + base)
+
     if "__MKTO_" in frag:
         sys.exit("unresolved placeholder remains in handover build")
+    if "fonts.googleapis.com" in frag:
+        sys.exit("Google Fonts survived the handover build")
 
-    dist = ROOT / "dist"
-    dist.mkdir(exist_ok=True)
-    out = dist / "embed.html"
+    out_dir = ROOT / "dist" / "handover"
+    if out_dir.exists():
+        shutil.rmtree(out_dir)
+    out_dir.mkdir(parents=True)
+    out = out_dir / "embed.html"
     out.write_text(frag)
+    if not base:
+        shutil.copytree(ROOT / "assets", out_dir / "assets")
+    shutil.copy(ROOT / "docs" / "HANDOVER.md", out_dir / "HANDOVER.md")
+    zip_path = shutil.make_archive(str(ROOT / "dist" / "allstar-quiz-handover"), "zip", out_dir)
+    print(f"packed {pathlib.Path(zip_path).relative_to(ROOT)}")
     return out
 
 

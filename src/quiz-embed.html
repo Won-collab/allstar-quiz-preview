@@ -83,7 +83,7 @@
   display:none;
   flex-direction:column;
   align-items:center;
-  padding:var(--sp-2xl) var(--sp-m) var(--sp-3xl);
+  padding:var(--sp-2xl) var(--sp-m);
   gap:var(--sp-2xl);
   animation:fu .38s cubic-bezier(.22,.61,.36,1);
 }
@@ -328,7 +328,7 @@ a.tlink,.rcopy .tlink{min-height:0;padding:14px 0;margin:-14px 0}
 .pfi{height:100%;background:var(--bg-accent);transition:width .42s cubic-bezier(.22,.61,.36,1)}
 
 /* --- question --------------------------------------------------------- */
-#s-q{padding:var(--sp-xl) var(--sp-xl) var(--sp-3xl);gap:0}
+#s-q{padding:var(--sp-xl) var(--sp-xl) var(--sp-2xl);gap:0}
 .qbody{display:flex;flex-direction:column;gap:var(--sp-xl);width:100%;max-width:620px}
 .qt{
   font-size:clamp(21px,6.2cqw,24px);line-height:1.333;
@@ -386,7 +386,7 @@ a.tlink,.rcopy .tlink{min-height:0;padding:14px 0;margin:-14px 0}
 .qgfx svg{width:100%;height:100%;display:block}
 
 /* --- result ----------------------------------------------------------- */
-#s-result{padding:var(--sp-2xl) var(--sp-m) var(--sp-3xl)}
+#s-result{padding:var(--sp-2xl) var(--sp-m)}
 .rw{display:flex;flex-direction:column;gap:var(--sp-2xl);width:100%;max-width:560px}
 .blockA{display:flex;flex-direction:column;align-items:center;gap:var(--sp-l);width:100%}
 .rcopy{display:flex;flex-direction:column;align-items:flex-start;gap:var(--sp-l);width:100%}
@@ -514,6 +514,11 @@ a.tlink,.rcopy .tlink{min-height:0;padding:14px 0;margin:-14px 0}
 }
 .mkto-host .mktoForm .mktoHtmlText *{color:var(--content-tertiary-inverted)!important;font-size:12px!important;line-height:16px!important}
 .mkto-host .mktoForm .mktoHtmlText a{text-decoration:underline!important}
+/* Marketo's consent markup nests spans, <u> and links that forms2 styles as
+   spaced inline blocks, which opens wide gaps inside the sentence. */
+.mkto-host .mktoForm .mktoHtmlText span,.mkto-host .mktoForm .mktoHtmlText u,.mkto-host .mktoForm .mktoHtmlText a{
+  display:inline!important;float:none!important;margin:0!important;padding:0!important;width:auto!important;
+}
 .mkto-host .mktoForm .mktoButtonRow{width:100%!important;display:block!important}
 .mkto-host .mktoForm .mktoButtonWrap{margin-left:0!important}
 .mkto-host .mktoForm .mktoButton{
@@ -540,6 +545,15 @@ a.tlink,.rcopy .tlink{min-height:0;padding:14px 0;margin:-14px 0}
 .mkto-host .mktoForm .mktoError .mktoErrorMsg *{color:var(--content-negative)!important;font-size:14px!important}
 .mkto-host .mktoForm .mktoError .mktoErrorDetail{display:inline!important;margin-left:.25em}
 
+/* Quiz footer · Figma `Screen footer`: 10/12 Medium, content/secondary-white,
+   16px 24px. (The intro frame has it at 8px Inter DS; the other screens'
+   10px Google Sans Flex is used throughout.) */
+.qfoot{
+  width:100%;padding:var(--sp-m) var(--sp-xl);
+  font-size:10px;line-height:12px;font-weight:var(--w-medium);
+  color:var(--content-secondary-white);
+}
+
 /* Visually hidden live region for "Link copied". */
 .sr{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
@@ -548,7 +562,8 @@ a.tlink,.rcopy .tlink{min-height:0;padding:14px 0;margin:-14px 0}
   .og{grid-template-columns:1fr 1fr}
 }
 @container quiz (min-width:720px){
-  .sc,#s-q,#s-result{padding:44px var(--sp-2xl) var(--sp-3xl)}
+  .sc,#s-q,#s-result{padding:44px var(--sp-2xl) var(--sp-2xl)}
+  .qfoot{padding:var(--sp-m) var(--sp-2xl)}
   .intro-pair{width:min(400px,100%)}
 }
 @container quiz (min-width:900px){
@@ -662,6 +677,10 @@ a.tlink,.rcopy .tlink{min-height:0;padding:14px 0;margin:-14px 0}
       </div>
     </div>
   </div>
+
+  <!-- Quiz footer · Figma `Screen footer`. The page is a bare template with
+       no site header or footer, so the quiz carries its own copyright line. -->
+  <div class="qfoot">COPYRIGHT © 2026 ALLSTAR BUSINESS SOLUTIONS LIMITED</div>
 
   <div class="sr" aria-live="polite" id="share-status"></div>
 </div>
@@ -817,6 +836,25 @@ const P={
 const ORDER=['CH','MD','FF','VD','AP','BO'];
 const INTRO_ART={'intro-ap':['assets/intro/accidental-pioneer.png','The Accidental Pioneer'],'intro-md':['assets/intro/mileage-detective.png','The Mileage Detective']};
 
+/* Result URLs, one page per result (agreed 2026-09-28). The web team serves
+   the same quiz embed at /yourfleetpersonality and at each result path, so
+   the quiz reads its own URL: a result path opens straight on that result,
+   and finishing the quiz moves the address bar to the result's path, so a
+   refresh or a shared link shows the same result and GA4 counts a page view
+   per result. Anywhere else (the preview), ?result=<slug> does the same. */
+const SLUG={CH:'cost-hawk',MD:'mileage-detective',FF:'fleet-firefighter',VD:'value-defender',AP:'accidental-pioneer',BO:'burned-out-manager'};
+function route(){
+  const m=location.pathname.match(/^(.*\/yourfleetpersonality)(?:\/([a-z-]+))?\/?$/);
+  if(m) return {base:m[1],slug:m[2]||null,routed:true};
+  return {base:null,slug:new URLSearchParams(location.search).get('result'),routed:false};
+}
+function codeFor(slug){return Object.keys(SLUG).find(k=>SLUG[k]===slug)||null;}
+function setRoute(code){
+  const r=route();if(!r.routed||!history.pushState)return;
+  const path=code?r.base+'/'+SLUG[code]:r.base;
+  if(location.pathname.replace(/\/$/,'')!==path)history.pushState({quiz:code||'intro'},'',path+location.search);
+}
+
 /* The link "Share the quiz" copies. */
 const SHARE_URL='https://allstarcard.co.uk/yourfleetpersonality';
 
@@ -915,7 +953,7 @@ function show(id){
   document.querySelectorAll('#qr .sc').forEach(s=>s.classList.remove('on'));
   document.getElementById(id).classList.add('on');
 }
-function go(){cur=0;ans=new Array(Qs.length).fill(null);rType=null;show('s-q');renderQ();scrollToQuiz()}
+function go(){cur=0;ans=new Array(Qs.length).fill(null);rType=null;setRoute(null);show('s-q');renderQ();scrollToQuiz()}
 function renderQ(){
   const q=Qs[cur];
   document.getElementById('qt').textContent=q.t;
@@ -979,8 +1017,9 @@ function calcResult(){
   });
   rType=winner;
 }
-function showResult(){
+function showResult(fromUrl){
   const p=P[rType];
+  if(!fromUrl)setRoute(rType);
   const coin=document.getElementById('result-art');
   const copy=document.getElementById('r-copy');
   coin.classList.remove('go');copy.classList.remove('go-rise');
@@ -992,7 +1031,7 @@ function showResult(){
   document.getElementById('r-fit-text').textContent=p.fitText;
   document.getElementById('r-fit-link').href=p.link;
   show('s-result');
-  scrollToQuiz();
+  if(!fromUrl)scrollToQuiz();
   whenDecoded(coin.querySelector('img'),()=>{replay(coin,'go');replay(copy,'go-rise');});
 }
 function restart(){go();}
@@ -1084,6 +1123,12 @@ function showTypes(){
    (they stay in the accessibility tree). */
 function usePlaceholders(formEl){
   if(!formEl)return;
+  /* Rows holding only hidden fields still take a flex gap each; the real
+     form has ten of them, which opened a 120px hole above the button. */
+  formEl.querySelectorAll('.mktoFormRow').forEach(r=>{
+    const shown=[...r.querySelectorAll('input,select,textarea,.mktoHtmlText,label')].some(el=>el.type!=='hidden'&&!el.matches('input[type=hidden]'));
+    if(!shown)r.style.setProperty('display','none','important');   /* beats the display:block!important above */
+  });
   formEl.querySelectorAll('.mktoFieldWrap').forEach(w=>{
     const lab=w.querySelector('.mktoLabel');const inp=w.querySelector('input,textarea');
     if(!lab||!inp||inp.type==='checkbox'||inp.type==='hidden')return;
@@ -1109,6 +1154,16 @@ let mktoFormInstance = null;
 document.addEventListener('touchstart',function(){},{passive:true});
 
 mountAssets();
+
+/* Open on the result the URL names, and follow the browser's back and
+   forward buttons between the quiz and a result. */
+function applyRoute(){
+  const code=codeFor(route().slug);
+  if(code){rType=code;showResult(true);}
+  else if(document.getElementById('s-result').classList.contains('on')||document.getElementById('s-types').classList.contains('on')){show('s-intro');}
+}
+applyRoute();
+addEventListener('popstate',applyRoute);
 
 if(typeof MktoForms2!=="undefined"){
   MktoForms2.whenReady(function(form){
