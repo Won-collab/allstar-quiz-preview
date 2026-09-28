@@ -238,16 +238,11 @@ a.tlink,.rcopy .tlink{min-height:0;padding:14px 0;margin:-14px 0}
 @media (hover:hover) and (pointer:fine){
   .st-coin:hover{transform:translateY(-36px)}
 }
-.st-coin:active,.st-coin.lift{transform:translateY(-36px) scale(.97)}
-/* Choosing a coin lands it with the same single spring as an option pick:
-   from the pressed lift, past full size once, then settled. */
-.st-coin.pop{animation:stPop .45s cubic-bezier(.3,.7,.4,1) both}
-@keyframes stPop{
-  0%  {transform:translateY(-36px) scale(.97)}
-  55% {transform:translateY(0) scale(1.025)}
-  100%{transform:translateY(0) scale(1)}
-}
-.st-item.open .st-coin:not(.lift):not(.pop){transform:none}
+.st-coin:active,.st-coin.lift{transform:translateY(-36px) scale(.97);transition-duration:.2s}
+/* Opening a coin lands it with the same single spring as an option pick.
+   The landing is started from wherever the coin actually is at that moment
+   (a quick tap releases it part-way up), in script, so it never jumps. */
+.st-item.open .st-coin:not(.lift){transform:none}
 /* Description: grid rows 0fr -> 1fr animates to the text's real height. */
 .st-detail{
   pointer-events:auto;width:100%;
@@ -992,8 +987,19 @@ function buildStack(){
     it.querySelector('.rquote').textContent=p.subtitle;
     it.querySelector('.rdesc').textContent=p.desc;
     const btn=it.querySelector('.st-coin');
-    btn.addEventListener('click',()=>{toggleStack(it);replay(btn,'pop');});
-    btn.addEventListener('animationend',e=>{if(e.animationName==='stPop')btn.classList.remove('pop');});
+    btn.addEventListener('click',()=>{
+      const from=getComputedStyle(btn).transform;
+      const opening=!it.classList.contains('open');
+      toggleStack(it);
+      btn.classList.remove('lift');
+      if(opening&&!reduceMotion()&&btn.animate){
+        btn.animate([
+          {transform:from==='none'?'none':from},
+          {transform:'translateY(0) scale(1.025)',offset:.55},
+          {transform:'none'}
+        ],{duration:450,easing:'cubic-bezier(.3,.7,.4,1)'});
+      }
+    });
     /* Touch has no hover, and iOS Safari only applies :active when a touch
        listener exists, so the press lift is driven here. It is held for at
        least 180ms so a quick tap still shows the lift before the card opens. */
