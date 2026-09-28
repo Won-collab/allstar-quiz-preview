@@ -243,6 +243,9 @@ a.tlink,.rcopy .tlink{min-height:0;padding:14px 0;margin:-14px 0}
 .stack.deal .st-item{animation:stIn .75s cubic-bezier(.2,.9,.25,1) both}
 /* No screen fade here: the cards arrive fully opaque. */
 #s-types{animation:none}
+/* The script owns the scroll on this screen. Browser scroll anchoring would
+   otherwise shift the page in one frame while a coin above is closing. */
+#s-types,#s-types *{overflow-anchor:none}
 .st-item + .st-item{margin-top:-245px}
 .st-item.open + .st-item{margin-top:0}
 .st-coin{
@@ -265,11 +268,21 @@ a.tlink,.rcopy .tlink{min-height:0;padding:14px 0;margin:-14px 0}
    up. The back coin lifts 12px, the front one 36px, in even steps. */
 .st-coin:active,.st-coin.lift{transform:translateY(calc(var(--lift,36px) * -1))}
 
-/* An open coin stays in line with the rest: the spacing between coins and
-   to the logo never changes. The sense of lift comes from the page itself,
-   which scrolls the opened coin up to 40% of the viewport (script) while the
-   coins below part for the description. */
-.st-item.open .st-coin:not(.lift){transform:none}
+/* Opening lifts the whole screen as one: the open coin carries on up from
+   its press to the full 36px (it only ever moves up, so it reads as a clean
+   rise), and the logo and every coin above it rise the same 36px on the same
+   curve, so the spacing between coins and to the logo holds. The detail's
+   negative margin brings the text and the coins below up with it. The page
+   then scrolls the settled coin to 40% of the viewport (script). */
+.st-item.open .st-coin{transform:translateY(-36px)}
+.st-item.open .st-detail{margin-top:-36px}
+#s-types .lbar{transition:transform .45s cubic-bezier(.33,.1,.25,1)}
+#s-types.has-open .lbar{transform:translateY(-36px)}
+.st-item.above .st-coin{transform:translateY(-36px)}
+.st-item.above .st-coin:active,.st-item.above .st-coin.lift{transform:translateY(calc(-36px - var(--lift,36px)))}
+@media (hover:hover) and (pointer:fine){
+  .st-item.above .st-coin:hover{transform:translateY(calc(-36px - var(--lift,36px)))}
+}
 /* Description: grid rows 0fr -> 1fr animates to the text's real height. */
 .st-detail{
   pointer-events:auto;width:100%;
@@ -1029,10 +1042,12 @@ function toggleStack(it){
   const wasOpen=it.classList.contains('open');
   const items=[...document.querySelectorAll('#stack .st-item')];
   items.forEach(x=>{
-    x.classList.remove('open');x.querySelector('.st-coin').setAttribute('aria-expanded','false');
+    x.classList.remove('open','above');x.querySelector('.st-coin').setAttribute('aria-expanded','false');
   });
+  document.getElementById('s-types').classList.toggle('has-open',!wasOpen);
   if(!wasOpen){
     it.classList.add('open');it.querySelector('.st-coin').setAttribute('aria-expanded','true');
+    items.slice(0,items.indexOf(it)).forEach(x=>x.classList.add('above'));
     centreOpen(it);
   }
 }
@@ -1045,7 +1060,8 @@ function centreOpen(it){
   const btn=it.querySelector('.st-coin');
   btn.classList.remove('lift');
   getComputedStyle(btn).transform;               /* start the transitions */
-  const anims=stack.getAnimations?stack.getAnimations({subtree:true}):[];
+  const scrEl=document.getElementById('s-types');
+  const anims=scrEl.getAnimations?scrEl.getAnimations({subtree:true}):[];
   const saved=anims.map(a=>a.currentTime);
   anims.forEach(a=>{const t=a.effect.getComputedTiming();a.currentTime=t.endTime;});
   const r=btn.getBoundingClientRect();
@@ -1055,8 +1071,9 @@ function centreOpen(it){
   try{window.scrollTo({top,behavior:reduceMotion()?'auto':'smooth'});}catch(e){window.scrollTo(0,top);}
 }
 function showTypes(){
+  document.getElementById('s-types').classList.remove('has-open');
   document.querySelectorAll('#stack .st-item').forEach(x=>{
-    x.classList.remove('open');x.querySelector('.st-coin').setAttribute('aria-expanded','false');
+    x.classList.remove('open','above');x.querySelector('.st-coin').setAttribute('aria-expanded','false');
   });
   show('s-types');replay(document.getElementById('stack'),'deal');scrollToQuiz();
 }
