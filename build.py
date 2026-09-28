@@ -191,9 +191,42 @@ __FRAGMENT__
     + '<button type="button" class="mktoButton" id="pv-submit">Keep me informed</button></span></div>';
   if (typeof usePlaceholders === 'function') { usePlaceholders(f); }
 
+  /* Validation, reproducing forms2: every field is required and the email
+     must look like one. Like forms2, only the first failing field is flagged
+     at a time: it gets .mktoInvalid, an injected .mktoError message and
+     focus. Typing into it clears the error. Copy is the proposed wording for
+     the real form's validation messages. */
+  var MSG_REQUIRED = 'Please fill in this field.';
+  var MSG_EMAIL = 'Please enter a valid email address.';
+  function clearError(inp){
+    inp.classList.remove('mktoInvalid');
+    inp.removeAttribute('aria-invalid');
+    var e = inp.parentNode.querySelector('.mktoError');
+    if (e) e.parentNode.removeChild(e);
+  }
+  function flag(inp, msg){
+    inp.classList.add('mktoInvalid');
+    inp.setAttribute('aria-invalid','true');
+    var e = document.createElement('div');
+    e.className = 'mktoError';
+    e.setAttribute('role','alert');
+    e.innerHTML = '<div class="mktoErrorArrowWrap"><div class="mktoErrorArrow"></div></div><div class="mktoErrorMsg"></div>';
+    e.querySelector('.mktoErrorMsg').textContent = msg;
+    inp.parentNode.insertBefore(e, inp.nextSibling);
+    inp.focus();
+  }
+  var fields = [].slice.call(f.querySelectorAll('input.mktoField'));
+  fields.forEach(function(inp){ inp.addEventListener('input', function(){ clearError(inp); }); });
+
   /* Stubbed submit still drives the thank-you screen so that screen can be
-     checked on a phone too. */
+     checked on a phone too, but only once the form validates. */
   document.getElementById('pv-submit').addEventListener('click', function(){
+    fields.forEach(clearError);
+    for (var i = 0; i < fields.length; i++) {
+      var v = fields[i].value.trim();
+      if (!v) { flag(fields[i], MSG_REQUIRED); return; }
+      if (fields[i].type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) { flag(fields[i], MSG_EMAIL); return; }
+    }
     if (typeof show === 'function') { show('s-thankyou'); }
     if (typeof scrollToQuiz === 'function') { scrollToQuiz(); }
   });
