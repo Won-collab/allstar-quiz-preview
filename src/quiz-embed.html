@@ -245,16 +245,17 @@ a.tlink,.rcopy .tlink{min-height:0;padding:14px 0;margin:-14px 0}
    front, so a full lift reads as it jumping away rather than being picked
    up. The back coin lifts 12px, the front one 36px, in even steps. */
 .st-coin:active,.st-coin.lift{transform:translateY(calc(var(--lift,36px) * -1))}
-/* Opening a coin lands it with a single spring, in position only: the coin
-   never changes size. It dips 4px past its place and settles.
-   The landing is started from wherever the coin actually is at that moment
-   (a quick tap releases it part-way up), in script, so it never jumps. */
-.st-item.open .st-coin:not(.lift){transform:none}
+
+/* An open coin stays lifted, and its description rides up with it: the
+   detail's negative margin pulls the text (and every coin below) up by the
+   same lift, so the text sits right under the raised coin. */
+.st-item.open .st-coin{transform:translateY(calc(var(--lift,36px) * -1))}
+.st-item.open .st-detail{margin-top:calc(var(--lift,36px) * -1)}
 /* Description: grid rows 0fr -> 1fr animates to the text's real height. */
 .st-detail{
   pointer-events:auto;width:100%;
   display:grid;grid-template-rows:0fr;
-  transition:grid-template-rows .6s var(--ease-out);
+  transition:grid-template-rows .6s var(--ease-out),margin-top .45s cubic-bezier(.33,.1,.25,1);
 }
 .st-item.open .st-detail{grid-template-rows:1fr}
 .st-inner{
@@ -1013,20 +1014,8 @@ function buildStack(){
     it.querySelector('.rquote').textContent=p.subtitle;
     it.querySelector('.rdesc').textContent=p.desc;
     const btn=it.querySelector('.st-coin');
-    btn.style.setProperty('--lift',(12+24*i/(ORDER.length-1)).toFixed(1)+'px');
-    btn.addEventListener('click',()=>{
-      const from=getComputedStyle(btn).transform;
-      const opening=!it.classList.contains('open');
-      toggleStack(it);
-      btn.classList.remove('lift');
-      if(opening&&!reduceMotion()&&btn.animate){
-        btn.animate([
-          {transform:from==='none'?'none':from},
-          {transform:'translateY(4px)',offset:.6},
-          {transform:'none'}
-        ],{duration:450,easing:'cubic-bezier(.3,.7,.4,1)'});
-      }
-    });
+    it.style.setProperty('--lift',(12+24*i/(ORDER.length-1)).toFixed(1)+'px');
+    btn.addEventListener('click',()=>{toggleStack(it);btn.classList.remove('lift');});
     /* Touch has no hover, and iOS Safari only applies :active when a touch
        listener exists, so the press lift is driven here. It is held for at
        least 180ms so a quick tap still shows the lift before the card opens. */
