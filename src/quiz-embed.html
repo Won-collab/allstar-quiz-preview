@@ -153,12 +153,14 @@ a.tlink,.rcopy .tlink{min-height:0;padding:14px 0;margin:-14px 0}
 
 /* Result: one full-size coin spins in and settles. */
 .result-coin{width:min(300px,100%)}
-.result-coin:not(.go){opacity:0}
+/* visibility, not opacity: any opacity below 1 (or an opacity animation) on
+   a preserve-3d element flattens it, and the art then shows mirrored through
+   the back face mid-turn. So the 3D keyframes animate transform only. */
+.result-coin:not(.go){visibility:hidden}
 .result-coin.go{animation:coinIn 1.5s var(--ease-out) both}
 .result-coin.go .coin-front::after{animation:shine .9s ease-out 1.05s both}
 @keyframes coinIn{
-  0%  {transform:perspective(1100px) translateY(28px) scale(.45) rotateY(-1080deg);opacity:0}
-  12% {opacity:1}
+  0%  {transform:perspective(1100px) translateY(28px) scale(.3) rotateY(-1080deg)}
   78% {transform:perspective(1100px) translateY(0) scale(1.04) rotateY(10deg)}
   100%{transform:perspective(1100px) translateY(0) scale(1) rotateY(0)}
 }
@@ -184,20 +186,25 @@ a.tlink,.rcopy .tlink{min-height:0;padding:14px 0;margin:-14px 0}
    coin that does the entrance, so the two transforms never fight. */
 .intro-pair{position:relative;width:min(305.78px,100%);aspect-ratio:305.78/225.67;margin-bottom:6px}
 .intro-slot{position:absolute;width:56.90%}
-.intro-slot.a{left:0;top:22.90%;z-index:2;filter:drop-shadow(0 2px 12.1px rgba(0,0,0,.25));animation:floatA 6s ease-in-out 1.6s infinite}
-.intro-slot.b{left:43.10%;top:0;z-index:1;animation:floatB 7s ease-in-out 1.8s infinite}
-.intro-slot .coin{width:100%;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.intro-slot.a .coin{animation:inA 1.3s var(--ease-out) .15s both}
-.intro-slot.b .coin{animation:inB 1.3s var(--ease-out) .4s both}
-.intro-slot .coin.flip{animation:flip .9s var(--ease-out) both}
+.intro-slot.a{left:0;top:22.90%;z-index:2}
+.intro-slot.a .coin-front{box-shadow:0 2px 12.1px rgba(0,0,0,.25)}
+.intro-slot.b{left:43.10%;top:0;z-index:1}
+.intro-slot{will-change:transform}
+.intro-slot .coin{width:100%;cursor:pointer;-webkit-tap-highlight-color:transparent;visibility:hidden}
+/* Nothing moves until both images have decoded (.go), so the first frames
+   of the spin are never spent waiting on the network or the decoder. */
+.intro-pair.go .intro-slot.a{animation:floatA 6s ease-in-out 1.5s infinite}
+.intro-pair.go .intro-slot.b{animation:floatB 7s ease-in-out 1.7s infinite}
+.intro-pair.go .intro-slot .coin{visibility:visible}
+.intro-pair.go .intro-slot.a .coin{animation:inA 1.3s var(--ease-out) .05s both}
+.intro-pair.go .intro-slot.b .coin{animation:inB 1.3s var(--ease-out) .3s both}
+.intro-pair.go .intro-slot .coin.flip{animation:flip .9s var(--ease-out) both}
 @keyframes inA{
-  0%  {transform:perspective(900px) translate(-45%,10%) rotate(-12deg) rotateY(-540deg) scale(.6);opacity:0}
-  15% {opacity:1}
+  0%  {transform:perspective(900px) translate(-45%,10%) rotate(-12deg) rotateY(-540deg) scale(.35)}
   100%{transform:perspective(900px) translate(0,0) rotate(0) rotateY(0) scale(1)}
 }
 @keyframes inB{
-  0%  {transform:perspective(900px) translate(45%,-10%) rotate(12deg) rotateY(540deg) scale(.6);opacity:0}
-  15% {opacity:1}
+  0%  {transform:perspective(900px) translate(45%,-10%) rotate(12deg) rotateY(540deg) scale(.35)}
   100%{transform:perspective(900px) translate(0,0) rotate(0) rotateY(0) scale(1)}
 }
 @keyframes flip{
@@ -225,7 +232,7 @@ a.tlink,.rcopy .tlink{min-height:0;padding:14px 0;margin:-14px 0}
   pointer-events:auto;
   width:min(300px,100%);aspect-ratio:1/1;margin:12px 0;
   padding:0;border:0;background:none;border-radius:50%;cursor:pointer;
-  filter:drop-shadow(0 -10px 4.9px rgba(0,0,0,.25));
+  box-shadow:0 -10px 4.9px rgba(0,0,0,.25);   /* round, as the button is a circle; cheaper than a filter */
   transition:transform .4s var(--ease-out);
   -webkit-tap-highlight-color:transparent;
 }
@@ -331,25 +338,15 @@ a.tlink,.rcopy .tlink{min-height:0;padding:14px 0;margin:-14px 0}
 .op.sel .oi{background:var(--bg-accent);color:var(--content-on-accent)}
 
 /* Bouncy selection. Pressing sinks the card slightly; choosing it springs
-   the card back past its size and settles, and the roundel pops as it turns
-   yellow. Layout never moves, so it works the same in the 2- and 3-column
+   once past its size and settles. The roundel is part of the card and moves
+   with it. Layout never moves, so it works the same in the 2- and 3-column
    grids. Only a fresh pick animates; re-rendering a saved answer does not. */
 .op{transition:background .18s,transform .18s cubic-bezier(.3,.7,.4,1)}
 .op:active{transform:scale(.97)}
-.op.pop{animation:opSpring .6s ease-in-out both}
-.op.pop .oi{animation:oiPop .55s ease-in-out both}
+.op.pop{animation:opSpring .42s cubic-bezier(.3,.7,.4,1) both}
 @keyframes opSpring{
   0%  {transform:scale(.96)}
-  30% {transform:scale(1.025)}
-  52% {transform:scale(.992)}
-  72% {transform:scale(1.006)}
-  100%{transform:scale(1)}
-}
-@keyframes oiPop{
-  0%  {transform:scale(.55)}
-  35% {transform:scale(1.2)}
-  58% {transform:scale(.93)}
-  78% {transform:scale(1.04)}
+  55% {transform:scale(1.02)}
   100%{transform:scale(1)}
 }
 .oi svg{width:20px;height:20px;display:block}
@@ -843,6 +840,10 @@ function mountAssets(){
     /* Tap a coin to flip it once more. */
     c.addEventListener('click',()=>replay(c,'flip'));
   });
+  const pair=document.querySelector('#s-intro .intro-pair');
+  const imgs=[...pair.querySelectorAll('img')];
+  let left=imgs.length;
+  imgs.forEach(im=>whenDecoded(im,()=>{if(--left===0)requestAnimationFrame(()=>pair.classList.add('go'));}));
   document.querySelectorAll('#qr [data-share]').forEach(b=>b.addEventListener('click',()=>shareQuiz(b)));
   document.getElementById('types-open').addEventListener('click',showTypes);
   document.getElementById('types-back').addEventListener('click',()=>{show('s-result');scrollToQuiz();});
