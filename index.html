@@ -166,7 +166,8 @@ a.tlink,.rcopy .tlink{min-height:0;padding:14px 0;margin:-14px 0}
 }
 
 /* Result: one full-size coin spins in and settles. */
-.result-coin{width:min(300px,100%)}
+.result-coin{width:min(300px,100%);cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.result-coin:focus-visible{outline:3px solid var(--bg-accent);outline-offset:6px;border-radius:50%}
 /* visibility, not opacity: any opacity below 1 (or an opacity animation) on
    a preserve-3d element flattens it, and the art then shows mirrored through
    the back face mid-turn. So the 3D keyframes animate transform only. */
@@ -609,7 +610,7 @@ a.tlink,.rcopy .tlink{min-height:0;padding:14px 0;margin:-14px 0}
   <div class="sc" id="s-result">
     <div class="rw">
       <div class="blockA">
-        <div class="coin result-coin" id="result-art"></div>
+        <div class="coin result-coin" id="result-art" role="button" tabindex="0" aria-label="Spin your card"></div>
         <div class="rcopy" id="r-copy">
           <div class="rquote result-rise" id="r-sub"></div>
           <p class="rdesc result-rise" id="r-desc"></p>
@@ -817,9 +818,9 @@ function scrollToQuiz(){
 }
 
 /* A coin: front face with the art, back face with the star. */
-function coinHTML(src,alt){
+function coinHTML(src,alt,sameBack){
   return '<div class="coin-face coin-front"><img src="'+src+'" alt="'+alt+'" decoding="async"></div>'
-       + '<div class="coin-face coin-back">'+CARD_BACK+'</div>';
+       + '<div class="coin-face coin-back">'+(sameBack?'<img src="'+src+'" alt="" decoding="async">':CARD_BACK)+'</div>';
 }
 function personaSrc(code){return 'assets/persona/'+P[code].art+'.png';}
 
@@ -852,6 +853,9 @@ function mountAssets(){
   imgs.forEach(im=>whenDecoded(im,()=>{if(--left===0)requestAnimationFrame(()=>pair.classList.add('go'));}));
   document.querySelectorAll('#qr [data-share]').forEach(b=>b.addEventListener('click',()=>shareQuiz(b)));
   document.getElementById('types-open').addEventListener('click',showTypes);
+  const rc=document.getElementById('result-art');
+  rc.addEventListener('click',spinResult);
+  rc.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();spinResult();}});
   document.getElementById('types-back').addEventListener('click',()=>{show('s-result');scrollToQuiz();});
   buildStack();
   /* Warm the cache so the result coin never waits on the network. */
@@ -962,7 +966,8 @@ function showResult(){
   const coin=document.getElementById('result-art');
   const copy=document.getElementById('r-copy');
   coin.classList.remove('go');copy.classList.remove('go-rise');
-  coin.innerHTML=coinHTML(personaSrc(rType),p.name);
+  /* The visitor's own card carries their persona on both faces. */
+  coin.innerHTML=coinHTML(personaSrc(rType),p.name,true);
   document.getElementById('r-sub').textContent=p.subtitle;
   document.getElementById('r-desc').textContent=p.desc;
   document.getElementById('r-fit-product').textContent=p.product;
@@ -973,6 +978,21 @@ function showResult(){
   whenDecoded(coin.querySelector('img'),()=>{replay(coin,'go');replay(copy,'go-rise');});
 }
 function restart(){go();}
+
+/* Tap the result card to spin it one full turn, landing with the same gentle
+   curve as the stacked coins. A tap mid-spin lets the current turn finish
+   rather than restarting it, so repeated taps never jerk. */
+let resultSpin=null;
+function spinResult(){
+  const c=document.getElementById('result-art');
+  if(reduceMotion()||!c.animate||!c.classList.contains('go'))return;
+  if(resultSpin&&resultSpin.playState==='running')return;
+  resultSpin=c.animate([
+    {transform:'perspective(1100px) rotateY(0deg)'},
+    {transform:'perspective(1100px) rotateY(372deg)',offset:.78},
+    {transform:'perspective(1100px) rotateY(360deg)'}
+  ],{duration:900,easing:'cubic-bezier(.33,.1,.25,1)'});
+}
 
 /* All personality types. Built once; every visit replays the deal-in and
    starts with everything closed, as in the design. */
