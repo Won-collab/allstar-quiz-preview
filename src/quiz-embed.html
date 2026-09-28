@@ -230,7 +230,9 @@ a.tlink,.rcopy .tlink{min-height:0;padding:14px 0;margin:-14px 0}
   width:min(300px,100%);aspect-ratio:1/1;margin:12px 0;
   padding:0;border:0;background:none;border-radius:50%;cursor:pointer;
   box-shadow:0 -4px 14.4px rgba(0,0,0,.13);   /* round, as the button is a circle; cheaper than a filter */
-  transition:transform .4s var(--ease-out);
+  /* A gentle lift: the house ease-out front-loads almost all of the travel
+     into the first frames, which read as a snatch. This one eases in too. */
+  transition:transform .45s cubic-bezier(.33,.1,.25,1);
   -webkit-tap-highlight-color:transparent;touch-action:manipulation;
 }
 .st-coin img{width:100%;height:100%;display:block;border-radius:50%}
@@ -238,7 +240,7 @@ a.tlink,.rcopy .tlink{min-height:0;padding:14px 0;margin:-14px 0}
 @media (hover:hover) and (pointer:fine){
   .st-coin:hover{transform:translateY(-36px)}
 }
-.st-coin:active,.st-coin.lift{transform:translateY(-36px);transition-duration:.2s}
+.st-coin:active,.st-coin.lift{transform:translateY(-36px)}
 /* Opening a coin lands it with a single spring, in position only: the coin
    never changes size. It dips 4px past its place and settles.
    The landing is started from wherever the coin actually is at that moment
