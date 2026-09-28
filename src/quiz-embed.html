@@ -246,11 +246,12 @@ a.tlink,.rcopy .tlink{min-height:0;padding:14px 0;margin:-14px 0}
    up. The back coin lifts 12px, the front one 36px, in even steps. */
 .st-coin:active,.st-coin.lift{transform:translateY(calc(var(--lift,36px) * -1))}
 
-/* An open coin stays lifted, and its description rides up with it: the
-   detail's negative margin pulls the text (and every coin below) up by the
-   same lift, so the text sits right under the raised coin. */
-.st-item.open .st-coin{transform:translateY(calc(var(--lift,36px) * -1))}
-.st-item.open .st-detail{margin-top:calc(var(--lift,36px) * -1)}
+/* An open coin is picked up in full, whatever its depth: the coins below
+   have moved away, so nothing covers it. Its description rides up with it
+   (a negative margin equal to the lift) so the text sits right under the
+   raised coin, and the page scrolls it to 40% of the viewport (script). */
+.st-item.open .st-coin{transform:translateY(-36px)}
+.st-item.open .st-detail{margin-top:-36px}
 /* Description: grid rows 0fr -> 1fr animates to the text's real height. */
 .st-detail{
   pointer-events:auto;width:100%;
@@ -1031,7 +1032,25 @@ function toggleStack(it){
   document.querySelectorAll('#stack .st-item').forEach(x=>{
     x.classList.remove('open');x.querySelector('.st-coin').setAttribute('aria-expanded','false');
   });
-  if(!wasOpen){it.classList.add('open');it.querySelector('.st-coin').setAttribute('aria-expanded','true');}
+  if(!wasOpen){it.classList.add('open');it.querySelector('.st-coin').setAttribute('aria-expanded','true');centreOpen(it);}
+}
+/* Bring the opened coin's centre to 40% of the viewport. The target comes
+   from the layout as it will be once every transition has finished (another
+   coin may be closing above this one), found by seeking the running
+   transitions to their end, measuring, and putting them back. */
+function centreOpen(it){
+  const stack=document.getElementById('stack');
+  const btn=it.querySelector('.st-coin');
+  btn.classList.remove('lift');
+  getComputedStyle(btn).transform;               /* start the transitions */
+  const anims=stack.getAnimations?stack.getAnimations({subtree:true}):[];
+  const saved=anims.map(a=>a.currentTime);
+  anims.forEach(a=>{const t=a.effect.getComputedTiming();a.currentTime=t.endTime;});
+  const r=btn.getBoundingClientRect();
+  anims.forEach((a,i)=>{a.currentTime=saved[i];});
+  const se=document.scrollingElement||document.documentElement;
+  const top=Math.max(0,se.scrollTop+r.top+r.height/2-window.innerHeight*0.4);
+  try{window.scrollTo({top,behavior:reduceMotion()?'auto':'smooth'});}catch(e){window.scrollTo(0,top);}
 }
 function showTypes(){
   document.querySelectorAll('#stack .st-item').forEach(x=>{
