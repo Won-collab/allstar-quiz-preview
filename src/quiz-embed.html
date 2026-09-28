@@ -239,9 +239,12 @@ a.tlink,.rcopy .tlink{min-height:0;padding:14px 0;margin:-14px 0}
 .st-coin img{width:100%;height:100%;display:block;border-radius:50%}
 .st-coin:focus-visible{outline:3px solid var(--bg-accent);outline-offset:4px}
 @media (hover:hover) and (pointer:fine){
-  .st-coin:hover{transform:translateY(-36px)}
+  .st-coin:hover{transform:translateY(calc(var(--lift,36px) * -1))}
 }
-.st-coin:active,.st-coin.lift{transform:translateY(-36px)}
+/* Lift by depth: a coin further back is mostly hidden under the ones in
+   front, so a full lift reads as it jumping away rather than being picked
+   up. The back coin lifts 12px, the front one 36px, in even steps. */
+.st-coin:active,.st-coin.lift{transform:translateY(calc(var(--lift,36px) * -1))}
 /* Opening a coin lands it with a single spring, in position only: the coin
    never changes size. It dips 4px past its place and settles.
    The landing is started from wherever the coin actually is at that moment
@@ -1010,6 +1013,7 @@ function buildStack(){
     it.querySelector('.rquote').textContent=p.subtitle;
     it.querySelector('.rdesc').textContent=p.desc;
     const btn=it.querySelector('.st-coin');
+    btn.style.setProperty('--lift',(12+24*i/(ORDER.length-1)).toFixed(1)+'px');
     btn.addEventListener('click',()=>{
       const from=getComputedStyle(btn).transform;
       const opening=!it.classList.contains('open');
