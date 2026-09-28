@@ -231,7 +231,7 @@ a.tlink,.rcopy .tlink{min-height:0;padding:14px 0;margin:-14px 0}
 /* All personality types · Figma "All results" (1656:13552) and
    "All results-selected" (1659:13699). Six coins stacked with a -245px gap,
    so each shows a 79px strip and the last one shows in full. Each coin casts
-   its shadow upwards onto the one behind it. Hover or press lifts a coin;
+   its shadow upwards onto the one behind it (0 -4px 14.4px, 13% black). Hover or press lifts a coin;
    choosing one opens its description and pushes the coins below it apart. */
 .stack{display:flex;flex-direction:column;width:100%;max-width:358px}
 .st-item{
@@ -246,7 +246,7 @@ a.tlink,.rcopy .tlink{min-height:0;padding:14px 0;margin:-14px 0}
   pointer-events:auto;
   width:min(300px,100%);aspect-ratio:1/1;margin:12px 0;
   padding:0;border:0;background:none;border-radius:50%;cursor:pointer;
-  box-shadow:0 -10px 4.9px rgba(0,0,0,.25);   /* round, as the button is a circle; cheaper than a filter */
+  box-shadow:0 -4px 14.4px rgba(0,0,0,.13);   /* round, as the button is a circle; cheaper than a filter */
   transition:transform .4s var(--ease-out);
   -webkit-tap-highlight-color:transparent;
 }
