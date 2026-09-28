@@ -265,12 +265,11 @@ a.tlink,.rcopy .tlink{min-height:0;padding:14px 0;margin:-14px 0}
    up. The back coin lifts 12px, the front one 36px, in even steps. */
 .st-coin:active,.st-coin.lift{transform:translateY(calc(var(--lift,36px) * -1))}
 
-/* An open coin is picked up in full, whatever its depth: the coins below
-   have moved away, so nothing covers it. Its description rides up with it
-   (a negative margin equal to the lift) so the text sits right under the
-   raised coin, and the page scrolls it to 40% of the viewport (script). */
-.st-item.open .st-coin{transform:translateY(-36px)}
-.st-item.open .st-detail{margin-top:-36px}
+/* An open coin stays in line with the rest: the spacing between coins and
+   to the logo never changes. The sense of lift comes from the page itself,
+   which scrolls the opened coin up to 40% of the viewport (script) while the
+   coins below part for the description. */
+.st-item.open .st-coin:not(.lift){transform:none}
 /* Description: grid rows 0fr -> 1fr animates to the text's real height. */
 .st-detail{
   pointer-events:auto;width:100%;
@@ -1028,10 +1027,14 @@ function buildStack(){
 }
 function toggleStack(it){
   const wasOpen=it.classList.contains('open');
-  document.querySelectorAll('#stack .st-item').forEach(x=>{
+  const items=[...document.querySelectorAll('#stack .st-item')];
+  items.forEach(x=>{
     x.classList.remove('open');x.querySelector('.st-coin').setAttribute('aria-expanded','false');
   });
-  if(!wasOpen){it.classList.add('open');it.querySelector('.st-coin').setAttribute('aria-expanded','true');centreOpen(it);}
+  if(!wasOpen){
+    it.classList.add('open');it.querySelector('.st-coin').setAttribute('aria-expanded','true');
+    centreOpen(it);
+  }
 }
 /* Bring the opened coin's centre to 40% of the viewport. The target comes
    from the layout as it will be once every transition has finished (another
