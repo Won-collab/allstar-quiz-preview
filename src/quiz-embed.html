@@ -198,16 +198,50 @@ a.tlink,.rcopy .tlink{min-height:0;padding:14px 0;margin:-14px 0}
 @keyframes floatA{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-6px) rotate(-1.5deg)}}
 @keyframes floatB{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-5px) rotate(1.5deg)}}
 
-/* All personality types: a grid of the six coins, flipping in in turn. */
-.types{width:100%;display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp-s)}
-.types[hidden]{display:none}
-.types .coin{width:100%;animation:typeIn .7s var(--ease-out) both}
-.types .coin.me .coin-front{box-shadow:0 0 0 3px var(--bg-black),0 0 0 5px var(--bg-accent)}
-.types .coin.me{z-index:1}
-@keyframes typeIn{
-  from{transform:perspective(700px) rotateY(-180deg) scale(.7);opacity:0}
-  to  {transform:perspective(700px) rotateY(0) scale(1);opacity:1}
+/* All personality types · Figma "All results" (1656:13552) and
+   "All results-selected" (1659:13699). Six coins stacked with a -245px gap,
+   so each shows a 79px strip and the last one shows in full. Each coin casts
+   its shadow upwards onto the one behind it. Hover or press lifts a coin;
+   choosing one opens its description and pushes the coins below it apart. */
+.stack{display:flex;flex-direction:column;width:100%;max-width:358px}
+.st-item{
+  position:relative;display:flex;flex-direction:column;align-items:center;
+  pointer-events:none;
+  transition:margin-top .6s var(--ease-out);
+  animation:stIn .7s var(--ease-out) both;
 }
+.st-item + .st-item{margin-top:-245px}
+.st-item.open + .st-item{margin-top:0}
+.st-coin{
+  pointer-events:auto;
+  width:min(300px,100%);aspect-ratio:1/1;margin:12px 0;
+  padding:0;border:0;background:none;border-radius:50%;cursor:pointer;
+  filter:drop-shadow(0 -10px 4.9px rgba(0,0,0,.25));
+  transition:transform .4s var(--ease-out);
+  -webkit-tap-highlight-color:transparent;
+}
+.st-coin img{width:100%;height:100%;display:block;border-radius:50%}
+.st-coin:focus-visible{outline:3px solid var(--bg-accent);outline-offset:4px}
+@media (hover:hover) and (pointer:fine){
+  .st-coin:hover{transform:translateY(-20px)}
+}
+.st-coin:active{transform:translateY(-20px)}
+.st-item.open .st-coin{transform:none}
+/* Description: grid rows 0fr -> 1fr animates to the text's real height. */
+.st-detail{
+  pointer-events:auto;width:100%;
+  display:grid;grid-template-rows:0fr;
+  transition:grid-template-rows .6s var(--ease-out);
+}
+.st-item.open .st-detail{grid-template-rows:1fr}
+.st-inner{
+  overflow:hidden;min-height:0;
+  display:flex;flex-direction:column;gap:var(--sp-l);
+  opacity:0;transform:translateY(-8px);
+  transition:opacity .3s ease,transform .45s var(--ease-out);
+}
+.st-item.open .st-inner{opacity:1;transform:none;transition-delay:.18s}
+@keyframes stIn{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:none}}
 
 /* --- buttons · DS Button ---------------------------------------------- */
 /* Sizes are the DS ladder: Large 56, Medium 48. Radius is radius/button
@@ -496,9 +530,8 @@ a.tlink,.rcopy .tlink{min-height:0;padding:14px 0;margin:-14px 0}
         <div class="rcopy" id="r-copy">
           <div class="rquote result-rise" id="r-sub"></div>
           <p class="rdesc result-rise" id="r-desc"></p>
-          <button class="tlink tlink-s tlink-white result-rise" id="types-toggle" aria-expanded="false" aria-controls="types">Check all personality types</button>
+          <button class="tlink tlink-s tlink-white result-rise" id="types-open">Check all personality types</button>
         </div>
-        <div class="types" id="types" hidden></div>
       </div>
 
       <div id="gate-slot"></div>
@@ -527,6 +560,13 @@ a.tlink,.rcopy .tlink{min-height:0;padding:14px 0;margin:-14px 0}
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- 04b All personality types -->
+  <div class="sc" id="s-types">
+    <div class="lbar" id="logo-dark-3"></div>
+    <div class="stack" id="stack"></div>
+    <button class="tlink tlink-l tlink-white" id="types-back">Back to your result</button>
   </div>
 
   <!-- 05 Thank you -->
@@ -733,8 +773,7 @@ function whenDecoded(img,fn){
 function mountAssets(){
   const d1=document.getElementById('logo-dark-1');
   if(d1) d1.innerHTML=LOGO_INVERTED;
-  const d2=document.getElementById('logo-dark-2');
-  if(d2) d2.innerHTML=LOGO_INVERTED;
+  ['logo-dark-2','logo-dark-3'].forEach(id=>{const d=document.getElementById(id);if(d)d.innerHTML=LOGO_INVERTED;});
   const fl=document.getElementById('fit-logo');
   if(fl) fl.innerHTML=LOGO_PLAIN;
   document.querySelectorAll('#s-intro .coin').forEach(c=>{
@@ -744,7 +783,9 @@ function mountAssets(){
     c.addEventListener('click',()=>replay(c,'flip'));
   });
   document.querySelectorAll('#qr [data-share]').forEach(b=>b.addEventListener('click',()=>shareQuiz(b)));
-  document.getElementById('types-toggle').addEventListener('click',toggleTypes);
+  document.getElementById('types-open').addEventListener('click',showTypes);
+  document.getElementById('types-back').addEventListener('click',()=>{show('s-result');scrollToQuiz();});
+  buildStack();
   /* Warm the cache so the result coin never waits on the network. */
   ORDER.forEach(k=>{const im=new Image();im.src=personaSrc(k);});
 }
@@ -851,32 +892,43 @@ function showResult(){
   document.getElementById('r-fit-product').textContent=p.product;
   document.getElementById('r-fit-text').textContent=p.fitText;
   document.getElementById('r-fit-link').href=p.link;
-  closeTypes();
   show('s-result');
   scrollToQuiz();
   whenDecoded(coin.querySelector('img'),()=>{replay(coin,'go');replay(copy,'go-rise');});
 }
 function restart(){go();}
 
-/* All personality types: the six coins, the visitor's own one ringed. */
-function toggleTypes(){
-  const grid=document.getElementById('types');
-  if(!grid.hidden){closeTypes();return;}
-  grid.innerHTML='';
+/* All personality types. Built once; every visit replays the deal-in and
+   starts with everything closed, as in the design. */
+function buildStack(){
+  const st=document.getElementById('stack');
   ORDER.forEach((k,i)=>{
-    const c=document.createElement('div');
-    c.className='coin'+(k===rType?' me':'');
-    c.style.animationDelay=(i*70)+'ms';
-    c.innerHTML=coinHTML(personaSrc(k),P[k].name);
-    grid.appendChild(c);
+    const p=P[k];
+    const it=document.createElement('div');
+    it.className='st-item';it.style.animationDelay=(i*70)+'ms';
+    it.innerHTML='<button class="st-coin" aria-expanded="false" aria-controls="st-'+k+'">'
+      + '<img src="'+personaSrc(k)+'" alt="'+p.name+'" decoding="async"></button>'
+      + '<div class="st-detail" id="st-'+k+'"><div class="st-inner">'
+      + '<div class="rquote"></div><p class="rdesc"></p></div></div>';
+    it.querySelector('.rquote').textContent=p.subtitle;
+    it.querySelector('.rdesc').textContent=p.desc;
+    it.querySelector('.st-coin').addEventListener('click',()=>toggleStack(it));
+    st.appendChild(it);
   });
-  grid.hidden=false;
-  document.getElementById('types-toggle').setAttribute('aria-expanded','true');
 }
-function closeTypes(){
-  const grid=document.getElementById('types');
-  grid.hidden=true;grid.innerHTML='';
-  document.getElementById('types-toggle').setAttribute('aria-expanded','false');
+function toggleStack(it){
+  const wasOpen=it.classList.contains('open');
+  document.querySelectorAll('#stack .st-item').forEach(x=>{
+    x.classList.remove('open');x.querySelector('.st-coin').setAttribute('aria-expanded','false');
+  });
+  if(!wasOpen){it.classList.add('open');it.querySelector('.st-coin').setAttribute('aria-expanded','true');}
+}
+function showTypes(){
+  document.querySelectorAll('#stack .st-item').forEach(x=>{
+    x.classList.remove('open');x.querySelector('.st-coin').setAttribute('aria-expanded','false');
+    x.style.animation='none';void x.offsetWidth;x.style.animation='';
+  });
+  show('s-types');scrollToQuiz();
 }
 
 /* Placeholder-only fields, as drawn. Each label's text becomes its field's
